@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Riho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+    <meta name="keywords" content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
+    <meta name="author" content="pixelstrap">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
+    <title>DCEE</title>
+    <!-- Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.css') }}">
+    <!-- ico-font-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/icofont.css') }}">
+    <!-- Themify icon-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/themify.css') }}">
+    <!-- Flag icon-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/flag-icon.css') }}">
+    <!-- Feather icon-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/feather-icon.css') }}">
+    <!-- Plugins css start-->
+    <!-- Plugins css Ends-->
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/bootstrap.css') }}">
+    <!-- App css-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link id="color" rel="stylesheet" href="{{ url_for('static', filename='css/color-1.css') }}" media="screen">
+    <!-- Responsive css-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
+  </head>
+  <body>
+   <!-- sign-up page start-->
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ url_for('static', filename='images/login/1.jpg') }}" alt="sign-up page"></div>
+      <div class="col-xl-7 p-0">
+          <div class="login-card login-dark">
+              <div>
+                  <div> <a class="logo text-start"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/1.png') }}" alt="sign-up page"></a></div>
+                  <div class="login-main">
+                      <form class="theme-form" method="post" action="{{ url_for('auth.register') }}">
+                          <h4>Create your account</h4>
+                          <p>Enter your personal details to create account</p>
+
+                          {% with messages = get_flashed_messages(with_categories=true) %}
+                              {% if messages %}
+                                  <div class="alert-container">
+                                      {% for category, message in messages %}
+                                          {% if loop.index == 1 %}
+                                              <span class="text-danger">{{ message }}</span>
+                                          {% endif %}
+                                      {% endfor %}
+                                  </div>
+                              {% endif %}
+                          {% endwith %}
+
+                          <div class="form-group">
+                              <label class="col-form-label pt-0">Your Name</label>
+                              <div class="row g-2">
+                                  <div class="col-6">
+                                      <input class="form-control" type="text" name="first_name" required placeholder="First name">
+                                  </div>
+                                  <div class="col-6">
+                                      <input class="form-control" type="text" name="last_name" required placeholder="Last name">
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-form-label">Email Address</label>
+                              <input class="form-control" type="email" name="email" required placeholder="Test@gmail.com">
+                          </div>
+                          <div class="form-group">
+                              <label class="col-form-label">Password</label>
+                              <div class="form-input position-relative">
+                                  <input class="form-control" type="password" name="password" required placeholder="*********">
+                                  <div class="show-hide"><span class="show"></span></div>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-form-label">Confirm Password</label>
+                              <div class="form-input position-relative">
+                                  <input class="form-control" type="password" name="confirm_password" required placeholder="*********">
+                                  <div class="show-hide"><span class="show"></span></div>
+                              </div>
+                          </div>
+                          <div class="form-group mb-0">
+                              <div class="checkbox p-0">
+                                  <input id="checkbox1" type="checkbox" required>
+                                  <label class="text-muted" for="checkbox1">Agree with<a class="ms-2" href="#">Privacy Policy</a></label>
+                              </div>
+                              <button class="btn btn-primary btn-block w-100" type="submit">Create Account</button>
+                          </div>
+                          <h6 class="text-muted mt-4 or">Or signup with</h6>
+                          <div class="social mt-4">
+                              <div class="btn-showcase"><a class="btn btn-light" href="https://accounts.google.com" target="_blank"><i class="txt-linkedin" data-feather="linkedin"></i> Google </a></div>
+                          </div>
+                          <p class="mt-4 mb-0 text-center">Already have an account?<a class="ms-2" href="{{ url_for('auth.login') }}">Sign in</a></p>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const emailInput = document.getElementById('email');
+    const emailFeedback = document.getElementById('email-feedback');
+    const formElements = document.querySelectorAll('.form-control:not(#email)');
+    const submitButton = document.querySelector('button[type="submit"]');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const togglePassword = document.getElementById('toggle-password');
+    const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+    const checkbox = document.getElementById('checkbox1');
+
+    emailInput.addEventListener('input', function () {
+      const email = emailInput.value;
+      const regex = /^[^\s@]+@gmail\.com$/;
+
+      if (regex.test(email)) {
+        emailInput.classList.remove('is-invalid');
+        emailInput.classList.add('is-valid');
+        emailFeedback.style.display = 'none';
+        formElements.forEach(el => el.disabled = false);
+        submitButton.disabled = false;
+      } else {
+        emailInput.classList.remove('is-valid');
+        emailInput.classList.add('is-invalid');
+        emailFeedback.style.display = 'block';
+        formElements.forEach(el => el.disabled = true);
+        submitButton.disabled = true;
+      }
+    });
+
+    function togglePasswordVisibility(input, toggle) {
+      if (input.type === 'password') {
+        input.type = 'text';
+        toggle.querySelector('span').textContent = 'Hide';
+      } else {
+        input.type = 'password';
+        toggle.querySelector('span').textContent = 'Show';
+      }
+    }
+
+    togglePassword.addEventListener('click', function () {
+      togglePasswordVisibility(passwordInput, togglePassword);
+    });
+
+    toggleConfirmPassword.addEventListener('click', function () {
+      togglePasswordVisibility(confirmPasswordInput, toggleConfirmPassword);
+    });
+
+    checkbox.addEventListener('change', function () {
+      submitButton.disabled = !checkbox.checked;
+    });
+  });
+</script>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- latest jquery-->
+      <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+      <!-- Bootstrap js-->
+      <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+      <!-- feather icon js-->
+      <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
+      <!-- scrollbar js-->
+      <!-- Sidebar jquery-->
+      <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+      <!-- Plugins JS start-->
+      <!-- calendar js-->
+      <!-- Plugins JS Ends-->
+      <!-- Theme js-->
+      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </div>
+  </body>
+</html>
