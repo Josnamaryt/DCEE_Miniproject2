@@ -34,79 +34,88 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
   </head>
   <body>
-   <!-- sign-up page start-->
+<!-- sign-up page start-->
 <div class="container-fluid">
-  <div class="row">
-      <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ url_for('static', filename='images/login/1.jpg') }}" alt="sign-up page"></div>
-      <div class="col-xl-7 p-0">
-          <div class="login-card login-dark">
-              <div>
-                  <div> <a class="logo text-start"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/1.png') }}" alt="sign-up page"></a></div>
-                  <div class="login-main">
-                      <form class="theme-form" method="post" action="{{ url_for('auth.register') }}">
-                          <h4>Create your account</h4>
-                          <p>Enter your personal details to create account</p>
+    <div class="row">
+        <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ url_for('static', filename='images/login/1.jpg') }}" alt="sign-up page"></div>
+        <div class="col-xl-7 p-0">
+            <div class="login-card login-dark">
+                <div>
+                    <div> <a class="logo text-start"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/1.png') }}" alt="sign-up page"></a></div>
+                    <div class="login-main">
+                        <form class="theme-form" method="post" action="{{ url_for('auth.register') }}">
+                            <h4>Create your account</h4>
+                            <p>Enter your personal details to create account</p>
 
-                          {% with messages = get_flashed_messages(with_categories=true) %}
-                              {% if messages %}
-                                  <div class="alert-container">
-                                      {% for category, message in messages %}
-                                          {% if loop.index == 1 %}
-                                              <span class="text-danger">{{ message }}</span>
-                                          {% endif %}
-                                      {% endfor %}
-                                  </div>
-                              {% endif %}
-                          {% endwith %}
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    <div class="alert-container">
+                                        {% for category, message in messages %}
+                                            {% if loop.index == 1 %}
+                                                <span class="text-danger">{{ message }}</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
 
-                          <div class="form-group">
-                              <label class="col-form-label pt-0">Your Name</label>
-                              <div class="row g-2">
-                                  <div class="col-6">
-                                      <input class="form-control" type="text" name="first_name" required placeholder="First name">
-                                  </div>
-                                  <div class="col-6">
-                                      <input class="form-control" type="text" name="last_name" required placeholder="Last name">
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="form-group">
-                              <label class="col-form-label">Email Address</label>
-                              <input class="form-control" type="email" name="email" required placeholder="Test@gmail.com">
-                          </div>
-                          <div class="form-group">
-                              <label class="col-form-label">Password</label>
-                              <div class="form-input position-relative">
-                                  <input class="form-control" type="password" name="password" required placeholder="*********">
-                                  <div class="show-hide"><span class="show"></span></div>
-                              </div>
-                          </div>
-                          <div class="form-group">
-                              <label class="col-form-label">Confirm Password</label>
-                              <div class="form-input position-relative">
-                                  <input class="form-control" type="password" name="confirm_password" required placeholder="*********">
-                                  <div class="show-hide"><span class="show"></span></div>
-                              </div>
-                          </div>
-                          <div class="form-group mb-0">
-                              <div class="checkbox p-0">
-                                  <input id="checkbox1" type="checkbox" required>
-                                  <label class="text-muted" for="checkbox1">Agree with<a class="ms-2" href="#">Privacy Policy</a></label>
-                              </div>
-                              <button class="btn btn-primary btn-block w-100" type="submit">Create Account</button>
-                          </div>
-                          <h6 class="text-muted mt-4 or">Or signup with</h6>
-                          <div class="social mt-4">
-                              <div class="btn-showcase"><a class="btn btn-light" href="https://accounts.google.com" target="_blank"><i class="txt-linkedin" data-feather="linkedin"></i> Google </a></div>
-                          </div>
-                          <p class="mt-4 mb-0 text-center">Already have an account?<a class="ms-2" href="{{ url_for('auth.login') }}">Sign in</a></p>
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-  
+                            <div class="form-group">
+                                <label class="col-form-label pt-0">Your Name</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input class="form-control" type="text" name="first_name" required placeholder="First name" oninput="capitalize(this)">
+                                    </div>
+                                    <div class="col-6">
+                                        <input class="form-control" type="text" name="last_name" required placeholder="Last name" oninput="capitalize(this)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Email Address</label>
+                                <input class="form-control" id="email" type="email" name="email" required placeholder="Test@gmail.com">
+                                <div id="email-feedback" class="invalid-feedback">Please enter a valid Gmail address.</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Password</label>
+                                <div class="form-input position-relative">
+                                    <input class="form-control" id="password" type="password" name="password" required placeholder="*********">
+                                    <div id="toggle-password" class="show-hide"><span class="show"></span></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Confirm Password</label>
+                                <div class="form-input position-relative">
+                                    <input class="form-control" id="confirm-password" type="password" name="confirm_password" required placeholder="*********">
+                                    <div id="toggle-confirm-password" class="show-hide"><span class="show"></span></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Select Role</label>
+                                <select class="form-control" name="role" required>
+                                    <option value="storefrontowner">Storefront Owner</option>
+                                    <option value="customer">Customer</option>
+                                    <option value="instructor">Instructor</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-0">
+                                <div class="checkbox p-0">
+                                    <input id="checkbox1" type="checkbox" required>
+                                    <label class="text-muted" for="checkbox1">Agree with<a class="ms-2" href="#">Privacy Policy</a></label>
+                                </div>
+                                <button class="btn btn-primary btn-block w-100" type="submit">Create Account</button>
+                            </div>
+                            <h6 class="text-muted mt-4 or">Or signup with</h6>
+                            <div class="social mt-4">
+                                <div class="btn-showcase"><a class="btn btn-light" href="https://accounts.google.com" target="_blank"><i class="txt-linkedin" data-feather="linkedin"></i> Google </a></div>
+                            </div>
+                            <p class="mt-4 mb-0 text-center">Already have an account?<a class="ms-2" href="{{ url_for('auth.login') }}">Sign in</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -160,43 +169,38 @@
     checkbox.addEventListener('change', function () {
       submitButton.disabled = !checkbox.checked;
     });
+
+    function capitalize(input) {
+      const value = input.value;
+      input.value = value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    const firstNameInput = document.querySelector('input[name="first_name"]');
+    const lastNameInput = document.querySelector('input[name="last_name"]');
+    
+    firstNameInput.addEventListener('input', function () {
+      capitalize(firstNameInput);
+    });
+    
+    lastNameInput.addEventListener('input', function () {
+      capitalize(lastNameInput);
+    });
   });
 </script>
 
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- latest jquery-->
-      <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-      <!-- Bootstrap js-->
-      <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
-      <!-- feather icon js-->
-      <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
-      <!-- scrollbar js-->
-      <!-- Sidebar jquery-->
-      <script src="{{ url_for('static', filename='js/config.js') }}"></script>
-      <!-- Plugins JS start-->
-      <!-- calendar js-->
-      <!-- Plugins JS Ends-->
-      <!-- Theme js-->
-      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    </div>
-  </body>
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<!-- Bootstrap js-->
+<script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+<!-- feather icon js-->
+<script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
+<!-- scrollbar js-->
+<!-- Sidebar jquery-->
+<script src="{{ url_for('static', filename='js/config.js') }}"></script>
+<!-- Plugins JS start-->
+<!-- calendar js-->
+<!-- Plugins JS Ends-->
+<!-- Theme js-->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
 </html>
