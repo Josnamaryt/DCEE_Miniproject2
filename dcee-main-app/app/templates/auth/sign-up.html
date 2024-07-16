@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,30 +10,32 @@
     <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
     <title>DCEE</title>
-    <!-- Google font-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.css') }}">
-    <!-- ico-font-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/icofont.css') }}">
-    <!-- Themify icon-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/themify.css') }}">
-    <!-- Flag icon-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/flag-icon.css') }}">
-    <!-- Feather icon-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/feather-icon.css') }}">
-    <!-- Plugins css start-->
-    <!-- Plugins css Ends-->
-    <!-- Bootstrap css-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/bootstrap.css') }}">
-    <!-- App css-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <link id="color" rel="stylesheet" href="{{ url_for('static', filename='css/color-1.css') }}" media="screen">
-    <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
-  </head>
-  <body>
+    <style>
+        .invalid-feedback {
+            display: none;
+            color: red;
+        }
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+        .is-valid ~ .invalid-feedback {
+            display: none;
+        }
+    </style>
+</head>
+<body>
 <!-- sign-up page start-->
 <div class="container-fluid">
     <div class="row">
@@ -72,30 +74,38 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-form-label">Email Address</label>
-                                <input class="form-control" id="email" type="email" name="email" required placeholder="Test@gmail.com">
-                                <div id="email-feedback" class="invalid-feedback">Please enter a valid Gmail address.</div>
+                                <input class="form-control" type="email" name="email" id="email" required placeholder="Test@gmail.com">
+                                <div class="invalid-feedback">Please enter a valid Gmail address.</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Role</label>
+                                <select class="form-control" name="role" id="role" required>
+                                    <option value="" disabled selected>Select your role</option>
+                                    <option value="storefrontowner">Storefront Owner</option>
+                                    <option value="customer">Customer</option>
+                                    <option value="instructor">Instructor</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="gstin-group" style="display: none;">
+                                <label class="col-form-label">GSTIN</label>
+                                <input class="form-control" type="text" name="gstin" id="gstin" placeholder="22AAAAA0000A1Z5" pattern="^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z][Z][0-9]$">
+                                <div class="invalid-feedback">Please enter a valid GSTIN (e.g., 22AAAAA0000A1Z5).</div>
                             </div>
                             <div class="form-group">
                                 <label class="col-form-label">Password</label>
                                 <div class="form-input position-relative">
-                                    <input class="form-control" id="password" type="password" name="password" required placeholder="*********">
-                                    <div id="toggle-password" class="show-hide"><span class="show"></span></div>
+                                    <input class="form-control" type="password" name="password" id="password" required placeholder="*********" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$">
+                                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
+                                    <div class="show-hide"><span class="show" onclick="togglePasswordVisibility()">Show</span></div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-form-label">Confirm Password</label>
                                 <div class="form-input position-relative">
-                                    <input class="form-control" id="confirm-password" type="password" name="confirm_password" required placeholder="*********">
-                                    <div id="toggle-confirm-password" class="show-hide"><span class="show"></span></div>
+                                    <input class="form-control" type="password" name="confirm_password" id="confirm-password" required placeholder="*********">
+                                    <div class="show-hide"><span class="show" onclick="toggleConfirmPasswordVisibility()">Show</span></div>
+                                    <div class="invalid-feedback">Passwords do not match.</div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label">Select Role</label>
-                                <select class="form-control" name="role" required>
-                                    <option value="storefrontowner">Storefront Owner</option>
-                                    <option value="customer">Customer</option>
-                                    <option value="instructor">Instructor</option>
-                                </select>
                             </div>
                             <div class="form-group mb-0">
                                 <div class="checkbox p-0">
@@ -118,89 +128,65 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const emailInput = document.getElementById('email');
-    const emailFeedback = document.getElementById('email-feedback');
-    const formElements = document.querySelectorAll('.form-control:not(#email)');
-    const submitButton = document.querySelector('button[type="submit"]');
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirm-password');
-    const togglePassword = document.getElementById('toggle-password');
-    const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
-    const checkbox = document.getElementById('checkbox1');
-
-    emailInput.addEventListener('input', function () {
-      const email = emailInput.value;
-      const regex = /^[^\s@]+@gmail\.com$/;
-
-      if (regex.test(email)) {
-        emailInput.classList.remove('is-invalid');
-        emailInput.classList.add('is-valid');
-        emailFeedback.style.display = 'none';
-        formElements.forEach(el => el.disabled = false);
-        submitButton.disabled = false;
-      } else {
-        emailInput.classList.remove('is-valid');
-        emailInput.classList.add('is-invalid');
-        emailFeedback.style.display = 'block';
-        formElements.forEach(el => el.disabled = true);
-        submitButton.disabled = true;
-      }
-    });
-
-    function togglePasswordVisibility(input, toggle) {
-      if (input.type === 'password') {
-        input.type = 'text';
-        toggle.querySelector('span').textContent = 'Hide';
-      } else {
-        input.type = 'password';
-        toggle.querySelector('span').textContent = 'Show';
-      }
-    }
-
-    togglePassword.addEventListener('click', function () {
-      togglePasswordVisibility(passwordInput, togglePassword);
-    });
-
-    toggleConfirmPassword.addEventListener('click', function () {
-      togglePasswordVisibility(confirmPasswordInput, toggleConfirmPassword);
-    });
-
-    checkbox.addEventListener('change', function () {
-      submitButton.disabled = !checkbox.checked;
-    });
-
     function capitalize(input) {
-      const value = input.value;
-      input.value = value.charAt(0).toUpperCase() + value.slice(1);
+        input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
     }
 
-    const firstNameInput = document.querySelector('input[name="first_name"]');
-    const lastNameInput = document.querySelector('input[name="last_name"]');
-    
-    firstNameInput.addEventListener('input', function () {
-      capitalize(firstNameInput);
-    });
-    
-    lastNameInput.addEventListener('input', function () {
-      capitalize(lastNameInput);
-    });
-  });
-</script>
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('password');
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+    }
 
-<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-<!-- Bootstrap js-->
-<script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
-<!-- feather icon js-->
-<script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
-<!-- scrollbar js-->
-<!-- Sidebar jquery-->
-<script src="{{ url_for('static', filename='js/config.js') }}"></script>
-<!-- Plugins JS start-->
-<!-- calendar js-->
-<!-- Plugins JS Ends-->
-<!-- Theme js-->
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    function toggleConfirmPasswordVisibility() {
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const type = confirmPasswordInput.type === 'password' ? 'text' : 'password';
+        confirmPasswordInput.type = type;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const roleSelect = document.getElementById('role');
+        const gstinGroup = document.getElementById('gstin-group');
+        const gstinInput = document.getElementById('gstin');
+
+        roleSelect.addEventListener('change', function () {
+            if (this.value === 'storefrontowner') {
+                gstinGroup.style.display = 'block';
+            } else {
+                gstinGroup.style.display = 'none';
+                gstinInput.value = '';
+                gstinInput.classList.remove('is-invalid', 'is-valid');
+            }
+        });
+
+        gstinInput.addEventListener('input', function () {
+            const gstinPattern = /^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z][Z][0-9]$/;
+            gstinInput.classList.toggle('is-invalid', !gstinPattern.test(gstinInput.value));
+            gstinInput.classList.toggle('is-valid', gstinPattern.test(gstinInput.value));
+        });
+
+        const emailInput = document.getElementById('email');
+        emailInput.addEventListener('input', function () {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            emailInput.classList.toggle('is-invalid', !emailPattern.test(emailInput.value));
+            emailInput.classList.toggle('is-valid', emailPattern.test(emailInput.value));
+        });
+
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+
+        passwordInput.addEventListener('input', function () {
+            const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/;
+            passwordInput.classList.toggle('is-invalid', !passwordPattern.test(passwordInput.value));
+            passwordInput.classList.toggle('is-valid', passwordPattern.test(passwordInput.value));
+            confirmPasswordInput.dispatchEvent(new Event('input'));
+        });
+
+        confirmPasswordInput.addEventListener('input', function () {
+            confirmPasswordInput.classList.toggle('is-invalid', confirmPasswordInput.value !== passwordInput.value);
+            confirmPasswordInput.classList.toggle('is-valid', confirmPasswordInput.value === passwordInput.value);
+        });
+    });
+</script>
 </body>
 </html>
