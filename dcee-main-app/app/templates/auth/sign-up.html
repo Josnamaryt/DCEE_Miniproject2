@@ -179,12 +179,18 @@
             const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/;
             passwordInput.classList.toggle('is-invalid', !passwordPattern.test(passwordInput.value));
             passwordInput.classList.toggle('is-valid', passwordPattern.test(passwordInput.value));
-            confirmPasswordInput.dispatchEvent(new Event('input'));
+
+            // Trigger confirm password validation only if there is input in the confirm password field
+            if (confirmPasswordInput.value.length > 0) {
+                confirmPasswordInput.dispatchEvent(new Event('input'));
+            }
         });
 
         confirmPasswordInput.addEventListener('input', function () {
-            confirmPasswordInput.classList.toggle('is-invalid', confirmPasswordInput.value !== passwordInput.value);
-            confirmPasswordInput.classList.toggle('is-valid', confirmPasswordInput.value === passwordInput.value);
+            if (passwordInput.value.length > 0) {
+                confirmPasswordInput.classList.toggle('is-invalid', confirmPasswordInput.value !== passwordInput.value);
+                confirmPasswordInput.classList.toggle('is-valid', confirmPasswordInput.value === passwordInput.value);
+            }
         });
     });
 </script>

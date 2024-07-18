@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to DCEE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #fff;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(0, 0, 0, 0.7);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center; /* Center the navigation links horizontally */
+      align-items: center;
+      margin: 0; /* Remove default margin */
+      padding: 0; /* Remove default padding */
+    }
+
+    nav ul li {
+      margin: 0 1rem;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #f1c40f;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 25px;
+      padding: 0.5rem;
+      width: 300px; /* Adjusted width of the search bar */
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      padding: 0.5rem;
+      flex: 1;
+      border-radius: 25px;
+    }
+
+    .search-bar button {
+      border: none;
+      background: #2575fc;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .search-bar button:hover {
+      background: #1a5dcf;
+    }
+
+    .hero {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: url('https://source.unsplash.com/random/1920x1080') no-repeat center center/cover;
+      padding-top: 100px;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: fadeInDown 2s;
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      animation: fadeInUp 2s;
+    }
+
+    .hero a {
+      text-decoration: none;
+      background: #f1c40f;
+      padding: 0.75rem 2rem;
+      border-radius: 25px;
+      color: #333;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .hero a:hover {
+      background: #e1b40e;
+    }
+
+    @keyframes fadeInDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    section {
+      padding: 4rem 2rem;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 15px;
+      margin: 2rem auto;
+      width: 90%;
+      max-width: 1200px;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .product-card {
+      background: #fff;
+      color: #333;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .product-card .info {
+      padding: 1rem;
+    }
+
+    .product-card .info h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #2575fc;
+    }
+
+    .product-card .info p {
+      margin: 0.5rem 0 1rem;
+    }
+
+    .product-card .info button {
+      background: #2575fc;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .product-card .info button:hover {
+      background: #1a5dcf;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    footer p {
+      margin: 0;
+    }
+
+    .contact {
+      text-align: center;
+    }
+
+    .contact p {
+      margin: 0.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="search-bar">
+      <input type="text" placeholder="Search for products...">
+      <button><i class="fas fa-search"></i></button>
+    </div>
+    <ul>
+      <li><a href="{{ url_for('about') }}">About</a></li>
+      <li><a href="{{ url_for('contact') }}">Contact</a></li>
+      <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+      <li><a href="{{ url_for('auth.signup') }}">Sign Up</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero" id="home">
+    <div>
+      <h1>Welcome to Digital Commerce Empowerment Ecosystem</h1>
+      <p>Empowering your digital commerce experience.</p>
+      <a href="{{ url_for('auth.signup') }}">Get Started</a>
+    </div>
+  </div>
+
+  <section class="about" id="about">
+    <h2>About Us</h2>
+    <p>
+      At DCEE, we are dedicated to providing a comprehensive digital commerce platform that empowers businesses and individuals to succeed in the online marketplace. Our ecosystem is designed to be user-friendly, secure, and adaptable to the changing needs of the digital world.
+    </p>
+  </section>
+
+  <section class="products">
+    <h2>Featured Products</h2>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/300" alt="Product 1">
+      <div class="info">
+        <h3>Product 1</h3>
+        <p>Short description of the product.</p>
+        <button>Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/300" alt="Product 2">
+      <div class="info">
+        <h3>Product 2</h3>
+        <p>Short description of the product.</p>
+        <button>Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/300" alt="Product 3">
+      <div class="info">
+        <h3>Product 3</h3>
+        <p>Short description of the product.</p>
+        <button>Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/300" alt="Product 4">
+      <div class="info">
+        <h3>Product 4</h3>
+        <p>Short description of the product.</p>
+        <button>Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <h2>Contact Us</h2>
+    <p>
+      We are here to help you with any queries or support you need. Feel free to reach out to us via email or phone.
+    </p>
+    <p>
+      <i class="fas fa-envelope"></i> Email: support@dcee.com
+    </p>
+    <p>
+      <i class="fas fa-phone"></i> Phone: +123 456 7890
+    </p>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 DCEE. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Smooth scroll for navigation links
+    document.querySelectorAll('nav ul li a').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>
