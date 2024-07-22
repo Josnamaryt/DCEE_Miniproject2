@@ -25,19 +25,22 @@ def login():
         password = request.form['password']
 
         user = mongo.db.users.find_one({'email': email})
-        if user and check_password_hash(user['password'], password):
-            user_obj = User(
-                _id=user['_id'],
-                email=user['email'],
-                password_hash=user['password'],
-                role=user.get('role'),
-                status=user.get('status')
-            )
-            login_user(user_obj)
-            flash('Login successful!', 'success')
-            return redirect(url_for('admin.dashboard'))
+        if user:
+            if check_password_hash(user['password'], password):
+                user_obj = User(
+                    _id=user['_id'],
+                    email=user['email'],
+                    password_hash=user['password'],
+                    role=user.get('role'),
+                    status=user.get('status')
+                )
+                login_user(user_obj)
+                flash('Login successful!', 'success')
+                return redirect(url_for('admin.dashboard'))
+            else:
+                flash('Invalid password.', 'danger')
         else:
-            flash('Invalid email or password.', 'danger')
+            flash('Email not registered.', 'danger')
 
     return render_template('auth/login.html')
 
