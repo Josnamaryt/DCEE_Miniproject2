@@ -96,7 +96,8 @@ def register():
             'created_at': created_at,
         }
         mongo.db.login.insert_one(login_data)
-#insert into different collection as per role
+
+        # Insert into different collection as per role
         if role == 'customer':
             add_customer = {
                 'first_name': first_name,
@@ -106,19 +107,21 @@ def register():
                 'updated_at': updated_at
             }
             mongo.db.customers.insert_one(add_customer)
-            flash(' customer registration successful! You can now log in.', 'success')
+            flash('Customer registration successful! You can now log in.', 'success')
             return redirect(url_for('auth.login'))
         
         elif role == 'storefrontowner':
+            gstin = request.form['gstin']  # Add this line to get the GSTIN from the form
             add_storefrontowner = {
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,
+                'gstin': gstin,  # Add GSTIN to the storefrontowner document
                 'created_at': created_at,
                 'updated_at': updated_at
             }
             mongo.db.storefrontowner.insert_one(add_storefrontowner)
-            flash('Storefrontowner registration successful! You can now log in.', 'success')
+            flash('Storefront owner registration successful! You can now log in.', 'success')
             return redirect(url_for('auth.login'))
         
         elif role == 'instructor':
@@ -132,6 +135,7 @@ def register():
             mongo.db.instructor.insert_one(add_instructor)
             flash('Instructor registration successful! You can now log in.', 'success')
             return redirect(url_for('auth.login'))
+
         flash('Registration successful! You can now log in.', 'success')
         return redirect(url_for('auth.login'))
 
@@ -149,11 +153,6 @@ def logout():
 def list_customers():
     customers = list(mongo.db.customers.find())
     return render_template('customers/list.html', customers=customers)
-
-#1. only use login table to check and verify while login. dont change anything in that unless password or username reset and role also for easy access.
-#2. use user table to save common things in all the users, like created_at, updated_at, status, role, etc.
-#3. for all other different roles and its details use different collections/tables like customers, storefrontowner,
-#instructor, etc. for other details like gstn is only for storefrontowner so only add gstn to storefrontowner collection/table and not on other tables.
 
 @customers_bp.route('/customers/add', methods=['GET', 'POST'])
 @login_required

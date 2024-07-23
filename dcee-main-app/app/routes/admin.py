@@ -77,6 +77,7 @@ def get_storefrontowners():
         storefrontowner['_id'] = str(storefrontowner['_id'])
         storefrontowner['createdAt'] = storefrontowner.get('created_at', '').strftime('%Y-%m-%d %H:%M:%S') if storefrontowner.get('created_at') else None
         storefrontowner['updatedAt'] = storefrontowner.get('updated_at', '').strftime('%Y-%m-%d %H:%M:%S') if storefrontowner.get('updated_at') else None
+        storefrontowner['gstin'] = storefrontowner.get('gstin', '')  # Add GSTIN field
         
         # Get the user information from the user info dictionary
         user_info = user_info_dict.get(storefrontowner['email'])

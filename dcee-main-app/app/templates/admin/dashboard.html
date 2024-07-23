@@ -408,6 +408,7 @@
                 <th>Email</th>
                 <th>First Name</th>
                 <th>Last Name</th>
+                <th>GSTIN</th>  <!-- Add GSTIN column header -->
                 <th>Updated At</th>
               </tr>
             </thead>
@@ -485,24 +486,25 @@
  <script>
   $(document).ready(function() {
     $('#storefrontModal').on('shown.bs.modal', function() {
-       console.log('Storefront Owner modal shown, initializing DataTable...');
-       if (!$.fn.DataTable.isDataTable('#storefrontTable')) {
-          $('#storefrontTable').DataTable({
-             "ajax": {
-                "url": "{{ url_for('admin.get_storefrontowners') }}",
-                "dataSrc": ""
-             },
-             "columns": [
-                { "data": "created_at" },
-                { "data": "email" },
-                { "data": "first_name" },
-                { "data": "last_name" },
-                { "data": "updated_at" }
-             ]
-          });
-       }
+        console.log('Storefront Owner modal shown, initializing DataTable...');
+        if (!$.fn.DataTable.isDataTable('#storefrontTable')) {
+            $('#storefrontTable').DataTable({
+                "ajax": {
+                    "url": "{{ url_for('admin.get_storefrontowners') }}",
+                    "dataSrc": ""
+                },
+                "columns": [
+                    { "data": "createdAt" },
+                    { "data": "email" },
+                    { "data": "first_name" },
+                    { "data": "last_name" },
+                    { "data": "gstin" },  // Add GSTIN column
+                    { "data": "updatedAt" }
+                ]
+            });
+        }
     });
- });
+});
 </script>
 <!-- end storefront owner modal JS -->
 </html>
