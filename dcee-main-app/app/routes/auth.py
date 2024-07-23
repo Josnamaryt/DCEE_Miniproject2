@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from app import login_manager, mongo
 from app.models import User
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,6 +8,7 @@ from datetime import datetime
 import re
 
 auth_bp = Blueprint('auth', __name__)
+customers_bp = Blueprint('customers', __name__)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -95,7 +96,42 @@ def register():
             'created_at': created_at,
         }
         mongo.db.login.insert_one(login_data)
-
+#insert into different collection as per role
+        if role == 'customer':
+            add_customer = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'created_at': created_at,
+                'updated_at': updated_at
+            }
+            mongo.db.customers.insert_one(add_customer)
+            flash(' customer registration successful! You can now log in.', 'success')
+            return redirect(url_for('auth.login'))
+        
+        elif role == 'storefrontowner':
+            add_storefrontowner = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'created_at': created_at,
+                'updated_at': updated_at
+            }
+            mongo.db.storefrontowner.insert_one(add_storefrontowner)
+            flash('Storefrontowner registration successful! You can now log in.', 'success')
+            return redirect(url_for('auth.login'))
+        
+        elif role == 'instructor':
+            add_instructor = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'created_at': created_at,
+                'updated_at': updated_at
+            }
+            mongo.db.instructor.insert_one(add_instructor)
+            flash('Instructor registration successful! You can now log in.', 'success')
+            return redirect(url_for('auth.login'))
         flash('Registration successful! You can now log in.', 'success')
         return redirect(url_for('auth.login'))
 
@@ -107,3 +143,71 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for('auth.login'))
+
+@customers_bp.route('/customers', methods=['GET'])
+@login_required
+def list_customers():
+    customers = list(mongo.db.customers.find())
+    return render_template('customers/list.html', customers=customers)
+
+#1. only use login table to check and verify while login. dont change anything in that unless password or username reset and role also for easy access.
+#2. use user table to save common things in all the users, like created_at, updated_at, status, role, etc.
+#3. for all other different roles and its details use different collections/tables like customers, storefrontowner,
+#instructor, etc. for other details like gstn is only for storefrontowner so only add gstn to storefrontowner collection/table and not on other tables.
+
+@customers_bp.route('/customers/add', methods=['GET', 'POST'])
+@login_required
+def add_customer():
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        email = request.form['email']
+        created_at = datetime.now()
+        updated_at = datetime.now()
+
+        customer_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': email,
+            'created_at': created_at,
+            'updated_at': updated_at
+        }
+        mongo.db.customers.insert_one(customer_data)
+
+        flash('Customer added successfully!', 'success')
+        return redirect(url_for('customers.list_customers'))
+
+    return render_template('customers/add.html')
+
+@customers_bp.route('/customers/edit/<customer_id>', methods=['GET', 'POST'])
+@login_required
+def edit_customer(customer_id):
+    customer = mongo.db.customers.find_one({'_id': ObjectId(customer_id)})
+
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        email = request.form['email']
+        updated_at = datetime.now()
+
+        mongo.db.customers.update_one(
+            {'_id': ObjectId(customer_id)},
+            {'$set': {
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'updated_at': updated_at
+            }}
+        )
+
+        flash('Customer updated successfully!', 'success')
+        return redirect(url_for('customers.list_customers'))
+
+    return render_template('customers/edit.html', customer=customer)
+
+@customers_bp.route('/customers/delete/<customer_id>', methods=['POST'])
+@login_required
+def delete_customer(customer_id):
+    mongo.db.customers.delete_one({'_id': ObjectId(customer_id)})
+    flash('Customer deleted successfully!', 'success')
+    return redirect(url_for('customers.list_customers'))

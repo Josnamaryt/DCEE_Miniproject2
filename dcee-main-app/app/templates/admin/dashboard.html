@@ -36,6 +36,7 @@
     <link id="color" rel="stylesheet" href="{{ url_for('static', filename='css/color-1.css') }}" media="screen">
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
   </head>
   <body> 
     <!-- loader starts-->
@@ -321,8 +322,8 @@
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
 
-<!-- Modals -->
-<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- customer Modals -->
+<div class="modal fade customerModal" id="customerModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
@@ -334,16 +335,14 @@
           <h2>Customer Details</h2>
           <table id="customerTable" class="table table-striped table-bordered">
             <thead>
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Role</th>
-                <th>Created At</th>
-                <th>Updated At</th>
-              </tr>
+              <th>created_at</th>
+              <th>email</th>
+              <th>first_name</th>
+              <th>last_name At</th>
+              <th>updated_at</th>
             </thead>
             <tbody>
-              <!-- Data will be populated here by JavaScript -->
+              <!-- Data will be populated here by DataTables -->
             </tbody>
           </table>
         </div>
@@ -354,6 +353,8 @@
     </div>
   </div>
 </div>
+<!-- End customer modal -->
+
 
 <div class="modal fade" id="instructorModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -368,11 +369,11 @@
           <table id="instructorTable" class="table table-striped table-bordered">
             <thead>
               <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Role</th>
-                <th>Created At</th>
-                <th>Updated At</th>
+                <th>created_at</th>
+                <th>email</th>
+                <th>first_name</th>
+                <th>last_name At</th>
+                <th>updated_at</th>
               </tr>
             </thead>
             <tbody>
@@ -401,11 +402,11 @@
           <table id="storefrontTable" class="table table-striped table-bordered">
             <thead>
               <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Role</th>
-                <th>Created At</th>
-                <th>Updated At</th>
+                <th>created_at</th>
+                <th>email</th>
+                <th>first_name</th>
+                <th>last_name At</th>
+                <th>updated_at</th>
               </tr>
             </thead>
             <tbody>
@@ -421,4 +422,29 @@
   </div>
 </div>
 </body>
+<!-- DataTables JS -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+<script>
+  $(document).ready(function() {
+     $('#customerModal').on('shown.bs.modal', function() {
+        console.log('Modal shown, initializing DataTable...');
+        if (!$.fn.DataTable.isDataTable('#customerTable')) {
+           $('#customerTable').DataTable({
+              "ajax": {
+                 "url": "{{ url_for('admin.get_customers') }}",
+                 "dataSrc": ""
+              },
+              "columns": [
+                 { "data": "created_at" },
+                 { "data": "email" },
+                 { "data": "first_name" },
+                 { "data": "last_name" },
+                 { "data": "updated_at" }
+              ]
+           });
+        }
+     });
+  });
+  </script>
 </html>
