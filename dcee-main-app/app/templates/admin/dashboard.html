@@ -355,7 +355,7 @@
 </div>
 <!-- End customer modal -->
 
-
+<!-- Instructor modal -->
 <div class="modal fade" id="instructorModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
@@ -369,11 +369,11 @@
           <table id="instructorTable" class="table table-striped table-bordered">
             <thead>
               <tr>
-                <th>created_at</th>
-                <th>email</th>
-                <th>first_name</th>
-                <th>last_name At</th>
-                <th>updated_at</th>
+                <th>Created At</th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Updated At</th>
               </tr>
             </thead>
             <tbody>
@@ -388,7 +388,9 @@
     </div>
   </div>
 </div>
+<!-- End instructor modal -->
 
+<!-- Storefront Owner modal -->
 <div class="modal fade" id="storefrontModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
@@ -402,11 +404,11 @@
           <table id="storefrontTable" class="table table-striped table-bordered">
             <thead>
               <tr>
-                <th>created_at</th>
-                <th>email</th>
-                <th>first_name</th>
-                <th>last_name At</th>
-                <th>updated_at</th>
+                <th>Created At</th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Updated At</th>
               </tr>
             </thead>
             <tbody>
@@ -421,10 +423,13 @@
     </div>
   </div>
 </div>
+<!-- End storefront owner modal -->
 </body>
 <!-- DataTables JS -->
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Customer modal JS -->
 <script>
   $(document).ready(function() {
      $('#customerModal').on('shown.bs.modal', function() {
@@ -447,4 +452,57 @@
      });
   });
   </script>
+
+  <!-- End customer modal -->
+
+  <!-- Instructor modal JS -->
+  <script>
+  $(document).ready(function() {
+    $('#instructorModal').on('shown.bs.modal', function() {
+       console.log('Instructor modal shown, initializing DataTable...');
+       if (!$.fn.DataTable.isDataTable('#instructorTable')) {
+          $('#instructorTable').DataTable({
+             "ajax": {
+                "url": "{{ url_for('admin.get_instructors') }}",
+                "dataSrc": ""
+             },
+             "columns": [
+                { "data": "created_at" },
+                { "data": "email" },
+                { "data": "first_name" },
+                { "data": "last_name" },
+                { "data": "updated_at" }
+             ]
+          });
+       }
+    });
+ });
+</script>
+
+<!-- end Instructor modal js -->
+
+<!-- StoreFront owner JS -->
+ <script>
+  $(document).ready(function() {
+    $('#storefrontModal').on('shown.bs.modal', function() {
+       console.log('Storefront Owner modal shown, initializing DataTable...');
+       if (!$.fn.DataTable.isDataTable('#storefrontTable')) {
+          $('#storefrontTable').DataTable({
+             "ajax": {
+                "url": "{{ url_for('admin.get_storefrontowners') }}",
+                "dataSrc": ""
+             },
+             "columns": [
+                { "data": "created_at" },
+                { "data": "email" },
+                { "data": "first_name" },
+                { "data": "last_name" },
+                { "data": "updated_at" }
+             ]
+          });
+       }
+    });
+ });
+</script>
+<!-- end storefront owner modal JS -->
 </html>

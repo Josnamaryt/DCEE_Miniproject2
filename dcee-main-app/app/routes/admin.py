@@ -34,3 +34,56 @@ def get_customers():
     
     # Return the customers as a JSON response
     return jsonify(customers)
+
+#instructor list view
+@admin_bp.route('/get_instructors', methods=['GET'])
+@login_required
+def get_instructors():
+    # Fetch instructors from the 'instructor' collection
+    instructors = list(mongo.db.instructor.find())
+    # Fetch user information with user_type 'instructor'
+    users_info = list(mongo.db.users.find({'user_type': 'instructor'}))
+    # Map email to user information
+    user_info_dict = {user['email']: user for user in users_info}
+    
+    for instructor in instructors:
+        instructor['_id'] = str(instructor['_id'])
+        # Update the field names to match the database
+        instructor['createdAt'] = instructor.get('created_at', '').strftime('%Y-%m-%d %H:%M:%S') if instructor.get('created_at') else None
+        instructor['updatedAt'] = instructor.get('updated_at', '').strftime('%Y-%m-%d %H:%M:%S') if instructor.get('updated_at') else None
+        
+        # Get the user information from the user info dictionary
+        user_info = user_info_dict.get(instructor['email'])
+        if user_info:
+            instructor['first_name'] = user_info.get('first_name')
+            instructor['last_name'] = user_info.get('last_name')
+            instructor['role'] = user_info.get('role')
+    
+    # Return the instructors as a JSON response
+    return jsonify(instructors)
+
+#storefront owner list
+@admin_bp.route('/get_storefrontowners', methods=['GET'])
+@login_required
+def get_storefrontowners():
+    # Fetch storefront owners from the 'storefrontowner' collection
+    storefrontowners = list(mongo.db.storefrontowner.find())
+    # Fetch user information with user_type 'storefrontowner'
+    users_info = list(mongo.db.users.find({'user_type': 'storefrontowner'}))
+    # Map email to user information
+    user_info_dict = {user['email']: user for user in users_info}
+    
+    for storefrontowner in storefrontowners:
+        storefrontowner['_id'] = str(storefrontowner['_id'])
+        storefrontowner['createdAt'] = storefrontowner.get('created_at', '').strftime('%Y-%m-%d %H:%M:%S') if storefrontowner.get('created_at') else None
+        storefrontowner['updatedAt'] = storefrontowner.get('updated_at', '').strftime('%Y-%m-%d %H:%M:%S') if storefrontowner.get('updated_at') else None
+        
+        # Get the user information from the user info dictionary
+        user_info = user_info_dict.get(storefrontowner['email'])
+        if user_info:
+            storefrontowner['first_name'] = user_info.get('first_name')
+            storefrontowner['last_name'] = user_info.get('last_name')
+            storefrontowner['role'] = user_info.get('role')
+    
+    # Return the storefront owners as a JSON response
+    return jsonify(storefrontowners)
