@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from app import login_manager, mongo
 from app.models import User
@@ -6,9 +6,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
 from datetime import datetime
 import re
+import random
+import string
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
+from flask_mail import Mail, Message
 
 auth_bp = Blueprint('auth', __name__)
 customers_bp = Blueprint('customers', __name__)
+
+mail = Mail()
+s = URLSafeTimedSerializer('Thisisasecret!')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -210,3 +217,36 @@ def delete_customer(customer_id):
     mongo.db.customers.delete_one({'_id': ObjectId(customer_id)})
     flash('Customer deleted successfully!', 'success')
     return redirect(url_for('customers.list_customers'))
+
+#FORGET AND RESET PASSWORD CRED
+@auth_bp.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        user = mongo.db.users.find_one({'email': email})
+    return render_template('auth/forgot_password.html')
+
+@auth_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = s.loads(token, salt='password-reset', max_age=3600)
+    except SignatureExpired:
+        flash('The password reset link is expired.', 'danger')
+        return redirect(url_for('auth.forgot_password'))
+    except BadTimeSignature:
+        flash('The password reset link is invalid.', 'danger')
+        return redirect(url_for('auth.forgot_password'))
+
+    if request.method == 'POST':
+        password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            flash('Passwords do not match!', 'danger')
+            return redirect(url_for('auth.reset_password', token=token))
+
+        password_hash = generate_password_hash(password)
+        mongo.db.users.update_one({'email': email}, {'$set': {'password': password_hash}})
+        flash('Your password has been updated! You are now able to log in.', 'success')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/reset_password.html')
