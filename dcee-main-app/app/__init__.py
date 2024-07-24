@@ -2,9 +2,11 @@ from flask import Flask
 from flask_pymongo import PyMongo
 from flask_login import LoginManager, UserMixin
 from bson import ObjectId
+from flask_mail import Mail
 
 mongo = PyMongo()
 login_manager = LoginManager()
+mail = Mail()
 
 def create_app(config_class='config.DevelopmentConfig'):
     app = Flask(__name__)
