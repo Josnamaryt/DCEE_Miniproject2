@@ -1,5 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
-# from flask_login import login_user, logout_user, login_required 
-# from app import login_manager
+from flask import Blueprint, render_template
+from flask_login import login_required
 
 customer_bp = Blueprint('customer', __name__)
+
+@customer_bp.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('customer/dashboard.html')

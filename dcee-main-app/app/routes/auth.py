@@ -4,7 +4,7 @@ from app import login_manager, mongo
 from app.models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
 import random
 import string
@@ -44,12 +44,22 @@ def login():
                 )
                 login_user(user_obj)
                 flash('Login successful!', 'success')
-                return redirect(url_for('admin.dashboard'))
+                # Redirect based on user role
+                if user['role'] == 'admin':
+                    return redirect(url_for('admin.dashboard'))
+                elif user['role'] == 'customer':
+                    return redirect(url_for('customer.dashboard'))
+                elif user['role'] == 'instructor':
+                    return redirect(url_for('instructor.dashboard'))
+                elif user['role'] == 'storefrontowner':
+                    return redirect(url_for('storefrontowner.dashboard'))
+                else:
+                    flash('Invalid user role.', 'danger')
+                    return redirect(url_for('auth.login'))
             else:
                 flash('Invalid password.', 'danger')
         else:
             flash('Email not registered.', 'danger')
-
     return render_template('auth/login.html')
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -155,98 +165,88 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for('auth.login'))
 
-@customers_bp.route('/customers', methods=['GET'])
-@login_required
-def list_customers():
-    customers = list(mongo.db.customers.find())
-    return render_template('customers/list.html', customers=customers)
+# Initialize Flask-Mail
+mail = Mail()
 
-@customers_bp.route('/customers/add', methods=['GET', 'POST'])
-@login_required
-def add_customer():
-    if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        email = request.form['email']
-        created_at = datetime.now()
-        updated_at = datetime.now()
+# Function to generate OTP
+def generate_otp(length=6):
+    return ''.join(random.choices(string.digits, k=length))
 
-        customer_data = {
-            'first_name': first_name,
-            'last_name': last_name,
-            'email': email,
-            'created_at': created_at,
-            'updated_at': updated_at
-        }
-        mongo.db.customers.insert_one(customer_data)
-
-        flash('Customer added successfully!', 'success')
-        return redirect(url_for('customers.list_customers'))
-
-    return render_template('customers/add.html')
-
-@customers_bp.route('/customers/edit/<customer_id>', methods=['GET', 'POST'])
-@login_required
-def edit_customer(customer_id):
-    customer = mongo.db.customers.find_one({'_id': ObjectId(customer_id)})
-
-    if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        email = request.form['email']
-        updated_at = datetime.now()
-
-        mongo.db.customers.update_one(
-            {'_id': ObjectId(customer_id)},
-            {'$set': {
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': email,
-                'updated_at': updated_at
-            }}
-        )
-
-        flash('Customer updated successfully!', 'success')
-        return redirect(url_for('customers.list_customers'))
-
-    return render_template('customers/edit.html', customer=customer)
-
-@customers_bp.route('/customers/delete/<customer_id>', methods=['POST'])
-@login_required
-def delete_customer(customer_id):
-    mongo.db.customers.delete_one({'_id': ObjectId(customer_id)})
-    flash('Customer deleted successfully!', 'success')
-    return redirect(url_for('customers.list_customers'))
-
-#FORGET AND RESET PASSWORD CRED
-@auth_bp.route('/forgot_password', methods=['GET', 'POST'])
-def forgot_password():
+@auth_bp.route('/forget-password', methods=['GET', 'POST'])
+def forget_password():
     if request.method == 'POST':
         email = request.form['email']
         user = mongo.db.users.find_one({'email': email})
-    return render_template('auth/forgot_password.html')
+        
+        if user:
+            otp = generate_otp()
+            expiration_time = datetime.now() + timedelta(minutes=15)
+            
+            # Store OTP in the database
+            mongo.db.password_reset.update_one(
+                {'email': email},
+                {'$set': {'otp': otp, 'expiration_time': expiration_time}},
+                upsert=True
+            )
+            
+            # Send OTP via email
+            msg = Message('Password Reset OTP',
+                          sender='your-email@example.com',
+                          recipients=[email])
+            msg.body = f'''To reset your password, use the following OTP:
 
-@auth_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    try:
-        email = s.loads(token, salt='password-reset', max_age=3600)
-    except SignatureExpired:
-        flash('The password reset link is expired.', 'danger')
-        return redirect(url_for('auth.forgot_password'))
-    except BadTimeSignature:
-        flash('The password reset link is invalid.', 'danger')
-        return redirect(url_for('auth.forgot_password'))
+{otp}
 
+This OTP is valid for 15 minutes.
+If you did not request a password reset, please ignore this email.
+'''
+            mail.send(msg)
+            
+            flash('An OTP has been sent to your email. Please check your inbox.', 'info')
+            return redirect(url_for('auth.reset_password'))
+        else:
+            flash('Email not found. Please check the email address and try again.', 'danger')
+    
+    return render_template('auth/forget_password.html')
+
+@auth_bp.route('/reset-password', methods=['GET', 'POST'])
+def reset_password():
     if request.method == 'POST':
-        password = request.form['new_password']
+        email = request.form['email']
+        otp = request.form['otp']
+        new_password = request.form['new_password']
         confirm_password = request.form['confirm_password']
-
-        if password != confirm_password:
+        
+        if new_password != confirm_password:
             flash('Passwords do not match!', 'danger')
-            return redirect(url_for('auth.reset_password', token=token))
-
-        password_hash = generate_password_hash(password)
-        mongo.db.users.update_one({'email': email}, {'$set': {'password': password_hash}})
-        flash('Your password has been updated! You are now able to log in.', 'success')
-        return redirect(url_for('auth.login'))
-    return render_template('auth/reset_password.html')
+            return redirect(url_for('auth.reset_password'))
+        
+        reset_request = mongo.db.password_reset.find_one({
+            'email': email,
+            'otp': otp,
+            'expiration_time': {'$gt': datetime.now()}
+        })
+        
+        if reset_request:
+            # Update password in users collection
+            password_hash = generate_password_hash(new_password)
+            mongo.db.users.update_one(
+                {'email': email},
+                {'$set': {'password': password_hash}}
+            )
+            
+            # Update password in login collection
+            mongo.db.login.update_one(
+                {'email': email},
+                {'$set': {'password': password_hash}}
+            )
+            
+            # Remove the used OTP
+            mongo.db.password_reset.delete_one({'email': email})
+            
+            flash('Your password has been reset successfully. You can now log in with your new password.', 'success')
+            return redirect(url_for('auth.login'))
+        else:
+            flash('Invalid or expired OTP. Please try again.', 'danger')
+    
+    return render_template('auth/forget_password.html')

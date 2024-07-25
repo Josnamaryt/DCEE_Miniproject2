@@ -3,6 +3,8 @@ from flask_pymongo import PyMongo
 from flask_login import LoginManager, UserMixin
 from bson import ObjectId
 from flask_mail import Mail
+from datetime import datetime, timedelta
+from werkzeug.security import generate_password_hash
 
 mongo = PyMongo()
 login_manager = LoginManager()
@@ -16,6 +18,15 @@ def create_app(config_class='config.DevelopmentConfig'):
         mongo.init_app(app)
     except Exception as e:
         print(f"Error initializing Flask-PyMongo: {str(e)}")
+    
+    # Mail configuration
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = 'josnamarythomas2025@mca.ajce.in'
+    app.config['MAIL_PASSWORD'] = 'JOSNA#987dd'
+    app.config['MAIL_DEFAULT_SENDER'] = 'josnamarythomas2025@mca.ajce.in'
+    mail.init_app(app)
     
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
