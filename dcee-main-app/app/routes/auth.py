@@ -26,6 +26,10 @@ def is_valid_email(email):
     regex = r'^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     return re.match(regex, email)
 
+@auth_bp.route('/')
+def home():
+    return render_template('home.html')
+
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -86,6 +90,7 @@ def register():
         first_name = request.form['first_name']
         last_name = request.form['last_name']
         role = request.form['role']
+        
         password_hash = generate_password_hash(password)
         created_at = datetime.now()
         updated_at = datetime.now()
