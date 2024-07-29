@@ -76,7 +76,7 @@
           <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0">
             <div> <a class="toggle-sidebar" href="#"> <i class="iconly-Category icli"> </i></a>
               <div class="d-flex align-items-center gap-2 ">
-                <h4 class="f-w-600">Welcome Alex</h4><img class="mt-0" src="{{ url_for('static', filename='images/hand.gif') }}" alt="hand-gif">
+                <h4 class="f-w-600">Welcome {{ user_name }}</h4><img class="mt-0" src="{{ url_for('static', filename='images/hand.gif') }}" alt="hand-gif">
               </div>
             </div>
             <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here’s what’s happening with your store today. </span></div>
@@ -331,8 +331,8 @@
               <li class="profile-nav onhover-dropdown"> 
                 <div class="media profile-media"><img class="b-r-10" src="{{ url_for('static', filename='images/dashboard/profile.png') }}" alt="">
                   <div class="media-body d-xxl-block d-none">
-                    <div class="d-flex align-items-center gap-2"> <span>Alex Mora </span><i class="middle fa fa-angle-down"> </i></div>
-                    <p class="mb-0 font-roboto">Admin</p>
+                    <div class="d-flex align-items-center gap-2"> <span>{{ user_name }} </span><i class="middle fa fa-angle-down"> </i></div>
+                    <p class="mb-0 font-roboto">Storefront Owner</p>
                   </div>
                 </div>
                 <ul class="profile-dropdown onhover-show-div">
@@ -377,50 +377,9 @@
                     <h6>Pinned</h6>
                   </div>
                 </li>
-                <li class="sidebar-main-title">
-                  <div>
-                    <h6 class="lan-1">General</h6>
-                  </div>
-                </li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"> </i><a class="sidebar-link sidebar-title" href="#">
-                    <svg class="stroke-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
-                    </svg>
-                    <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-home') }}"></use>
-                    </svg><span class="lan-3">Dashboard          </span></a>
-                  <ul class="sidebar-submenu">
-                    <li><a href="index.html">Default</a></li>
-                    <li><a href="dashboard-02.html">Ecommerce</a></li>
-                    <li><a href="dashboard-03.html">Project</a></li>
-                  </ul>
-                </li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                    <svg class="stroke-icon"> 
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-widget') }}"></use>
-                    </svg>
-                    <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-widget') }}"></use>
-                    </svg><span class="lan-6">Widgets</span></a>
-                  <ul class="sidebar-submenu">
-                    <li><a href="general-widget.html">General</a></li>
-                    <li><a href="chart-widget.html">Chart</a></li>
-                  </ul>
-                </li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                    <svg class="stroke-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-layout') }}"></use>
-                    </svg>
-                    <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-layout') }}"></use>
-                    </svg><span class="lan-7">Page layout</span></a>
-                  <ul class="sidebar-submenu">
-                    <li><a href="box-layout.html">Boxed</a></li>
-                    <li><a href="layout-rtl.html">RTL</a></li>
-                    <li><a href="layout-dark.html">Dark Layout</a></li>
-                    <li> <a href="hide-on-scroll.html">Hide Nav Scroll</a></li>
-                  </ul>
-                </li>
+                
+                
+               
                 <li class="sidebar-main-title">
                   <div>
                     <h6 class="lan-8">Applications</h6>
@@ -1609,55 +1568,54 @@
                           </div>
                         </div>
                       </div>
+                      <!-- Container-fluid Ends-->
                     </div>
-                    <!-- Container-fluid Ends-->
-                  </div>
-                  <!-- footer start-->
-                  <footer class="footer">
-                    <div class="container-fluid">
-                      <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                          <p class="mb-0">Copyright 2024 © Riho theme by pixelstrap  </p>
+                    <!-- footer start-->
+                    <footer class="footer">
+                      <div class="container-fluid">
+                        <div class="row">
+                          <div class="col-md-12 footer-copyright text-center">
+                            <p class="mb-0">Copyright 2024 © Riho theme by pixelstrap  </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </footer>
+                    </footer>
+                  </div>
                 </div>
-              </div>
-              <!-- latest jquery-->
-              <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-              <!-- Bootstrap js-->
-              <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
-              <!-- feather icon js-->
-              <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
-              <!-- scrollbar js-->
-              <script src="{{ url_for('static', filename='js/scrollbar/simplebar.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/scrollbar/custom.js') }}"></script>
-              <!-- Sidebar jquery-->
-              <script src="{{ url_for('static', filename='js/config.js') }}"></script>
-              <!-- Plugins JS start-->
-              <script src="{{ url_for('static', filename='js/sidebar-menu.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/sidebar-pin.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/slick/slick.min.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/slick/slick.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/header-slick.js') }}"></script>
-              <!-- calendar js-->
-              <script src="{{ url_for('static', filename='js/flat-pickr/flatpickr.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/flat-pickr/custom-flatpickr.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/dropzone/dropzone.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/dropzone/dropzone-script.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/select2/tagify.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/select2/tagify.polyfills.min.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/select2/intltelinput.min.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/add-product/select4-custom.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/editors/quill.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/custom-add-product.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/height-equal.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/tooltip-init.js') }}"></script>
-              <!-- Plugins JS Ends-->
-              <!-- Theme js-->
-              <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-              <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
-            </body>
-          </html>
+                <!-- latest jquery-->
+                <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+                <!-- Bootstrap js-->
+                <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+                <!-- feather icon js-->
+                <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
+                <!-- scrollbar js-->
+                <script src="{{ url_for('static', filename='js/scrollbar/simplebar.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/scrollbar/custom.js') }}"></script>
+                <!-- Sidebar jquery-->
+                <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+                <!-- Plugins JS start-->
+                <script src="{{ url_for('static', filename='js/sidebar-menu.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/sidebar-pin.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/slick/slick.min.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/slick/slick.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/header-slick.js') }}"></script>
+                <!-- calendar js-->
+                <script src="{{ url_for('static', filename='js/flat-pickr/flatpickr.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/flat-pickr/custom-flatpickr.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/dropzone/dropzone.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/dropzone/dropzone-script.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/select2/tagify.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/select2/tagify.polyfills.min.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/select2/intltelinput.min.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/add-product/select4-custom.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/editors/quill.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/custom-add-product.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/height-equal.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/tooltip-init.js') }}"></script>
+                <!-- Plugins JS Ends-->
+                <!-- Theme js-->
+                <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+                <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
+              </body>
+            </html>
