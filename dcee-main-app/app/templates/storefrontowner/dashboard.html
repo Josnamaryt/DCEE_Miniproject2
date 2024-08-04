@@ -336,7 +336,7 @@
                   </div>
                 </div>
                 <ul class="profile-dropdown onhover-show-div">
-                  <li><a href="user-profile.html"><i data-feather="user"></i><span>My Profile</span></a></li>
+                  <li><a href="#" id="profile-modal-trigger"><i data-feather="user"></i><span>My Profile</span></a></li>
                   <li><a href="letter-box.html"><i data-feather="mail"></i><span>Inbox</span></a></li>
                   <li> <a href="edit-profile.html"> <i data-feather="settings"></i><span>Settings</span></a></li>
                   <li><a class="btn btn-pill btn-outline-primary btn-sm" href="{{ url_for('auth.login') }}">Log Out</a></li>
@@ -391,7 +391,7 @@
                     </svg>
                     <svg class="fill-icon">
                       <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-project') }}"></use>
-                    </svg><span>Project           </span></a>
+                    </svg><span>Profile View</span></a>
                   <ul class="sidebar-submenu">
                     <li><a href="projects.html">Project List</a></li>
                     <li><a href="projectcreate.html">Create new</a></li>
@@ -417,7 +417,7 @@
                         </svg>
                         <svg class="fill-icon">
                           <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
-                        </svg><span>Ecommerce</span></a>
+                        </svg><span>Store Registration</span></a>
                       <ul class="sidebar-submenu">
                         <li> <a href="add-products.html">Add Products</a></li>
                         <li><a href="product.html">Product</a></li>
@@ -426,334 +426,8 @@
                         <li><a href="list-products.html">Product list</a></li>
                         <li><a href="payment-details.html">Payment Details</a></li>
                         <li><a href="order-history.html">Order History</a></li>
-                        <li><a class="submenu-title" href="#">Invoices<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
-                          <ul class="nav-sub-childmenu submenu-content">
-                            <li><a href="invoice-1.html">Invoice-1</a></li>
-                            <li><a href="invoice-2.html">Invoice-2</a></li>
-                            <li><a href="invoice-3.html">Invoice-3</a></li>
-                            <li><a href="invoice-4.html">Invoice-4</a></li>
-                            <li><a href="invoice-5.html">Invoice-5</a></li>
-                            <li><a href="invoice-template.html">Invoice-6</a></li>
-                          </ul>
-                        </li>
-                        <li><a href="cart.html">Cart</a></li>
-                        <li><a href="list-wish.html">Wishlist</a></li>
-                        <li><a href="checkout.html">Checkout</a></li>
-                        <li><a href="pricing.html">Pricing</a></li>
                       </ul>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="letter-box.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-email') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-email') }}"></use>
-                        </svg><span>Letter Box   </span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a href="email-application.html">Email App</a></li>
-                        <li><a href="email-compose.html">Email Compose</a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-chat') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-chat') }}"></use>
-                        </svg><span>Chat</span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a href="private-chat.html">Private Chat</a></li>
-                        <li> <a href="group-chat.html">Group Chat</a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-list"> <i class="fa fa-thumb-tack"> </i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon"> 
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-user') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-user') }}"></use>
-                        </svg><span>Users</span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a href="user-profile.html">Users Profile</a></li>
-                        <li><a href="edit-profile.html">Users Edit</a></li>
-                        <li><a href="user-cards.html">Users Cards</a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="bookmark.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-bookmark') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-bookmark') }}"> </use>
-                        </svg><span>Bookmarks</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="contacts.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-contact') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-contact') }}"> </use>
-                        </svg><span>Contacts</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="task.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-task') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-task') }}"> </use>
-                        </svg><span>Tasks</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="calendar-basic.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-calendar') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-calender') }}"></use>
-                        </svg><span>Calendar</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="social-app.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-social') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-social') }}"> </use>
-                        </svg><span>Social App</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="to-do.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-to-do') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-to-do') }}"> </use>
-                        </svg><span>To-Do</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="search.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-search') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-search') }}"> </use>
-                        </svg><span>Search Result</span></a></li>
-                    <li class="sidebar-main-title"> 
-                      <div>
-                        <h6>Forms & Table</h6>
-                      </div>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon"> 
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-form') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-form') }}"> </use>
-                        </svg><span>Forms</span></a>
-                      <ul class="sidebar-submenu">
-                        <li> <a class="submenu-title" href="#">Form Controls <span class="sub-arrow"> <i class="fa fa-angle-right"></i></span></a>
-                          <ul class="nav-sub-childmenu submenu-content">
-                            <li><a href="form-validation.html">Form Validation</a></li>
-                            <li><a href="base-input.html">Base Inputs</a></li>
-                            <li><a href="radio-checkbox-control.html">Checkbox & Radio</a></li>
-                            <li><a href="input-group.html">Input Groups</a></li>
-                            <li> <a href="input-mask.html">Input Mask</a></li>
-                            <li><a href="megaoptions.html">Mega Options</a></li>
-                          </ul>
-                        </li>
-                        <li><a class="submenu-title" href="#">
-                             Form Widgets<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
-                          <ul class="nav-sub-childmenu submenu-content">
-                            <li><a href="datepicker.html">Datepicker</a></li>
-                            <li><a href="touchspin.html">Touchspin</a></li>
-                            <li><a href="select2.html">Select2</a></li>
-                            <li><a href="switch.html">Switch</a></li>
-                            <li><a href="typeahead.html">Typeahead</a></li>
-                            <li><a href="clipboard.html">Clipboard</a></li>
-                          </ul>
-                        </li>
-                        <li><a class="submenu-title" href="#">Form layout<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
-                          <ul class="nav-sub-childmenu submenu-content">
-                            <li><a href="form-wizard.html">Form Wizard 1</a></li>
-                            <li><a href="form-wizard-two.html">Form Wizard 2</a></li>
-                            <li><a href="two-factor.html">Two Factor</a></li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-table') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-table') }}"></use>
-                        </svg><span>Tables</span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a class="submenu-title" href="#">Bootstrap Tables<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
-                          <ul class="nav-sub-childmenu submenu-content">
-                            <li><a href="bootstrap-basic-table.html">Basic Tables</a></li>
-                            <li><a href="table-components.html">Table components</a></li>
-                          </ul>
-                        </li>
-                        <li><a class="submenu-title" href="#">Data Tables<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
-                          <ul class="nav-sub-childmenu submenu-content">
-                            <li><a href="datatable-basic-init.html">Basic Init</a></li>
-                            <li> <a href="datatable-advance.html">Advance Init </a></li>
-                            <li> <a href="datatable-API.html">API </a></li>
-                            <li><a href="datatable-data-source.html">Data Sources</a></li>
-                          </ul>
-                        </li>
-                        <li><a href="datatable-ext-autofill.html">Ex. Data Tables</a></li>
-                        <li><a href="jsgrid-table.html">Js Grid Table        </a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-main-title">
-                      <div>
-                        <h6>Components</h6>
-                      </div>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-ui-kits') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ui-kits') }}"></use>
-                        </svg><span>Ui Kits</span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a href="typography.html">Typography</a></li>
-                        <li><a href="avatars.html">Avatars</a></li>
-                        <li><a href="helper-classes.html">helper classes</a></li>
-                        <li><a href="grid.html">Grid</a></li>
-                        <li><a href="tag-pills.html">Tag & pills</a></li>
-                        <li><a href="progress-bar.html">Progress</a></li>
-                        <li><a href="modal.html">Modal</a></li>
-                        <li><a href="alert.html">Alert</a></li>
-                        <li><a href="popover.html">Popover</a></li>
-                        <li><a href="tooltip.html">Tooltip</a></li>
-                        <li><a href="dropdown.html">Dropdown</a></li>
-                        <li><a href="according.html">Accordion</a></li>
-                        <li><a href="tab-bootstrap.html">Tabs</a></li>
-                        <li><a href="list.html">Lists</a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-bonus-kit') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-bonus-kit') }}"></use>
-                        </svg><span>Bonus Ui</span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a href="scrollable.html">Scrollable</a></li>
-                        <li><a href="tree.html">Tree view</a></li>
-                        <li><a href="toasts.html">Toasts</a></li>
-                        <li><a href="rating.html">Rating</a></li>
-                        <li><a href="dropzone.html">dropzone</a></li>
-                        <li><a href="tour.html">Tour</a></li>
-                        <li><a href="sweet-alert2.html">SweetAlert2</a></li>
-                        <li><a href="modal-animated.html">Animated Modal</a></li>
-                        <li><a href="owl-carousel.html">Owl Carousel</a></li>
-                        <li><a href="ribbons.html">Ribbons</a></li>
-                        <li><a href="pagination.html">Pagination</a></li>
-                        <li><a href="breadcrumb.html">Breadcrumb</a></li>
-                        <li><a href="range-slider.html">Range Slider</a></li>
-                        <li><a href="image-cropper.html">Image cropper</a></li>
-                        <li><a href="basic-card.html">Basic Card</a></li>
-                        <li><a href="creative-card.html">Creative Card</a></li>
-                        <li><a href="dragable-card.html">Draggable Card</a></li>
-                        <li><a href="timeline-v-1.html">Timeline </a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-animation') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-animation') }}"></use>
-                        </svg><span>Animation</span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a href="animate.html">Animate</a></li>
-                        <li><a href="scroll-reval.html">Scroll Reveal</a></li>
-                        <li><a href="AOS.html">AOS animation</a></li>
-                        <li><a href="tilt.html">Tilt Animation</a></li>
-                        <li><a href="wow.html">Wow Animation</a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-icons') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-icons') }}"></use>
-                        </svg><span>Icons</span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a href="flag-icon.html">Flag icon</a></li>
-                        <li><a href="font-awesome.html">Fontawesome Icon</a></li>
-                        <li><a href="ico-icon.html">Ico Icon</a></li>
-                        <li><a href="themify-icon.html">Themify Icon</a></li>
-                        <li><a href="feather-icon.html">Feather icon</a></li>
-                        <li><a href="whether-icon.html">Whether Icon</a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-button') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-botton') }}"></use>
-                        </svg><span>Buttons</span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a href="buttons.html">Default Style</a></li>
-                        <li><a href="buttons-flat.html">Flat Style</a></li>
-                        <li><a href="buttons-edge.html">Edge Style</a></li>
-                        <li><a href="raised-button.html">Raised Style</a></li>
-                        <li><a href="button-group.html">Button Group</a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-charts') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-charts') }}"></use>
-                        </svg><span>Charts</span></a>
-                      <ul class="sidebar-submenu">
-                        <li><a href="echarts.html">Echarts</a></li>
-                        <li><a href="chart-apex.html">Apex Chart</a></li>
-                        <li><a href="chart-google.html">Google Chart</a></li>
-                        <li><a href="chart-sparkline.html">Sparkline chart</a></li>
-                        <li><a href="chart-flot.html">Flot Chart</a></li>
-                        <li><a href="chart-knob.html">Knob Chart</a></li>
-                        <li><a href="chart-morris.html">Morris Chart</a></li>
-                        <li><a href="chartjs.html">Chatjs Chart</a></li>
-                        <li><a href="chartist.html">Chartist Chart</a></li>
-                        <li><a href="chart-peity.html">Peity Chart</a></li>
-                      </ul>
-                    </li>
-                    <li class="sidebar-main-title">
-                      <div>
-                        <h6>Pages</h6>
-                      </div>
-                    </li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="landing-page.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-landing-page') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-landing-page') }}"></use>
-                        </svg><span>Landing page</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="sample-page.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-sample-page') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-sample-page') }}"></use>
-                        </svg><span>Sample page</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="internationalization.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-internationalization') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-internationalization') }}"></use>
-                        </svg><span>Internationalization</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="../starter-kit/index.html" target="_blank">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-starter-kit') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-starter-kit') }}"></use>
-                        </svg><span>Starter kit</span></a></li>
-                  </ul>
+                    
                   <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
                 </div>
               </nav>
@@ -1384,55 +1058,80 @@
                             </div>
                           </div>
                         </div>
+                        <!-- Container-fluid Ends-->
                       </div>
-                      <!-- Container-fluid Ends-->
-                    </div>
-                    <!-- footer start-->
-                    <footer class="footer">
-                      <div class="container-fluid">
-                        <div class="row">
-                          <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2024 © DCEE  </p>
+                      <!-- footer start-->
+                      <footer class="footer">
+                        <div class="container-fluid">
+                          <div class="row">
+                            <div class="col-md-12 footer-copyright text-center">
+                              <p class="mb-0">Copyright 2024 © DCEE  </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </footer>
+                      </footer>
+                    </div>
                   </div>
-                </div>
-                <!-- latest jquery-->
-                <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-                <!-- Bootstrap js-->
-                <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
-                <!-- feather icon js-->
-                <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
-                <!-- scrollbar js-->
-                <script src="{{ url_for('static', filename='js/scrollbar/simplebar.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/scrollbar/custom.js') }}"></script>
-                <!-- Sidebar jquery-->
-                <script src="{{ url_for('static', filename='js/config.js') }}"></script>
-                <!-- Plugins JS start-->
-                <script src="{{ url_for('static', filename='js/sidebar-menu.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/sidebar-pin.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/slick/slick.min.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/slick/slick.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/header-slick.js') }}"></script>
-                <!-- calendar js-->
-                <script src="{{ url_for('static', filename='js/flat-pickr/flatpickr.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/flat-pickr/custom-flatpickr.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/dropzone/dropzone.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/dropzone/dropzone-script.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/select2/tagify.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/select2/tagify.polyfills.min.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/select2/intltelinput.min.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/add-product/select4-custom.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/editors/quill.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/custom-add-product.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/height-equal.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/tooltip-init.js') }}"></script>
-                <!-- Plugins JS Ends-->
-                <!-- Theme js-->
-                <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-                <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
-              </body>
-            </html>
+                  <!-- latest jquery-->
+                  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+                  <!-- Bootstrap js-->
+                  <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+                  <!-- feather icon js-->
+                  <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
+                  <!-- scrollbar js-->
+                  <script src="{{ url_for('static', filename='js/scrollbar/simplebar.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/scrollbar/custom.js') }}"></script>
+                  <!-- Sidebar jquery-->
+                  <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+                  <!-- Plugins JS start-->
+                  <script src="{{ url_for('static', filename='js/sidebar-menu.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/sidebar-pin.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/slick/slick.min.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/slick/slick.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/header-slick.js') }}"></script>
+                  <!-- calendar js-->
+                  <script src="{{ url_for('static', filename='js/flat-pickr/flatpickr.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/flat-pickr/custom-flatpickr.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/dropzone/dropzone.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/dropzone/dropzone-script.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/select2/tagify.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/select2/tagify.polyfills.min.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/select2/intltelinput.min.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/add-product/select4-custom.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/editors/quill.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/custom-add-product.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/height-equal.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/tooltip-init.js') }}"></script>
+                  <!-- Plugins JS Ends-->
+                  <!-- Theme js-->
+                  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+                  <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
+                  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+                  <script>
+                    $(document).ready(function() {
+                      $('#profile-modal-trigger').click(function(e) {
+                        e.preventDefault();
+                        // Fetch user details from the backend
+                        $.ajax({
+                          url: "{{ url_for('storefrontowner.get_profile') }}", // Replace with your backend endpoint
+                          method: 'GET',
+                          success: function(response) {
+                            // Populate the modal fields with the user details
+                            $('#firstname').val(response.first_name);
+                            $('#lastname').val(response.last_name);
+                            $('#email').val(response.email);
+                            $('#gstn').val(response.gstin);
+                            // Show the modal
+                            $('#profileModal').modal('show');
+                          },
+                          error: function(error) {
+                            console.error('Error fetching user profile:', error);
+                          }
+                        });
+                      });
+                    });
+                  </script>
+                </body>
+              </html>
