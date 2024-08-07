@@ -3,7 +3,7 @@ from app import mongo
 from bson import ObjectId
 
 class User(UserMixin):
-    def __init__(self, _id, email, password_hash, role, status):
+    def __init__(self, _id, email, password_hash, role, status, *args, **kwargs):
         self.id = str(_id)
         self.email = email
         self.password_hash = password_hash

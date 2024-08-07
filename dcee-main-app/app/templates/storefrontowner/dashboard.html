@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+W<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -76,7 +76,7 @@
           <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0">
             <div> <a class="toggle-sidebar" href="#"> <i class="iconly-Category icli"> </i></a>
               <div class="d-flex align-items-center gap-2 ">
-                <h4 class="f-w-600">Welcome {{ user_name }}</h4><img class="mt-0" src="{{ url_for('static', filename='images/hand.gif') }}" alt="hand-gif">
+                <h4 class="f-w-600">Welcome {{ current_user_dict.first_name }} {{ current_user_dict.last_name }}</h4><img class="mt-0" src="{{ url_for('static', filename='images/hand.gif') }}" alt="hand-gif">
               </div>
             </div>
             <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here’s what’s happening with your store today. </span></div>
@@ -507,20 +507,7 @@
                             <div class="tab-content" id="add-product-pills-tabContent">
                               <div class="tab-pane fade show active" id="detail-product" role="tabpanel" aria-labelledby="detail-product-tab">
                                 <div class="sidebar-body">
-                                  <form class="row g-2">
-                                    <label class="form-label col-12 m-0" for="storeName">Store Name <span class="txt-danger"> *</span></label>
-                                    <div class="col-12 custom-input">
-                                      <input class="form-control is-invalid" id="storeName" type="text" required="">
-                                      <div class="valid-feedback">Looks good!</div>
-                                      <div class="invalid-feedback">A store name is required and recommended to be unique.</div>
-                                    </div>
-                                    <label class="form-label col-12 m-0" for="storeDesc">Store Description <span class="txt-danger"> *</span></label>
-                                    <div class="col-12 custom-input">
-                                      <textarea class="form-control is-invalid" id="storeDesc" required=""></textarea>
-                                      <div class="valid-feedback">Looks good!</div>
-                                      <div class="invalid-feedback">A store description is required.</div>
-                                    </div>
-                                  </form>
+                                  form will be here after testing 
                                   <div class="product-buttons">
                                     <div class="btn">
                                       <div class="d-flex align-items-center gap-sm-2 gap-1">Next
@@ -641,6 +628,39 @@
                 </div>
                 <!-- Container-fluid Ends-->
               </div>
+              <form action="{{ url_for('storeowner.register_store') }}" method="post" class="row g-2">
+                <label class="form-label col-12 m-0" for="store_name">Store Name <span class="txt-danger">*</span></label>
+                <div class="col-12 custom-input">
+                    <input class="form-control" id="store_name" name="store_name" type="text" required>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">A store name is required and recommended to be unique.</div>
+                </div>
+            
+                <label class="form-label col-12 m-0" for="store_type">Store Type <span class="txt-danger">*</span></label>
+                <div class="col-12 custom-input">
+                    <input class="form-control" id="store_type" name="store_type" type="text" required>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Store type is required.</div>
+                </div>
+            
+                <label class="form-label col-12 m-0" for="store_address">Store Address <span class="txt-danger">*</span></label>
+                <div class="col-12 custom-input">
+                    <textarea class="form-control" id="store_address" name="store_address" required></textarea>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Store address is required.</div>
+                </div>
+            
+                <label class="form-label col-12 m-0" for="store_gstin">Store GSTIN <span class="txt-danger">*</span></label>
+                <div class="col-12 custom-input">
+                    <input class="form-control" id="store_gstin" name="store_gstin" type="text" required>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Store GSTIN is required.</div>
+                </div>
+            
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Register Store</button>
+                </div>
+              </form>
               <!-- footer start-->
               <footer class="footer">
                 <div class="container-fluid">
@@ -696,7 +716,7 @@
                 e.preventDefault();
                 // Fetch user details from the backend
                 $.ajax({
-                  url: "{{ url_for('storefrontowner.get_profile') }}", // Replace with your backend endpoint
+                  url: "{{ url_for('storeowner.get_profile') }}", // Replace with your backend endpoint
                   method: 'GET',
                   success: function(response) {
                     // Populate the modal fields with the user details
