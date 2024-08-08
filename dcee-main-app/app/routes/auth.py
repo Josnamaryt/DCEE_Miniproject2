@@ -56,7 +56,7 @@ def login():
                 elif user['role'] == 'instructor':
                     return redirect(url_for('instructor.dashboard'))
                 elif user['role'] == 'storefrontowner':
-                    return redirect(url_for('storefrontowner.dashboard'))
+                    return redirect(url_for('storeowner.dashboard'))
                 else:
                     flash('Invalid user role.', 'danger')
                     return redirect(url_for('auth.login'))

@@ -1,4 +1,4 @@
-W<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -378,8 +378,6 @@ W<!DOCTYPE html>
                   </div>
                 </li>
                 
-                
-               
                 <li class="sidebar-main-title">
                   <div>
                     <h6 class="lan-8">Applications</h6>
@@ -387,352 +385,207 @@ W<!DOCTYPE html>
                 </li>
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
                     <svg class="stroke-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-project') }}"></use>
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-ecommerce') }}"></use>
                     </svg>
                     <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-project') }}"></use>
-                    </svg><span>Profile View</span></a>
-                  <ul class="sidebar-submenu">
-                    <li><a href="projects.html">Project List</a></li>
-                    <li><a href="projectcreate.html">Create new</a></li>
-                  </ul>
-                </li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="file-manager.html">
-                    <svg class="stroke-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-file') }}"></use>
-                    </svg>
-                    <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-file') }}"></use>
-                    </svg><span>File manager</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="kanban.html">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-board') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-board') }}"></use>
-                        </svg><span>kanban Board</span></a></li>
-                    <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-ecommerce') }}"></use>
-                        </svg>
-                        <svg class="fill-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
-                        </svg><span>Store Registration</span></a>
-                      <ul class="sidebar-submenu">
-                        <li> <a href="add-products.html">Add Products</a></li>
-                        <li><a href="product.html">Product</a></li>
-                        <li><a href="category.html">Category page</a></li>
-                        <li><a href="product-page.html">Product page</a></li>
-                        <li><a href="list-products.html">Product list</a></li>
-                        <li><a href="payment-details.html">Payment Details</a></li>
-                        <li><a href="order-history.html">Order History</a></li>
-                      </ul>
-                    
-                  <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
+                    </svg><span>Store Registration</span></a>
+                    <ul class="sidebar-submenu">
+                      <li> <a href="#" data-bs-toggle="modal" data-bs-target="#storeDetailsModal">Store Details</a></li>
+                      <li> <a href="#" data-bs-toggle="modal" data-bs-target="#productRegistrationModal">Product Registration</a></li>
+                    </ul>
+                  </li>
+                <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+              </div>
+            </nav>
+          </div>
+          <!-- Page Sidebar Ends-->
+          <div class="page-body">
+            <div class="container-fluid">
+              <div class="page-title">
+                <div class="row">
+                  <div class="col-6">
+                    <h4>Add Store</h4>
+                  </div>
+                  <div class="col-6">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a href="index.html">                                       
+                          <svg class="stroke-icon">
+                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
+                          </svg></a></li>
+                      <li class="breadcrumb-item">ECommerce</li>
+                      <li class="breadcrumb-item active">Add Store</li>
+                    </ol>
+                  </div>
                 </div>
-              </nav>
+              </div>
             </div>
-            <!-- Page Sidebar Ends-->
-            <div class="page-body">
-              <div class="container-fluid">
-                <div class="page-title">
-                  <div class="row">
-                    <div class="col-6">
-                      <h4>Add Product</h4>
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+              <div class="row"> 
+                <div class="col-12"> 
+                  <div class="card"> 
+                    <div class="card-header">
+                      <h5>Store Registration Form</h5>
                     </div>
-                    <div class="col-6">
-                      <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">                                       
-                            <svg class="stroke-icon">
-                              <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
-                            </svg></a></li>
-                        <li class="breadcrumb-item">ECommerce</li>
-                        <li class="breadcrumb-item active">Add Product</li>
-                      </ol>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- Container-fluid starts-->
-              <div class="container-fluid">
-                <div class="row"> 
-                  <div class="col-12"> 
-                    <div class="card"> 
-                      <div class="card-header">
-                        <h5>Product Form</h5>
-                      </div>
-                      <div class="card-body">
-                        <div class="row g-xl-5 g-3">
-                          <div class="col-xxl-3 col-xl-4 box-col-4e sidebar-left-wrapper">
-                            <ul class="sidebar-left-icons nav nav-pills" id="add-product-pills-tab" role="tablist">
-                              <li class="nav-item"> <a class="nav-link active" id="detail-product-tab" data-bs-toggle="pill" href="#detail-product" role="tab" aria-controls="detail-product" aria-selected="false">
-                                  <div class="nav-rounded">
-                                    <div class="product-icons">
-                                      <svg class="stroke-icon">
-                                        <use href="{{ url_for('static', filename='svg/icon-sprite.svg#product-detail') }}"></use>
-                                      </svg>
-                                    </div>
-                                  </div>
-                                  <div class="product-tab-content">
-                                    <h6>Add Product Details</h6>
-                                    <p>Add Product name & details</p>
-                                  </div></a></li>
-                              <li class="nav-item"> <a class="nav-link" id="gallery-product-tab" data-bs-toggle="pill" href="#gallery-product" role="tab" aria-controls="gallery-product" aria-selected="false">
-                                  <div class="nav-rounded">
-                                    <div class="product-icons">
-                                      <svg class="stroke-icon">
-                                        <use href="{{ url_for('static', filename='svg/icon-sprite.svg#product-gallery') }}"></use>
-                                      </svg>
-                                    </div>
-                                  </div>
-                                  <div class="product-tab-content">
-                                    <h6>Product gallery</h6>
-                                    <p>thumbnail & Add Product Gallery</p>
-                                  </div></a></li>
-                              <li class="nav-item"> <a class="nav-link" id="category-product-tab" data-bs-toggle="pill" href="#category-product" role="tab" aria-controls="category-product" aria-selected="false">
-                                  <div class="nav-rounded">
-                                    <div class="product-icons">
-                                      <svg class="stroke-icon">
-                                        <use href="{{ url_for('static', filename='svg/icon-sprite.svg#product-category') }}"></use>
-                                      </svg>
-                                    </div>
-                                  </div>
-                                  <div class="product-tab-content">
-                                    <h6>Product Categories</h6>
-                                    <p>Add Product category, Status and Tags</p>
-                                  </div></a></li>
-                            </ul>
-                          </div>
-                          <div class="col-xxl-9 col-xl-8 box-col-8 position-relative">
-                            <div class="tab-content" id="add-product-pills-tabContent">
-                              <div class="tab-pane fade show active" id="detail-product" role="tabpanel" aria-labelledby="detail-product-tab">
-                                <div class="sidebar-body">
-                                  form will be here after testing 
-                                  <div class="product-buttons">
-                                    <div class="btn">
-                                      <div class="d-flex align-items-center gap-sm-2 gap-1">Next
-                                        <svg>
-                                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#front-arrow') }}">  </use>
-                                        </svg>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="tab-pane fade" id="gallery-product" role="tabpanel" aria-labelledby="gallery-product-tab">
-                                <div class="sidebar-body">
-                                  <div class="product-upload">
-                                    <p>Product Image </p>
-                                    <form class="dropzone dropzone-light" id="multiFileUploadA" action="/upload.php">
-                                      <div class="dz-message needsclick">
-                                        <svg>
-                                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#file-upload') }}"></use>
-                                        </svg>
-                                        <h6>Drag your image here, or <a class="txt-primary" href="#!">browser</a></h6><span class="note needsclick">SVG,PNG,JPG or GIF</span>
-                                      </div>
-                                    </form>
-                                  </div>
-                                  <div class="product-buttons">
-                                    <div class="btn">
-                                      <div class="d-flex align-items-center gap-sm-2 gap-1">
-                                        <svg>
-                                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#back-arrow') }}"></use>
-                                        </svg>Previous
-                                      </div>
-                                    </div>
-                                    <div class="btn">
-                                      <div class="d-flex align-items-center gap-sm-2 gap-1">Next
-                                        <svg>
-                                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#front-arrow') }}">     </use>
-                                        </svg>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="tab-pane fade" id="category-product" role="tabpanel" aria-labelledby="category-product-tab">
-                                <div class="sidebar-body">
-                                  <form>
-                                    <div class="row g-lg-4 g-3">
-                                      <div class="col-12">
-                                        <div class="row g-3">
-                                          <div class="col-sm-6">
-                                            <div class="row g-2"> 
-                                              <div class="col-12">
-                                                <label class="form-label m-0" for="validationDefault04">Add Category</label>
-                                              </div>
-                                              <div class="col-12">
-                                                <select class="form-select" id="validationDefault04" required="">
-                                                  <option selected="" value="">Toys & games</option>
-                                                  <option>Sportswear </option>
-                                                  <option>Jewellery </option>
-                                                  <option>Furniture and Decor</option>
-                                                  <option>Health, Personal Care, and Beauty</option>
-                                                  <option>Auto and Parts </option>
-                                                  <option>Baby Care Products</option>
-                                                </select>
-                                                <p class="f-light">A product can be added to a category</p>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="col-sm-6">
-                                            <div class="row g-2">
-                                              <div class="col-12">
-                                                <label class="form-label" for="publishStatus">Publish Status</label>
-                                                <select class="form-select" id="publishStatus" required="">
-                                                  <option selected="" value="">Available</option>
-                                                  <option>Not Available</option>
-                                                </select>
-                                                <p class="f-light">Choose the status</p>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="col-sm-6">
-                                            <div class="row">
-                                              <div class="col-12">
-                                                <label class="form-label" for="datetime-local1">Publish Date & Time</label>
-                                                <div class="input-group flatpicker-calender product-date">
-                                                  <input class="form-control" id="datetime-local1" type="date">
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="product-buttons">
-                                      <div class="btn">
-                                        <div class="d-flex align-items-center gap-sm-2 gap-1">
-                                          <svg>
-                                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#back-arrow') }}"></use>
-                                          </svg>Previous
-                                        </div>
-                                      </div>
-                                      <div class="btn">
-                                        <div class="d-flex align-items-center gap-sm-2 gap-1">Register Store
-                                          <svg>
-                                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#front-arrow') }}"></use>
-                                          </svg>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                    <div class="card-body">
+                      <form action="{{ url_for('storeowner.register_store') }}" method="post" class="row g-2">
+                        <label class="form-label col-12 m-0" for="store_name">Store Name <span class="txt-danger">*</span></label>
+                        <div class="col-12 custom-input">
+                            <input class="form-control" id="store_name" name="store_name" type="text" required>
+                            <div class="valid-feedback">Looks good!</div>
+                            <div class="invalid-feedback">A store name is required and recommended to be unique.</div>
                         </div>
+                    
+                        <label class="form-label col-12 m-0" for="store_type">Store Type <span class="txt-danger">*</span></label>
+                        <div class="col-12 custom-input">
+                            <input class="form-control" id="store_type" name="store_type" type="text" required>
+                            <div class="valid-feedback">Looks good!</div>
+                            <div class="invalid-feedback">Store type is required.</div>
+                        </div>
+                    
+                        <label class="form-label col-12 m-0" for="store_address">Store Address <span class="txt-danger">*</span></label>
+                        <div class="col-12 custom-input">
+                            <textarea class="form-control" id="store_address" name="store_address" required></textarea>
+                            <div class="valid-feedback">Looks good!</div>
+                            <div class="invalid-feedback">Store address is required.</div>
+                        </div>
+                    
+                        <label class="form-label col-12 m-0" for="store_gstin">Store GSTIN <span class="txt-danger">*</span></label>
+                        <div class="col-12 custom-input">
+                          <input class="form-control" id="store_gstin" name="store_gstin" type="text" required>
+                          <div class="valid-feedback">Looks good!</div>
+                          <div class="invalid-feedback">Store GSTIN is required.</div>
                       </div>
-                    </div>
+                  
+                      <label class="form-label col-12 m-0" for="store_established_date">Store Established Date <span class="txt-danger">*</span></label>
+                      <div class="col-12 custom-input">
+                          <input class="form-control" id="store_established_date" name="store_established_date" type="date" required>
+                          <div class="valid-feedback">Looks good!</div>
+                          <div class="invalid-feedback">Store established date is required.</div>
+                      </div>
+                  
+                      <div class="col-12">
+                          <button type="submit" class="btn btn-primary">Register Store</button>
+                      </div>
+                    </form>
                   </div>
                 </div>
-                <!-- Container-fluid Ends-->
               </div>
-              <form action="{{ url_for('storeowner.register_store') }}" method="post" class="row g-2">
-                <label class="form-label col-12 m-0" for="store_name">Store Name <span class="txt-danger">*</span></label>
-                <div class="col-12 custom-input">
-                    <input class="form-control" id="store_name" name="store_name" type="text" required>
-                    <div class="valid-feedback">Looks good!</div>
-                    <div class="invalid-feedback">A store name is required and recommended to be unique.</div>
+            </div>
+            <!-- Container-fluid Ends-->
+          </div>
+          <!-- Modal for Store Details -->
+          <div class="modal fade" id="storeDetailsModal" tabindex="-1" aria-labelledby="storeDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="storeDetailsModalLabel">Store Details</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            
-                <label class="form-label col-12 m-0" for="store_type">Store Type <span class="txt-danger">*</span></label>
-                <div class="col-12 custom-input">
-                    <input class="form-control" id="store_type" name="store_type" type="text" required>
-                    <div class="valid-feedback">Looks good!</div>
-                    <div class="invalid-feedback">Store type is required.</div>
-                </div>
-            
-                <label class="form-label col-12 m-0" for="store_address">Store Address <span class="txt-danger">*</span></label>
-                <div class="col-12 custom-input">
-                    <textarea class="form-control" id="store_address" name="store_address" required></textarea>
-                    <div class="valid-feedback">Looks good!</div>
-                    <div class="invalid-feedback">Store address is required.</div>
-                </div>
-            
-                <label class="form-label col-12 m-0" for="store_gstin">Store GSTIN <span class="txt-danger">*</span></label>
-                <div class="col-12 custom-input">
-                    <input class="form-control" id="store_gstin" name="store_gstin" type="text" required>
-                    <div class="valid-feedback">Looks good!</div>
-                    <div class="invalid-feedback">Store GSTIN is required.</div>
-                </div>
-            
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Register Store</button>
-                </div>
-              </form>
-              <!-- footer start-->
-              <footer class="footer">
-                <div class="container-fluid">
-                  <div class="row">
-                    <div class="col-md-12 footer-copyright text-center">
-                      <p class="mb-0">Copyright 2024 © DCEE  </p>
+                <div class="modal-body">
+                  <form id="storeDetailsForm" action="{{ url_for('storeowner.register_store') }}" method="post">
+                    <div class="mb-3">
+                      <label for="modalStoreName" class="form-label">Store Name <span class="txt-danger">*</span></label>
+                      <input type="text" class="form-control" id="modalStoreName" name="store_name" required>
                     </div>
-                  </div>
+                    <div class="mb-3">
+                      <label for="modalStoreType" class="form-label">Store Type <span class="txt-danger">*</span></label>
+                      <input type="text" class="form-control" id="modalStoreType" name="store_type" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="modalStoreAddress" class="form-label">Store Address <span class="txt-danger">*</span></label>
+                      <textarea class="form-control" id="modalStoreAddress" name="store_address" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="modalStoreGSTIN" class="form-label">Store GSTIN <span class="txt-danger">*</span></label>
+                      <input type="text" class="form-control" id="modalStoreGSTIN" name="store_gstin" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="modalStoreEstablishedDate" class="form-label">Store Established Date <span class="txt-danger">*</span></label>
+                      <input type="date" class="form-control" id="modalStoreEstablishedDate" name="store_established_date" required>
+                    </div>
+                  </form>
                 </div>
-              </footer>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" form="storeDetailsForm" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
             </div>
           </div>
-          <!-- latest jquery-->
-          <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-          <!-- Bootstrap js-->
-          <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
-          <!-- feather icon js-->
-          <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
-          <!-- scrollbar js-->
-          <script src="{{ url_for('static', filename='js/scrollbar/simplebar.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/scrollbar/custom.js') }}"></script>
-          <!-- Sidebar jquery-->
-          <script src="{{ url_for('static', filename='js/config.js') }}"></script>
-          <!-- Plugins JS start-->
-          <script src="{{ url_for('static', filename='js/sidebar-menu.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/sidebar-pin.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/slick/slick.min.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/slick/slick.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/header-slick.js') }}"></script>
-          <!-- calendar js-->
-          <script src="{{ url_for('static', filename='js/flat-pickr/flatpickr.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/flat-pickr/custom-flatpickr.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/dropzone/dropzone.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/dropzone/dropzone-script.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/select2/tagify.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/select2/tagify.polyfills.min.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/select2/intltelinput.min.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/add-product/select4-custom.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/editors/quill.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/custom-add-product.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/height-equal.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/tooltip-init.js') }}"></script>
-          <!-- Plugins JS Ends-->
-          <!-- Theme js-->
-          <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
-          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-          <script>
-            $(document).ready(function() {
-              $('#profile-modal-trigger').click(function(e) {
-                e.preventDefault();
-                // Fetch user details from the backend
-                $.ajax({
-                  url: "{{ url_for('storeowner.get_profile') }}", // Replace with your backend endpoint
-                  method: 'GET',
-                  success: function(response) {
-                    // Populate the modal fields with the user details
-                    $('#firstname').val(response.first_name);
-                    $('#lastname').val(response.last_name);
-                    $('#email').val(response.email);
-                    $('#gstn').val(response.gstin);
-                    // Show the modal
-                    $('#profileModal').modal('show');
-                  },
-                  error: function(error) {
-                    console.error('Error fetching user profile:', error);
-                  }
-                });
-              });
+          <!-- footer start-->
+          <footer class="footer">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-12 footer-copyright text-center">
+                  <p class="mb-0">Copyright 2024 © DCEE  </p>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
+      <!-- latest jquery-->
+      <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+      <!-- Bootstrap js-->
+      <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+      <!-- feather icon js-->
+      <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
+      <!-- scrollbar js-->
+      <script src="{{ url_for('static', filename='js/scrollbar/simplebar.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/scrollbar/custom.js') }}"></script>
+      <!-- Sidebar jquery-->
+      <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+      <!-- Plugins JS start-->
+      <script src="{{ url_for('static', filename='js/sidebar-menu.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/sidebar-pin.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/slick/slick.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/slick/slick.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/header-slick.js') }}"></script>
+      <!-- calendar js-->
+      <script src="{{ url_for('static', filename='js/flat-pickr/flatpickr.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/flat-pickr/custom-flatpickr.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/dropzone/dropzone.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/dropzone/dropzone-script.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/select2/tagify.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/select2/tagify.polyfills.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/select2/intltelinput.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/add-product/select4-custom.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/editors/quill.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/custom-add-product.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/height-equal.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/tooltip-init.js') }}"></script>
+      <!-- Plugins JS Ends-->
+      <!-- Theme js-->
+      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+        $(document).ready(function() {
+          $('#profile-modal-trigger').click(function(e) {
+            e.preventDefault();
+            // Fetch user details from the backend
+            $.ajax({
+              url: "{{ url_for('storeowner.get_profile') }}", // Replace with your backend endpoint
+              method: 'GET',
+              success: function(response) {
+                // Populate the modal fields with the user details
+                $('#firstname').val(response.first_name);
+                $('#lastname').val(response.last_name);
+                $('#email').val(response.email);
+                $('#gstn').val(response.gstin);
+                // Show the modal
+                $('#profileModal').modal('show');
+              },
+              error: function(error) {
+                console.error('Error fetching user profile:', error);
+              }
             });
-          </script>
-        </body>
-      </html>
+          });
+        });
+      </script>
+    </body>
+  </html>

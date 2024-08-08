@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from app import login_manager, mongo
 from app.models import User
@@ -10,9 +10,7 @@ import random
 import string
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from flask_mail import Mail, Message
-from flask import request, jsonify
-
-# from app import login_manager
+from flask import request
 
 storeowner_bp = Blueprint('storeowner', __name__)
 
@@ -47,7 +45,6 @@ def dashboard():
     }
     return render_template('storefrontowner/dashboard.html', current_user_dict=current_user_dict)
 
-
 @storeowner_bp.route('/register_store', methods=['POST'])
 @login_required
 def register_store():
@@ -56,9 +53,10 @@ def register_store():
     store_gstin = request.form.get('store_gstin')
     store_owner_id = current_user.email
     store_type = request.form.get('store_type')
+    store_established_date = request.form.get('store_established_date')
     
     # Basic validation
-    if not all([store_name, store_address, store_gstin, store_type]):
+    if not all([store_name, store_address, store_gstin, store_type, store_established_date]):
         return jsonify({'success': False, 'message': 'All fields are required'}), 400
 
     store = {
@@ -66,7 +64,8 @@ def register_store():
         'store_type': store_type,
         'store_address': store_address,
         'store_gstin': store_gstin,
-        'store_owner_id': store_owner_id
+        'store_owner_id': store_owner_id,
+        'store_established_date': store_established_date
     }
     
     try:
