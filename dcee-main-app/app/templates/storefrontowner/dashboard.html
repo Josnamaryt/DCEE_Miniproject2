@@ -393,6 +393,7 @@
                     <ul class="sidebar-submenu">
                       <li> <a href="#" data-bs-toggle="modal" data-bs-target="#storeDetailsModal">Store Details</a></li>
                       <li> <a href="#" data-bs-toggle="modal" data-bs-target="#productRegistrationModal">Product Registration</a></li>
+                      <li> <a href="#" data-bs-toggle="modal" data-bs-target="#productDetailsModal">Product Details</a></li>
                     </ul>
                   </li>
                 <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
@@ -450,7 +451,6 @@
                             <div class="valid-feedback">Looks good!</div>
                             <div class="invalid-feedback">Store address is required.</div>
                         </div>
-                    
                         <label class="form-label col-12 m-0" for="store_gstin">Store GSTIN <span class="txt-danger">*</span></label>
                         <div class="col-12 custom-input">
                           <input class="form-control" id="store_gstin" name="store_gstin" type="text" required>
@@ -476,44 +476,143 @@
             <!-- Container-fluid Ends-->
           </div>
           <!-- Modal for Store Details -->
-          <div class="modal fade" id="storeDetailsModal" tabindex="-1" aria-labelledby="storeDetailsModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="storeDetailsModalLabel">Store Details</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <form id="storeDetailsForm" action="{{ url_for('storeowner.register_store') }}" method="post">
-                    <div class="mb-3">
-                      <label for="modalStoreName" class="form-label">Store Name <span class="txt-danger">*</span></label>
-                      <input type="text" class="form-control" id="modalStoreName" name="store_name" required>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modalStoreType" class="form-label">Store Type <span class="txt-danger">*</span></label>
-                      <input type="text" class="form-control" id="modalStoreType" name="store_type" required>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modalStoreAddress" class="form-label">Store Address <span class="txt-danger">*</span></label>
-                      <textarea class="form-control" id="modalStoreAddress" name="store_address" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modalStoreGSTIN" class="form-label">Store GSTIN <span class="txt-danger">*</span></label>
-                      <input type="text" class="form-control" id="modalStoreGSTIN" name="store_gstin" required>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modalStoreEstablishedDate" class="form-label">Store Established Date <span class="txt-danger">*</span></label>
-                      <input type="date" class="form-control" id="modalStoreEstablishedDate" name="store_established_date" required>
-                    </div>
-                  </form>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" form="storeDetailsForm" class="btn btn-primary">Save changes</button>
-                </div>
-              </div>
-            </div>
+<div class="modal fade" id="storeDetailsModal" tabindex="-1" aria-labelledby="storeDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="storeDetailsModalLabel">Store Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container mt-5">
+          <h2>Store Details</h2>
+          <table id="storeTable" class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Store Name</th>
+                <th>Store Type</th>
+                <th>Store Address</th>
+                <th>Store GSTIN</th>
+                <th>Store Established Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data will be populated here by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Store Details Modal -->
+<!-- Modal for Product Registration -->
+<div class="modal fade" id="productRegistrationModal" tabindex="-1" aria-labelledby="productRegistrationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productRegistrationModalLabel">Product Registration</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="productRegistrationForm" action="{{ url_for('storeowner.register_product') }}" method="post" enctype="multipart/form-data" class="row g-2">
+          <label class="form-label col-12 m-0" for="product_name">Product Name <span class="txt-danger">*</span></label>
+          <div class="col-12 custom-input">
+              <input class="form-control" id="product_name" name="product_name" type="text" required>
+              <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">Product name is required.</div>
           </div>
+      
+          <label class="form-label col-12 m-0" for="product_price">Product Price <span class="txt-danger">*</span></label>
+          <div class="col-12 custom-input">
+              <input class="form-control" id="product_price" name="product_price" type="number" step="0.01" required>
+              <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">Product price is required.</div>
+          </div>
+      
+          <label class="form-label col-12 m-0" for="product_status">Product Status <span class="txt-danger">*</span></label>
+          <div class="col-12 custom-input">
+              <select class="form-control" id="product_status" name="product_status" required>
+                  <option value="">Select Status</option>
+                  <option value="available">Available</option>
+                  <option value="out_of_stock">Out of Stock</option>
+                  <option value="discontinued">Discontinued</option>
+              </select>
+              <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">Product status is required.</div>
+          </div>
+      
+          <label class="form-label col-12 m-0" for="product_image">Product Image <span class="txt-danger">*</span></label>
+          <div class="col-12 custom-input">
+              <input class="form-control" id="product_image" name="product_image" type="file" accept="image/*" required>
+              <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">Product image is required.</div>
+          </div>
+      
+          <label class="form-label col-12 m-0" for="product_quantity">Product Quantity <span class="txt-danger">*</span></label>
+          <div class="col-12 custom-input">
+              <input class="form-control" id="product_quantity" name="product_quantity" type="number" required>
+              <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">Product quantity is required.</div>
+          </div>
+      
+          <label class="form-label col-12 m-0" for="product_add_date">Product Add Date <span class="txt-danger">*</span></label>
+          <div class="col-12 custom-input">
+              <input class="form-control" id="product_add_date" name="product_add_date" type="date" required>
+              <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">Product add date is required.</div>
+          </div>
+      
+          <div class="col-12">
+              <button type="submit" class="btn btn-primary">Register Product</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Product Registration Modal -->
+ <!-- Modal for Product Details -->
+<div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productDetailsModalLabel">Product Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container mt-5">
+          <h2>Product Details</h2>
+          <table id="productTable" class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Product Status</th>
+                <th>Product Quantity</th>
+                <th>Product Add Date</th>
+                <th>Product Image</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data will be populated here by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Product Details Modal -->
           <!-- footer start-->
           <footer class="footer">
             <div class="container-fluid">
@@ -587,5 +686,79 @@
           });
         });
       </script>
+      <!-- Store Details Modal JS -->
+      <script>
+        $(document).ready(function() {
+          $('#storeDetailsModal').on('shown.bs.modal', function() {
+             console.log('Store Details modal shown, initializing DataTable...');
+             if (!$.fn.DataTable.isDataTable('#storeTable')) {
+                $('#storeTable').DataTable({
+                   "ajax": {
+                      "url": "{{ url_for('storeowner.get_stores') }}",
+                      "dataSrc": ""
+                   },
+                   "columns": [
+                      { "data": "store_name" },
+                      { "data": "store_type" },
+                      { "data": "store_address" },
+                      { "data": "store_gstin" },
+                      { "data": "store_established_date" }
+                   ]
+                });
+             }
+          });
+       });
+      </script>
+      <!-- End Store Details Modal JS -->
+      <!-- Product Registration Modal JS -->
+      <script>
+        $(document).ready(function() {
+          $('#productRegistrationForm').on('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+              url: "{{ url_for('storeowner.register_product') }}",
+              type: 'POST',
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function(response) {
+                alert(response.message);
+                $('#productRegistrationModal').modal('hide');
+                $('#productRegistrationForm')[0].reset();
+              },
+              error: function(error) {
+                console.error('Error registering product:', error);
+              }
+            });
+          });
+        });
+      </script>
+      <!-- End Product Registration Modal JS -->
+       <!-- Product Details Modal JS -->
+<script>
+  $(document).ready(function() {
+    $('#productDetailsModal').on('shown.bs.modal', function() {
+       console.log('Product Details modal shown, initializing DataTable...');
+       if (!$.fn.DataTable.isDataTable('#productTable')) {
+          $('#productTable').DataTable({
+             "ajax": {
+                "url": "{{ url_for('storeowner.get_products') }}",
+                "dataSrc": ""
+             },
+             "columns": [
+                { "data": "product_name" },
+                { "data": "product_price" },
+                { "data": "product_status" },
+                { "data": "product_quantity" },
+                { "data": "product_add_date" },
+                { "data": "product_image" }
+             ]
+          });
+       }
+    });
+ });
+</script>
+<!-- End Product Details Modal JS -->
     </body>
   </html>
