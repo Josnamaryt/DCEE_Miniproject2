@@ -41,6 +41,9 @@
     <link id="color" rel="stylesheet" href="{{ url_for('static', filename='css/color-1.css') }}" media="screen">
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body> 
     <!-- loader starts-->
@@ -79,259 +82,19 @@
                 <h4 class="f-w-600">Welcome {{ current_user_dict.first_name }} {{ current_user_dict.last_name }}</h4><img class="mt-0" src="{{ url_for('static', filename='images/hand.gif') }}" alt="hand-gif">
               </div>
             </div>
-            <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here’s what’s happening with your store today. </span></div>
+            <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's happening with your store today. </span></div>
           </div>
           <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
             <ul class="nav-menus"> 
-              <li class="d-md-block d-none"> 
-                <div class="form search-form mb-0">
-                  <div class="input-group"><span class="input-icon">
-                      <svg>
-                        <use href="{{ url_for('static', filename='svg/icon-sprite.svg#search-header') }}"></use>
-                      </svg>
-                      <input class="w-100" type="search" placeholder="Search"></span></div>
-                </div>
-              </li>
-              <li class="d-md-none d-block"> 
-                <div class="form search-form mb-0">
-                  <div class="input-group"> <span class="input-show"> 
-                      <svg id="searchIcon">
-                        <use href="{{ url_for('static', filename='svg/icon-sprite.svg#search-header') }}"></use>
-                      </svg>
-                      <div id="searchInput">
-                        <input type="search" placeholder="Search">
-                      </div></span></div>
-                </div>
-              </li>
-              <li class="onhover-dropdown">
-                <svg>
-                  <use href="{{ url_for('static', filename='svg/icon-sprite.svg#star') }}"></use>
-                </svg>
-                <div class="onhover-show-div bookmark-flip">
-                  <div class="flip-card">
-                    <div class="flip-card-inner">
-                      <div class="front">
-                        <h6 class="f-18 mb-0 dropdown-title">Bookmark</h6>
-                        <ul class="bookmark-dropdown">
-                          <li>
-                            <div class="row">
-                              <div class="col-4 text-center">
-                                <div class="bookmark-content">
-                                  <div class="bookmark-icon"><i data-feather="file-text"></i></div><span>Forms</span>
-                                </div>
-                              </div>
-                              <div class="col-4 text-center">
-                                <div class="bookmark-content">
-                                  <div class="bookmark-icon"><i data-feather="user"></i></div><span>Profile</span>
-                                </div>
-                              </div>
-                              <div class="col-4 text-center">
-                                <div class="bookmark-content">
-                                  <div class="bookmark-icon"><i data-feather="server"></i></div><span>Tables</span>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                          <li class="text-center"><a class="flip-btn f-w-700" id="flip-btn" href="javascript:void(0)">Add New Bookmark</a></li>
-                        </ul>
-                      </div>
-                      <div class="back">
-                        <ul>
-                          <li>
-                            <div class="bookmark-dropdown flip-back-content">
-                              <input type="text" placeholder="search...">
-                            </div>
-                          </li>
-                          <li><a class="f-w-700 d-block flip-back" id="flip-back" href="javascript:void(0)">Back</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
+              
               <li> 
                 <div class="mode"><i class="moon" data-feather="moon"> </i></div>
               </li>
-              <li class="onhover-dropdown notification-down">
-                <div class="notification-box"> 
-                  <svg> 
-                    <use href="{{ url_for('static', filename='svg/icon-sprite.svg#notification-header') }}"></use>
-                  </svg><span class="badge rounded-pill badge-secondary">4 </span>
-                </div>
-                <div class="onhover-show-div notification-dropdown"> 
-                  <div class="card mb-0"> 
-                    <div class="card-header">
-                      <div class="common-space"> 
-                        <h4 class="text-start f-w-600">Notitications</h4>
-                        <div><span>4 New</span></div>
-                      </div>
-                    </div>
-                    <div class="card-body">
-                      <div class="notitications-bar">
-                        <ul class="nav nav-pills nav-primary p-0" id="pills-tab" role="tablist">
-                          <li class="nav-item p-0"> <a class="nav-link active" id="pills-aboutus-tab" data-bs-toggle="pill" href="#pills-aboutus" role="tab" aria-controls="pills-aboutus" aria-selected="true">All(3)</a></li>
-                          <li class="nav-item p-0"> <a class="nav-link" id="pills-blog-tab" data-bs-toggle="pill" href="#pills-blog" role="tab" aria-controls="pills-blog" aria-selected="false">
-                               Messages</a></li>
-                          <li class="nav-item p-0"> <a class="nav-link" id="pills-contactus-tab" data-bs-toggle="pill" href="#pills-contactus" role="tab" aria-controls="pills-contactus" aria-selected="false">
-                               Cart  </a></li>
-                        </ul>
-                        <div class="tab-content" id="pills-tabContent">
-                          <div class="tab-pane fade show active" id="pills-aboutus" role="tabpanel" aria-labelledby="pills-aboutus-tab">
-                            <div class="user-message"> 
-                              <div class="cart-dropdown notification-all">
-                                <ul>
-                                  <li class="pr-0 pl-0 pb-3 pt-3">
-                                    <div class="media"><img class="img-fluid b-r-5 me-3 img-60" src="{{ url_for('static', filename='images/other-images/receiver-img.jpg') }}" alt="">
-                                      <div class="media-body"><a class="f-light f-w-500" href="product.html">Men Blue T-Shirt</a>
-                                        <div class="qty-box"> 
-                                          <div class="input-group"> <span class="input-group-prepend">
-                                              <button class="btn quantity-left-minus" type="button" data-type="minus" data-field="">- </button></span>
-                                            <input class="form-control input-number" type="text" name="quantity" value="1"><span class="input-group-prepend">
-                                              <button class="btn quantity-right-plus" type="button" data-type="plus" data-field="">+</button></span>
-                                          </div>
-                                        </div>
-                                        <h6 class="font-primary">$695.00</h6>
-                                      </div>
-                                      <div class="close-circle"><a class="bg-danger" href="#"><i data-feather="x"></i></a></div>
-                                    </div>
-                                  </li>
-                                </ul>
-                              </div>
-                              <ul> 
-                                <li>
-                                  <div class="user-alerts"><img class="user-image rounded-circle img-fluid me-2" src="{{ url_for('static', filename='images/dashboard/user/5.jpg') }}" alt="user">
-                                    <div class="user-name">
-                                      <div> 
-                                        <h6><a class="f-w-500 f-14" href="user-profile.html">Floyd Miles</a></h6><span class="f-light f-w-500 f-12">Sir, Can i remove part in des...</span>
-                                      </div>
-                                      <div> 
-                                        <svg>
-                                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#more-vertical') }}"></use>
-                                        </svg>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </li>
-                                <li>
-                                  <div class="user-alerts"><img class="user-image rounded-circle img-fluid me-2" src="{{ url_for('static', filename='images/dashboard/user/6.jpg') }}" alt="user">
-                                    <div class="user-name">
-                                      <div> 
-                                        <h6><a class="f-w-500 f-14" href="user-profile.html">Dianne Russell</a></h6><span class="f-light f-w-500 f-12">So, what is my next work ?</span>
-                                      </div>
-                                      <div> 
-                                        <svg>
-                                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#more-vertical') }}"></use>
-                                        </svg>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div class="tab-pane fade" id="pills-blog" role="tabpanel" aria-labelledby="pills-blog-tab">
-                            <div class="notification-card"> 
-                              <ul> 
-                                <li class="notification d-flex w-100 justify-content-between align-items-center">
-                                  <div class="d-flex w-100 notification-data justify-content-center align-items-center gap-2">
-                                    <div class="user-alerts flex-shrink-0"><img class="rounded-circle img-fluid img-40" src="{{ url_for('static', filename='images/dashboard/user/3.jpg') }}" alt="user"></div>
-                                    <div class="flex-grow-1">
-                                      <div class="common-space user-id w-100">
-                                        <div class="common-space w-100"> <a class="f-w-500 f-12" href="private-chat.html">Robert D. Hambly</a></div>
-                                      </div>
-                                      <div><span class="f-w-500 f-light f-12">Hello Miss...😊</span></div>
-                                    </div><span class="f-light f-w-500 f-12">44 sec</span>
-                                  </div>
-                                </li>
-                                <li class="notification d-flex w-100 justify-content-between align-items-center">
-                                  <div class="d-flex w-100 notification-data justify-content-center align-items-center gap-2">
-                                    <div class="user-alerts flex-shrink-0"><img class="rounded-circle img-fluid img-40" src="{{ url_for('static', filename='images/dashboard/user/7.jpg') }}" alt="user"></div>
-                                    <div class="flex-grow-1">
-                                      <div class="common-space user-id w-100">
-                                        <div class="common-space w-100"> <a class="f-w-500 f-12" href="private-chat.html">Courtney C. Strang</a></div>
-                                      </div>
-                                      <div><span class="f-w-500 f-light f-12">Wishing You a Happy Birthday Dear.. 🥳🎊</span></div>
-                                    </div><span class="f-light f-w-500 f-12">52 min</span>
-                                  </div>
-                                </li>
-                                <li class="notification d-flex w-100 justify-content-between align-items-center">
-                                  <div class="d-flex w-100 notification-data justify-content-center align-items-center gap-2">
-                                    <div class="user-alerts flex-shrink-0"><img class="rounded-circle img-fluid img-40" src="{{ url_for('static', filename='images/dashboard/user/5.jpg') }}" alt="user"></div>
-                                    <div class="flex-grow-1">
-                                      <div class="common-space user-id w-100">
-                                        <div class="common-space w-100"> <a class="f-w-500 f-12" href="private-chat.html">Raye T. Sipes</a></div>
-                                      </div>
-                                      <div><span class="f-w-500 f-light f-12">Hello Dear!! This Theme Is Very beautiful</span></div>
-                                    </div><span class="f-light f-w-500 f-12">48 min</span>
-                                  </div>
-                                </li>
-                                <li class="notification d-flex w-100 justify-content-between align-items-center">
-                                  <div class="d-flex w-100 notification-data justify-content-center align-items-center gap-2">
-                                    <div class="user-alerts flex-shrink-0"><img class="rounded-circle img-fluid img-40" src="{{ url_for('static', filename='images/dashboard/user/6.jpg') }}" alt="user"></div>
-                                    <div class="flex-grow-1">
-                                      <div class="common-space user-id w-100">
-                                        <div class="common-space w-100"> <a class="f-w-500 f-12" href="private-chat.html">Henry S. Miller</a></div>
-                                      </div>
-                                      <div><span class="f-w-500 f-light f-12">You’re older today than yesterday, happy birthday!</span></div>
-                                    </div><span class="f-light f-w-500 f-12">3 min</span>
-                                  </div>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div class="tab-pane fade" id="pills-contactus" role="tabpanel" aria-labelledby="pills-contactus-tab">
-                            <div class="cart-dropdown mt-4"> 
-                              <ul>
-                                <li class="pr-0 pl-0 pb-3">
-                                  <div class="media"><img class="img-fluid b-r-5 me-3 img-60" src="{{ url_for('static', filename='images/other-images/cart-img.jpg') }}" alt="">
-                                    <div class="media-body"><a class="f-light f-w-500" href="product.html">Furniture Chair for Home</a>
-                                      <div class="qty-box">
-                                        <div class="input-group"> <span class="input-group-prepend">
-                                            <button class="btn quantity-left-minus" type="button" data-type="minus" data-field="">-</button></span>
-                                          <input class="form-control input-number" type="text" name="quantity" value="1"><span class="input-group-prepend">
-                                            <button class="btn quantity-right-plus" type="button" data-type="plus" data-field="">+</button></span>
-                                        </div>
-                                      </div>
-                                      <h6 class="font-primary">$500</h6>
-                                    </div>
-                                    <div class="close-circle"><a class="bg-danger" href="#"><i data-feather="x"></i></a></div>
-                                  </div>
-                                </li>
-                                <li class="pr-0 pl-0 pb-3 pt-3">
-                                  <div class="media"><img class="img-fluid b-r-5 me-3 img-60" src="{{ url_for('static', filename='images/other-images/receiver-img.jpg') }}" alt="">
-                                    <div class="media-body"><a class="f-light f-w-500" href="product.html">Men Cotton Blend Blue T-Shirt</a>
-                                      <div class="qty-box"> 
-                                        <div class="input-group"> <span class="input-group-prepend">
-                                            <button class="btn quantity-left-minus" type="button" data-type="minus" data-field="">- </button></span>
-                                          <input class="form-control input-number" type="text" name="quantity" value="1"><span class="input-group-prepend">
-                                            <button class="btn quantity-right-plus" type="button" data-type="plus" data-field="">+</button></span>
-                                        </div>
-                                      </div>
-                                      <h6 class="font-primary">$695.00</h6>
-                                    </div>
-                                    <div class="close-circle"><a class="bg-danger" href="#"><i data-feather="x"></i></a></div>
-                                  </div>
-                                </li>
-                                <li class="mb-3 total"><a href="checkout.html">
-                                    <h6 class="mb-0">
-                                       Order Total :<span class="f-right">$1195.00  </span></h6></a></li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div class="card-footer pb-0 pr-0 pl-0"> 
-                            <div class="text-center"> <a class="f-w-700" href="private-chat.html">
-                                <button class="btn btn-primary" type="button" title="btn btn-primary">Check all</button></a></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
+              
               <li class="profile-nav onhover-dropdown"> 
                 <div class="media profile-media"><img class="b-r-10" src="" alt="">
                   <div class="media-body d-xxl-block d-none">
-                    <div class="d-flex align-items-center gap-2"> <span>{{ user_name }} </span><i class="middle fa fa-angle-down"> </i></div>
+                    <div class="d-flex align-items-center gap-2"> <span>{{ current_user_dict.first_name }} {{ current_user_dict.last_name }} </span><i class="middle fa fa-angle-down"> </i></div>
                     <p class="mb-0 font-roboto">Storefront Owner</p>
                   </div>
                 </div>
@@ -391,7 +154,7 @@
                       <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
                     </svg><span>Store Registration</span></a>
                     <ul class="sidebar-submenu">
-                      <li> <a href="#" data-bs-toggle="modal" data-bs-target="#storeDetailsModal">Store Details</a></li>
+                      <li> <a href="#" data-bs-toggle="modal" data-bs-target=".storeDetailsModal">Store Details</a></li>
                       <li> <a href="#" data-bs-toggle="modal" data-bs-target="#productRegistrationModal">Product Registration</a></li>
                       <li> <a href="#" data-bs-toggle="modal" data-bs-target="#productDetailsModal">Product Details</a></li>
                     </ul>
@@ -430,7 +193,7 @@
                       <h5>Store Registration Form</h5>
                     </div>
                     <div class="card-body">
-                      <form action="{{ url_for('storeowner.register_store') }}" method="post" class="row g-2">
+                      <form id="storeRegistrationForm" action="{{ url_for('storeowner.register_store') }}" method="post" class="row g-2">
                         <label class="form-label col-12 m-0" for="store_name">Store Name <span class="txt-danger">*</span></label>
                         <div class="col-12 custom-input">
                             <input class="form-control" id="store_name" name="store_name" type="text" required>
@@ -469,45 +232,47 @@
                           <button type="submit" class="btn btn-primary">Register Store</button>
                       </div>
                     </form>
+                    <div id="registrationMessage" style="display: none;"></div>
                   </div>
                 </div>
               </div>
             </div>
             <!-- Container-fluid Ends-->
           </div>
-          <!-- Modal for Store Details -->
-<div class="modal fade" id="storeDetailsModal" tabindex="-1" aria-labelledby="storeDetailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="storeDetailsModalLabel">Store Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Store Details Modal -->
+    <div class="modal fade storeDetailsModal" id="storeDetailsModal" tabindex="-1" aria-labelledby="storeDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="storeDetailsModalLabel">Store Details</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <div class="container mt-5">
+                      <h2>Store Details</h2>
+                      <table id="storeTable" class="table table-striped table-bordered">
+                          <thead>
+                              <tr>
+                                  <th>Store Name</th>
+                                  <th>Store Type</th>
+                                  <th>Store Address</th>
+                                  <th>Store GSTIN</th>
+                                  <th>Store Owner ID</th>
+                                  <th>Store Established Date</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <!-- Data will be populated here by DataTables -->
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+          </div>
       </div>
-      <div class="modal-body">
-        <div class="container mt-5">
-          <h2>Store Details</h2>
-          <table id="storeTable" class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th>Store Name</th>
-                <th>Store Type</th>
-                <th>Store Address</th>
-                <th>Store GSTIN</th>
-                <th>Store Established Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Data will be populated here by JavaScript -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
   </div>
-</div>
 <!-- End Store Details Modal -->
 <!-- Modal for Product Registration -->
 <div class="modal fade" id="productRegistrationModal" tabindex="-1" aria-labelledby="productRegistrationModalLabel" aria-hidden="true">
@@ -625,6 +390,141 @@
           </footer>
         </div>
       </div>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+      
+      <!-- DataTables JS -->
+      <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+      <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+      <script>
+        $(document).ready(function() {
+            let storeTable;
+    
+            function initDataTable() {
+                if ($.fn.DataTable.isDataTable('#storeTable')) {
+                    storeTable.ajax.reload();
+                } else {
+                    storeTable = $('#storeTable').DataTable({
+                        "ajax": {
+                            "url": "{{ url_for('storeowner.get_stores') }}",
+                            "dataSrc": "",
+                            "error": function(xhr, error, thrown) {
+                                console.error('Error loading store data:', error);
+                            }
+                        },
+                        "columns": [
+                            { "data": "store_name" },
+                            { "data": "store_type" },
+                            { "data": "store_address" },
+                            { "data": "store_gstin" },
+                            { "data": "store_owner_id" },
+                            { "data": "store_established_date" }
+                        ],
+                        "initComplete": function(settings, json) {
+                            console.log('DataTable initialization complete');
+                            console.log('Received data:', json);
+                        }
+                    });
+                }
+            }
+    
+            $('#storeDetailsModal').on('shown.bs.modal', function() {
+                console.log('Store Details modal shown, initializing DataTable...');
+                initDataTable();
+            });
+        });
+        </script>
+      <!-- Store Details Modal JS -->
+      <script>
+        $(document).ready(function() {
+          console.log('Document ready');
+          console.log('jQuery version:', $.fn.jquery);
+          console.log('DataTables available:', typeof $.fn.DataTable === 'function');
+
+          // Function to initialize DataTable
+          function initDataTable() {
+            if (typeof $.fn.DataTable === 'function') {
+              console.log('DataTables is loaded');
+              if (!$.fn.DataTable.isDataTable('#storeTable')) {
+                $('#storeTable').DataTable({
+                  "ajax": {
+                    "url": "{{ url_for('storeowner.get_stores') }}",
+                    "dataSrc": function(json) {
+                      console.log('Processing store data...');
+                      console.log('Received data:', json);
+                      return json;
+                    }
+                  },
+                  "columns": [
+                    { "data": "store_name" },
+                    { "data": "store_type" },
+                    { "data": "store_address" },
+                    { "data": "store_gstin" },
+                    { "data": "store_established_date" }
+                  ],
+                  "initComplete": function(settings, json) {
+                    console.log('DataTable initialization complete');
+                  }
+                });
+              } else {
+                $('#storeTable').DataTable().ajax.reload();
+              }
+            } else {
+              console.error('DataTables is not loaded');
+            }
+          }
+
+          // Try to initialize DataTable when the modal is shown
+          $('.storeDetailsModal').on('shown.bs.modal', function() {
+            console.log('Store Details modal shown, initializing DataTable...');
+            initDataTable();
+          });
+
+          // If DataTables is not immediately available, wait for it
+          if (typeof $.fn.DataTable !== 'function') {
+            var checkDataTables = setInterval(function() {
+              if (typeof $.fn.DataTable === 'function') {
+                clearInterval(checkDataTables);
+                console.log('DataTables is now available');
+                initDataTable();
+              }
+            }, 100);
+          }
+        });
+      </script>
+      <!-- End Store Details Modal JS -->
+      <!-- Product Registration Modal JS -->
+      <script>
+        $(document).ready(function() {
+          $('#productRegistrationModal').on('shown.bs.modal', function() {
+            console.log('Product Registration modal shown');
+          });
+        });
+      </script>
+      <!-- End Product Registration Modal JS -->
+       <!-- Product Details Modal JS -->
+      <script>
+        $(document).ready(function() {
+          $('#productDetailsModal').on('shown.bs.modal', function() {
+            console.log('Product Details modal shown, initializing DataTable...');
+            if (!$.fn.DataTable.isDataTable('#productTable')) {
+                $('#productTable').DataTable({
+                  "ajax": {
+                      "url": "{{ url_for('storeowner.get_products') }}",
+                      "dataSrc": ""
+                  },
+                  "columns": [
+                      { "data": "product_name" },
+                      { "data": "product_price" },
+                      { "data": "product_status" },
+                      { "data": "product_quantity" },
+                      { "data": "product_add_date" },
+                      { "data": "product_image" }
+                  ]
+                });
+            }
+          });
+      });
+      </script>
       <!-- latest jquery-->
       <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
       <!-- Bootstrap js-->
@@ -662,103 +562,40 @@
       <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-      <script>
-        $(document).ready(function() {
-          $('#profile-modal-trigger').click(function(e) {
-            e.preventDefault();
-            // Fetch user details from the backend
-            $.ajax({
-              url: "{{ url_for('storeowner.get_profile') }}", // Replace with your backend endpoint
-              method: 'GET',
-              success: function(response) {
-                // Populate the modal fields with the user details
-                $('#firstname').val(response.first_name);
-                $('#lastname').val(response.last_name);
-                $('#email').val(response.email);
-                $('#gstn').val(response.gstin);
-                // Show the modal
-                $('#profileModal').modal('show');
-              },
-              error: function(error) {
-                console.error('Error fetching user profile:', error);
-              }
-            });
-          });
-        });
-      </script>
-      <!-- Store Details Modal JS -->
-      <script>
-        $(document).ready(function() {
-          $('#storeDetailsModal').on('shown.bs.modal', function() {
-             console.log('Store Details modal shown, initializing DataTable...');
-             if (!$.fn.DataTable.isDataTable('#storeTable')) {
-                $('#storeTable').DataTable({
-                   "ajax": {
-                      "url": "{{ url_for('storeowner.get_stores') }}",
-                      "dataSrc": ""
-                   },
-                   "columns": [
-                      { "data": "store_name" },
-                      { "data": "store_type" },
-                      { "data": "store_address" },
-                      { "data": "store_gstin" },
-                      { "data": "store_established_date" }
-                   ]
-                });
-             }
-          });
-       });
-      </script>
-      <!-- End Store Details Modal JS -->
-      <!-- Product Registration Modal JS -->
-      <script>
-        $(document).ready(function() {
-          $('#productRegistrationForm').on('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-              url: "{{ url_for('storeowner.register_product') }}",
-              type: 'POST',
-              data: formData,
-              processData: false,
-              contentType: false,
-              success: function(response) {
-                alert(response.message);
-                $('#productRegistrationModal').modal('hide');
-                $('#productRegistrationForm')[0].reset();
-              },
-              error: function(error) {
-                console.error('Error registering product:', error);
-              }
-            });
-          });
-        });
-      </script>
-      <!-- End Product Registration Modal JS -->
-       <!-- Product Details Modal JS -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+<!-- End Product Details Modal JS -->
+
+<!-- Store Registration Form AJAX Submission -->
 <script>
   $(document).ready(function() {
-    $('#productDetailsModal').on('shown.bs.modal', function() {
-       console.log('Product Details modal shown, initializing DataTable...');
-       if (!$.fn.DataTable.isDataTable('#productTable')) {
-          $('#productTable').DataTable({
-             "ajax": {
-                "url": "{{ url_for('storeowner.get_products') }}",
-                "dataSrc": ""
-             },
-             "columns": [
-                { "data": "product_name" },
-                { "data": "product_price" },
-                { "data": "product_status" },
-                { "data": "product_quantity" },
-                { "data": "product_add_date" },
-                { "data": "product_image" }
-             ]
-          });
-       }
+    $('#storeRegistrationForm').on('submit', function(e) {
+      e.preventDefault();
+      var form = $(this);
+      var url = form.attr('action');
+
+      $.ajax({
+        type: 'POST',
+        url: url,
+        data: form.serialize(),
+        success: function(data) {
+          if (data.success) {
+            $('#registrationMessage').html('<div class="alert alert-success">' + data.message + '</div>');
+            $('#registrationMessage').show();
+          } else {
+            $('#registrationMessage').html('<div class="alert alert-danger">' + data.message + '</div>');
+            $('#registrationMessage').show();
+          }
+        },
+        error: function() {
+          $('#registrationMessage').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+          $('#registrationMessage').show();
+        }
+      });
     });
- });
+  });
 </script>
-<!-- End Product Details Modal JS -->
+<!-- End Store Registration Form AJAX Submission -->
+
     </body>
   </html>

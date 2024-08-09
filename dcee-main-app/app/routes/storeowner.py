@@ -17,7 +17,7 @@ import os
 storeowner_bp = Blueprint('storeowner', __name__)
 
 # Define the upload folder for product images
-UPLOAD_FOLDER = 'static/images/products'
+UPLOAD_FOLDER = 'static/images/product'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
@@ -87,15 +87,20 @@ def register_store():
 @storeowner_bp.route('/get_stores', methods=['GET'])
 @login_required
 def get_stores():
-    # Fetch stores from the 'stores' collection
-    stores = list(mongo.db.stores.find())
-    
+    # Fetch stores from the 'stores' collection for the current user
+    stores = list(mongo.db.stores.find({'store_owner_id': current_user.email}))
     for store in stores:
         store['_id'] = str(store['_id'])
-        store['store_established_date'] = store.get('store_established_date', '').strftime('%Y-%m-%d') if store.get('store_established_date') else None
-        store['gstin'] = store.get('gstin', '') 
-        
-    # Return the stores as a JSON response
+        store['store_name'] = store.get('store_name', '')
+        store['store_type'] = store.get('store_type', '')
+        store['store_address'] = store.get('store_address', '')
+        store['store_gstin'] = store.get('store_gstin', '')
+        store['store_owner_id'] = store.get('store_owner_id', '')
+        established_date = store.get('store_established_date')
+        if established_date and isinstance(established_date, datetime):
+            store['store_established_date'] = established_date.strftime('%Y-%m-%d')
+        else:
+            store['store_established_date'] = None
     return jsonify(stores)
 
 @storeowner_bp.route('/register_product', methods=['POST'])
