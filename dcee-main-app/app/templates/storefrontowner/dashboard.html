@@ -146,19 +146,50 @@
                     <h6 class="lan-8">Applications</h6>
                   </div>
                 </li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
+                <li class="sidebar-list">
+                  <a class="sidebar-link sidebar-title" href="#" data-bs-toggle="modal" data-bs-target="#storeRegistrationModal">
                     <svg class="stroke-icon">
                       <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-ecommerce') }}"></use>
                     </svg>
                     <svg class="fill-icon">
                       <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
-                    </svg><span>Store Registration</span></a>
-                    <ul class="sidebar-submenu">
-                      <li> <a href="{{ url_for('storeowner.get_stores') }}">Store Details</a></li>
-                      <li> <a href="#" data-bs-toggle="modal" data-bs-target="#productRegistrationModal">Product Registration</a></li>
-                      <li> <a href="#" data-bs-toggle="modal" data-bs-target="#productDetailsModal">Product Details</a></li>
-                    </ul>
-                  </li>
+                    </svg>
+                    <span>Register Store</span>
+                  </a>
+                </li>
+                <li class="sidebar-list">
+                  <a class="sidebar-link sidebar-title" href="{{ url_for('storeowner.get_stores') }}">
+                    <svg class="stroke-icon">
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-ecommerce') }}"></use>
+                    </svg>
+                    <svg class="fill-icon">
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
+                    </svg>
+                    <span>Store Details</span>
+                  </a>
+                </li>
+                <li class="sidebar-list">
+                  <a class="sidebar-link sidebar-title" href="#" data-bs-toggle="modal" data-bs-target="#productRegistrationModal">
+                    <svg class="stroke-icon">
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-ecommerce') }}"></use>
+                    </svg>
+                    <svg class="fill-icon">
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
+                    </svg>
+                    <span>Register Product</span>
+                  </a>
+                </li>
+                <li class="sidebar-list">
+                  <a class="sidebar-link sidebar-title" href="{{ url_for('storeowner.get_products') }}">
+                    <svg class="stroke-icon">
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-ecommerce') }}"></use>
+                    </svg>
+                    <svg class="fill-icon">
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
+                    </svg>
+                    <span>Product Details</span>
+                  </a>
+                </li>
                 <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
               </div>
             </nav>
@@ -169,16 +200,17 @@
               <div class="page-title">
                 <div class="row">
                   <div class="col-6">
-                    <h4>Add Store</h4>
+                    <h4>Dashboard</h4>
                   </div>
                   <div class="col-6">
                     <ol class="breadcrumb">
-                      <li class="breadcrumb-item"><a href="index.html">                                       
-                          <svg class="stroke-icon">
-                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
-                          </svg></a></li>
-                      <li class="breadcrumb-item">ECommerce</li>
-                      <li class="breadcrumb-item active">Add Store</li>
+                      <li class="breadcrumb-item"><a href="index.html">
+                        <svg class="stroke-icon">
+                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
+                        </svg></a>
+                      </li>
+                      <li class="breadcrumb-item">Dashboard</li>
+                      <li class="breadcrumb-item active">Product Overview</li>
                     </ol>
                   </div>
                 </div>
@@ -186,56 +218,20 @@
             </div>
             <!-- Container-fluid starts-->
             <div class="container-fluid">
-              <div class="row"> 
-                <div class="col-12"> 
-                  <div class="card"> 
-                    <div class="card-header">
-                      <h5>Store Registration Form</h5>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Product Overview</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="productOverview">
+                                    <!-- Product overview will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                      <form id="storeRegistrationForm" action="{{ url_for('storeowner.register_store') }}" method="post" class="row g-2">
-                        <label class="form-label col-12 m-0" for="store_name">Store Name <span class="txt-danger">*</span></label>
-                        <div class="col-12 custom-input">
-                            <input class="form-control" id="store_name" name="store_name" type="text" required>
-                            <div class="valid-feedback">Looks good!</div>
-                            <div class="invalid-feedback">A store name is required and recommended to be unique.</div>
-                        </div>
-                    
-                        <label class="form-label col-12 m-0" for="store_type">Store Type <span class="txt-danger">*</span></label>
-                        <div class="col-12 custom-input">
-                            <input class="form-control" id="store_type" name="store_type" type="text" required>
-                            <div class="valid-feedback">Looks good!</div>
-                            <div class="invalid-feedback">Store type is required.</div>
-                        </div>
-                    
-                        <label class="form-label col-12 m-0" for="store_address">Store Address <span class="txt-danger">*</span></label>
-                        <div class="col-12 custom-input">
-                            <textarea class="form-control" id="store_address" name="store_address" required></textarea>
-                            <div class="valid-feedback">Looks good!</div>
-                            <div class="invalid-feedback">Store address is required.</div>
-                        </div>
-                        <label class="form-label col-12 m-0" for="store_gstin">Store GSTIN <span class="txt-danger">*</span></label>
-                        <div class="col-12 custom-input">
-                          <input class="form-control" id="store_gstin" name="store_gstin" type="text" required>
-                          <div class="valid-feedback">Looks good!</div>
-                          <div class="invalid-feedback">Store GSTIN is required.</div>
-                      </div>
-                  
-                      <label class="form-label col-12 m-0" for="store_established_date">Store Established Date <span class="txt-danger">*</span></label>
-                      <div class="col-12 custom-input">
-                          <input class="form-control" id="store_established_date" name="store_established_date" type="date" required>
-                          <div class="valid-feedback">Looks good!</div>
-                          <div class="invalid-feedback">Store established date is required.</div>
-                      </div>
-                  
-                      <div class="col-12">
-                          <button type="submit" class="btn btn-primary">Register Store</button>
-                      </div>
-                    </form>
-                    <div id="registrationMessage" style="display: none;"></div>
-                  </div>
                 </div>
-              </div>
             </div>
             <!-- Container-fluid Ends-->
           </div>
@@ -344,41 +340,7 @@
   </div>
 </div>
 <!-- End Product Registration Modal -->
- <!-- Modal for Product Details -->
-<div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="productDetailsModalLabel">Product Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="container mt-5">
-          <h2>Product Details</h2>
-          <table id="productTable" class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Product Price</th>
-                <th>Product Status</th>
-                <th>Product Quantity</th>
-                <th>Product Add Date</th>
-                <th>Product Image</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Data will be populated here by JavaScript -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End Product Details Modal -->
+ 
           <!-- footer start-->
           <footer class="footer">
             <div class="container-fluid">
@@ -530,30 +492,7 @@
         });
       </script>
       <!-- End Product Registration Modal JS -->
-       <!-- Product Details Modal JS -->
-      <script>
-        $(document).ready(function() {
-          $('#productDetailsModal').on('shown.bs.modal', function() {
-            console.log('Product Details modal shown, initializing DataTable...');
-            if (!$.fn.DataTable.isDataTable('#productTable')) {
-                $('#productTable').DataTable({
-                  "ajax": {
-                      "url": "{{ url_for('storeowner.get_products') }}",
-                      "dataSrc": ""
-                  },
-                  "columns": [
-                      { "data": "product_name" },
-                      { "data": "product_price" },
-                      { "data": "product_status" },
-                      { "data": "product_quantity" },
-                      { "data": "product_add_date" },
-                      { "data": "product_image" }
-                  ]
-                });
-            }
-          });
-      });
-      </script>
+       
       <!-- latest jquery-->
       <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
       <!-- Bootstrap js-->
@@ -625,6 +564,93 @@
   });
 </script>
 <!-- End Store Registration Form AJAX Submission -->
+
+<!-- Add this modal for store registration -->
+<div class="modal fade" id="storeRegistrationModal" tabindex="-1" aria-labelledby="storeRegistrationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="storeRegistrationModalLabel">Store Registration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="storeRegistrationForm" action="{{ url_for('storeowner.register_store') }}" method="post" class="row g-2">
+                    <label class="form-label col-12 m-0" for="store_name">Store Name <span class="txt-danger">*</span></label>
+                    <div class="col-12 custom-input">
+                        <input class="form-control" id="store_name" name="store_name" type="text" required>
+                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">A store name is required and recommended to be unique.</div>
+                    </div>
+                
+                    <label class="form-label col-12 m-0" for="store_type">Store Type <span class="txt-danger">*</span></label>
+                    <div class="col-12 custom-input">
+                        <input class="form-control" id="store_type" name="store_type" type="text" required>
+                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">Store type is required.</div>
+                    </div>
+                
+                    <label class="form-label col-12 m-0" for="store_address">Store Address <span class="txt-danger">*</span></label>
+                    <div class="col-12 custom-input">
+                        <textarea class="form-control" id="store_address" name="store_address" required></textarea>
+                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">Store address is required.</div>
+                    </div>
+                    <label class="form-label col-12 m-0" for="store_gstin">Store GSTIN <span class="txt-danger">*</span></label>
+                    <div class="col-12 custom-input">
+                      <input class="form-control" id="store_gstin" name="store_gstin" type="text" required>
+                      <div class="valid-feedback">Looks good!</div>
+                      <div class="invalid-feedback">Store GSTIN is required.</div>
+                  </div>
+              
+                  <label class="form-label col-12 m-0" for="store_established_date">Store Established Date <span class="txt-danger">*</span></label>
+                  <div class="col-12 custom-input">
+                      <input class="form-control" id="store_established_date" name="store_established_date" type="date" required>
+                      <div class="valid-feedback">Looks good!</div>
+                      <div class="invalid-feedback">Store established date is required.</div>
+                  </div>
+              
+                  <div class="col-12">
+                      <button type="submit" class="btn btn-primary">Register Store</button>
+                  </div>
+                </form>
+                <div id="registrationMessage" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+  // Load product overview when the page loads
+  loadProductOverview();
+
+  function loadProductOverview() {
+    $.ajax({
+      url: "{{ url_for('storeowner.get_product_overview') }}",
+      type: 'GET',
+      success: function(response) {
+        $('#productOverview').html(response);
+      },
+      error: function(xhr, status, error) {
+        console.error('Error loading product overview:', error);
+        $('#productOverview').html('<p>Error loading product overview. Please try again later.</p>');
+      }
+    });
+  }
+
+  function showProductDetails() {
+    // Hide the product overview
+    $('#productOverview').hide();
+    
+    // Show the existing product details section
+    $('#productDetails').show();
+    
+    // If you need to refresh the product details, you can add that logic here
+    // For example, you might call a function to reload the product data
+    // reloadProductDetails();
+  }
+});
+</script>
 
     </body>
   </html>

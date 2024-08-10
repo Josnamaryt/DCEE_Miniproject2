@@ -45,17 +45,17 @@
         <div class="page-header">
             <div class="header-wrapper row m-0">
                 <div class="header-logo-wrapper col-auto p-0">
-                    <div class="logo-wrapper"> <a href="{{ url_for('storeowner.dashboard') }}"><img class="img-fluid for-light" src="{{ url_for('static', filename='images/logo/logo_dark.png') }}" alt="logo-light"><img class="img-fluid for-dark" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt="logo-dark"></a></div>
+                    <div class="logo-wrapper"> <a href="{{ url_for('storeowner.dashboard') }}"><img class="img-fluid for-light" src="{{ url_for('static', filename='images/logo/1.png') }}" alt="logo-light"><img class="img-fluid for-dark" src="{{ url_for('static', filename='images/logo/1.png') }}" alt="logo-dark"></a></div>
                     <div class="toggle-sidebar"> <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i></div>
                 </div>
                 <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0"></div>
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
                     <ul class="nav-menus">
                         <li class="profile-nav onhover-dropdown">
-                            <div class="media profile-media"><img class="b-r-10" src="{{ url_for('static', filename='images/dashboard/profile.png') }}" alt="">
+                            <div class="media profile-media"><img class="b-r-10" src="" alt="">
                                 <div class="media-body d-xxl-block d-none">
-                                    <div class="d-flex align-items-center gap-2"> <span>Alex Mora </span><i class="middle fa fa-angle-down"> </i></div>
-                                    <p class="mb-0 font-roboto">Admin</p>
+                                    <div class="d-flex align-items-center gap-2"> <span>Fidha M </span><i class="middle fa fa-angle-down"> </i></div>
+                                    <p class="mb-0 font-roboto">Store Owner</p>
                                 </div>
                             </div>
                             <ul class="profile-dropdown onhover-show-div">
@@ -115,7 +115,7 @@
                     <div class="page-title">
                         <div class="row">
                             <div class="col-6">
-                                <h4>Stores List</h4>
+                                <h4>Stores Registered</h4>
                             </div>
                             <div class="col-6">
                                 <ol class="breadcrumb">
@@ -140,24 +140,29 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-striped">
+                                        <table class="table table-striped" id="storesTable">
                                             <thead>
                                                 <tr>
                                                     <th>Store Name</th>
+                                                    <th>Store Type</th>
                                                     <th>Address</th>
-                                                   
-                                                    <th>Email</th>
+                                                    <th>GSTIN</th>
+                                                    <th>Established Date</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {% for store in stores %}
-                                                <tr>
+                                                <tr data-store-id="{{ store.id }}">
                                                     <td>{{ store.name }}</td>
+                                                    <td>{{ store.type }}</td>
                                                     <td>{{ store.address }}</td>
-                                                   
-                                                    <td>{{ store.email }}</td>
-                                                    <td>{{ store.actions|safe }}</td>
+                                                    <td>{{ store.gstin }}</td>
+                                                    <td>{{ store.established_date }}</td>
+                                                    <td>
+                                                        <button class="btn btn-primary btn-sm" onclick="editStore('{{ store.id }}')">Edit</button>
+                                                        <button class="btn btn-danger btn-sm" onclick="deleteStore('{{ store.id }}')">Delete</button>
+                                                    </td>
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
@@ -175,7 +180,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2024 © Riho theme by pixelstrap</p>
+                            <p class="mb-0">Copyright 2024 © DCEE</p>
                         </div>
                     </div>
                 </div>
@@ -201,5 +206,150 @@
     <!-- Theme js-->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
+    <div class="modal fade" id="editStoreModal" tabindex="-1" role="dialog" aria-labelledby="editStoreModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStoreModalLabel">Edit Store</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStoreForm">
+                        <input type="hidden" id="editStoreId">
+                        <div class="form-group">
+                            <label for="editStoreName">Store Name</label>
+                            <input type="text" class="form-control" id="editStoreName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editStoreType">Store Type</label>
+                            <input type="text" class="form-control" id="editStoreType" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editStoreAddress">Address</label>
+                            <input type="text" class="form-control" id="editStoreAddress" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editStoreGstin">GSTIN</label>
+                            <input type="text" class="form-control" id="editStoreGstin" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editStoreEstablishedDate">Established Date</label>
+                            <input type="date" class="form-control" id="editStoreEstablishedDate" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateStore()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+<script>
+ function editStore(storeId) {
+    fetch(`/storeowner/get_store/${storeId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const store = data.store;
+                document.getElementById('editStoreId').value = store.id;
+                document.getElementById('editStoreName').value = store.name;
+                document.getElementById('editStoreType').value = store.type;
+                document.getElementById('editStoreAddress').value = store.address;
+                document.getElementById('editStoreGstin').value = store.gstin;
+                document.getElementById('editStoreEstablishedDate').value = store.established_date;
+                $('#editStoreModal').modal('show');
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function updateStore() {
+    const storeId = document.getElementById('editStoreId').value;
+    const storeName = document.getElementById('editStoreName').value;
+    const storeType = document.getElementById('editStoreType').value;
+    const storeAddress = document.getElementById('editStoreAddress').value;
+    const storeGstin = document.getElementById('editStoreGstin').value;
+    const storeEstablishedDate = document.getElementById('editStoreEstablishedDate').value;
+
+    const updatedStore = {
+        name: storeName,
+        type: storeType,
+        address: storeAddress,
+        gstin: storeGstin,
+        established_date: storeEstablishedDate
+    };
+
+    fetch(`/storeowner/update_store/${storeId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedStore),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            $('#editStoreModal').modal('hide');
+            refreshStoreList();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}   
+
+function deleteStore(storeId) {
+
+    if (confirm('Are you sure you want to delete this store?')) {
+        fetch(`/storeowner/delete_store/${storeId}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                // Remove the store from the page
+                document.querySelector(`tr[data-store-id="${storeId}"]`).remove();
+                // Refresh the store list
+                refreshStoreList();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+function refreshStoreList() {
+    fetch('/storeowner/fetch_stores')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.querySelector('#storesTable tbody');
+            tableBody.innerHTML = '';
+            data.data.forEach(store => {
+                const row = `
+                    <tr data-store-id="${store.id}">
+                        <td>${store.name}</td>
+                        <td>${store.type}</td>
+                        <td>${store.address}</td>
+                        <td>${store.gstin}</td>
+                        <td>${store.established_date}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteStore('${store.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+</script>
 </html>

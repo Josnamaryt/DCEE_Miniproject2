@@ -13,6 +13,9 @@ from flask_mail import Mail, Message
 from flask import request
 from werkzeug.utils import secure_filename
 import os
+from bson.errors import InvalidId
+from flask import jsonify
+
 
 storeowner_bp = Blueprint('storeowner', __name__)
 
@@ -95,10 +98,10 @@ def fetch_stores():
         formatted_store = {
             'id': str(store['_id']),  # Include the store ID to help with debugging
             'name': store.get('store_name', ''),
+            'type': store.get('store_type', ''),
             'address': store.get('store_address', ''),
-            'phone': store.get('store_phone', ''),
-            'email': store.get('store_email', ''),
-            'actions': f'<button onclick="editStore(\'{str(store["_id"])}\')">Edit</button> <button onclick="deleteStore(\'{str(store["_id"])}\')">Delete</button>'
+            'gstin': store.get('store_gstin', ''),
+            'established_date': store.get('store_established_date', ''),
         }
         formatted_stores.append(formatted_store)
     print("Fetched Stores:", formatted_stores)
@@ -116,7 +119,6 @@ def get_stores():
         'gstin': 'NA'
     }
     return render_template('storefrontowner/stores.html', user_data=user_data, stores=stores)
-
 
 @storeowner_bp.route('/register_product', methods=['POST'])
 @login_required
@@ -156,19 +158,194 @@ def register_product():
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
+# @storeowner_bp.route('/get_products', methods=['GET'])
+# @login_required
+# def get_products():
+#     # Fetch products from the 'products' collection where store_owner_id matches the current user's email
+#     products = list(mongo.db.products.find({'store_owner_id': current_user.email}))
+#     for product in products:
+#         product['_id'] = str(product['_id'])
+#         # Convert product_add_date to datetime object before formatting
+#         product_add_date = product.get('product_add_date')
+#         if product_add_date and isinstance(product_add_date, datetime):
+#             product['product_add_date'] = product_add_date.strftime('%Y-%m-%d')
+#         else:
+#             product['product_add_date'] = None
+#         product['product_image'] = product.get('product_image', '')
+#     # Return the products as a JSON response
+#     return render_template('storefrontowner/products.html', products=products)
+
+@storeowner_bp.route('/fetch_products', methods=['GET'])
+@login_required
+def fetch_products():
+    user_email = current_user.email
+    products = list(mongo.db.products.find({'store_owner_id': user_email}))
+    formatted_products = []
+    for product in products:
+        formatted_product = {
+            'id': str(product['_id']),
+            'name': product.get('product_name', ''),
+            'price': f"${product.get('product_price', 0):.2f}",
+            'status': product.get('product_status', ''),
+            'quantity': product.get('product_quantity', 0),
+            'added_date': product.get('product_add_date', '') if isinstance(product.get('product_add_date'), str) else (product.get('product_add_date').strftime('%Y-%m-%d') if product.get('product_add_date') else ''),
+            
+            'image': product.get('product_image', ''),
+            'added_date': product.get('product_add_date', '') if isinstance(product.get('product_add_date'), str) else (product.get('product_add_date').strftime('%Y-%m-%d') if product.get('product_add_date') else ''),
+            'actions': f'<button onclick="editProduct(\'{str(product["_id"])}\')">Edit</button> <button onclick="deleteProduct(\'{str(product["_id"])}\')">Delete</button>'
+        }
+        formatted_products.append(formatted_product)
+    print("Fetched Products:", formatted_products)
+    return jsonify({'data': formatted_products})
+
 @storeowner_bp.route('/get_products', methods=['GET'])
 @login_required
 def get_products():
-    # Fetch products from the 'products' collection where store_owner_id matches the current user's email
-    products = list(mongo.db.products.find({'store_owner_id': current_user.email}))
-    for product in products:
-        product['_id'] = str(product['_id'])
-        # Convert product_add_date to datetime object before formatting
-        product_add_date = product.get('product_add_date')
-        if product_add_date and isinstance(product_add_date, datetime):
-            product['product_add_date'] = product_add_date.strftime('%Y-%m-%d')
+    response = fetch_products()
+    products = response.get_json().get('data', [])
+    user_data = {
+        'first_name': 'NA',
+        'last_name': 'NA',
+        'email': 'NA'
+    }
+    
+    return render_template('storefrontowner/products.html', user_data=user_data, product=products)
+
+@storeowner_bp.route('/delete_store/<store_id>', methods=['DELETE'])
+@login_required
+def delete_store(store_id):
+    try:
+        result = mongo.db.stores.delete_one({'_id': ObjectId(store_id), 'store_owner_id': current_user.email})
+        if result.deleted_count:
+            return jsonify({'success': True, 'message': 'Store deleted successfully'}), 200
         else:
-            product['product_add_date'] = None
-        product['product_image'] = product.get('product_image', '')
-    # Return the products as a JSON response
-    return render_template('storefrontowner/products.html', products=products)
+            return jsonify({'success': False, 'message': 'Store not found or you do not have permission to delete it'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@storeowner_bp.route('/delete_product/<product_id>', methods=['GET','DELETE'])
+@login_required
+def delete_product(product_id):
+    try:
+        result = mongo.db.products.delete_one({'_id': ObjectId(product_id), 'store_owner_id': current_user.email})
+        if result.deleted_count:
+            return jsonify({'success': True, 'message': 'Product deleted successfully'}), 200
+        else:
+            return jsonify({'success': False, 'message': 'Product not found or you do not have permission to delete it'}), 404
+    except InvalidId:
+        return jsonify({'success': False, 'message': 'Invalid product ID'}), 400
+    except Exception as e:
+        print(f"Error deleting product: {str(e)}")  # Log the error
+        return jsonify({'success': False, 'message': f'An error occurred: {str(e)}'}), 500
+
+@storeowner_bp.route('/get_store/<store_id>', methods=['GET'])
+@login_required
+def get_store(store_id):
+    try:
+        store = mongo.db.stores.find_one({'_id': ObjectId(store_id), 'store_owner_id': current_user.email})
+        if store:
+            formatted_store = {
+                'id': str(store['_id']),
+                'name': store.get('store_name', ''),
+                'type': store.get('store_type', ''),
+                'address': store.get('store_address', ''),
+                'gstin': store.get('store_gstin', ''),
+                'established_date': store.get('store_established_date', ''),
+            }
+            return jsonify({'success': True, 'store': formatted_store})
+        else:
+            return jsonify({'success': False, 'message': 'Store not found or you do not have permission to edit it'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@storeowner_bp.route('/update_store/<store_id>', methods=['PUT'])
+@login_required
+def update_store(store_id):
+    try:
+        data = request.json
+        result = mongo.db.stores.update_one(
+            {'_id': ObjectId(store_id), 'store_owner_id': current_user.email},
+            {'$set': {
+                'store_name': data['name'],
+                'store_type': data['type'],
+                'store_address': data['address'],
+                'store_gstin': data['gstin'],
+                'store_established_date': data['established_date']
+            }}
+        )
+        if result.modified_count:
+            return jsonify({'success': True, 'message': 'Store updated successfully'}), 200
+        else:
+            return jsonify({'success': False, 'message': 'Store not found or you do not have permission to update it'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@storeowner_bp.route('/get_product/<product_id>', methods=['GET'])
+@login_required
+def get_product(product_id):
+    try:
+        product = mongo.db.products.find_one({'_id': ObjectId(product_id), 'store_owner_id': current_user.email})
+        if product:
+            formatted_product = {
+                'id': str(product['_id']),
+                'name': product.get('product_name', ''),
+                'price': product.get('product_price', 0),
+                'status': product.get('product_status', ''),
+                'quantity': product.get('product_quantity', 0),
+                'added_date': product.get('product_add_date', '') if isinstance(product.get('product_add_date'), str) else (product.get('product_add_date').strftime('%Y-%m-%d') if product.get('product_add_date') else ''),
+            }
+            return jsonify({'success': True, 'product': formatted_product})
+        else:
+            return jsonify({'success': False, 'message': 'Product not found or you do not have permission to edit it'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@storeowner_bp.route('/update_product/<product_id>', methods=['PUT'])
+@login_required
+def update_product(product_id):
+    try:
+        data = request.json
+        result = mongo.db.products.update_one(
+            {'_id': ObjectId(product_id), 'store_owner_id': current_user.email},
+            {'$set': {
+                'product_name': data['name'],
+                'product_price': data['price'],
+                'product_status': data['status'],
+                'product_quantity': data['quantity'],
+                'product_add_date': data['added_date']
+            }}
+        )
+        if result.modified_count:
+            return jsonify({'success': True, 'message': 'Product updated successfully'}), 200
+        else:
+            return jsonify({'success': False, 'message': 'Product not found or you do not have permission to update it'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@storeowner_bp.route('/get_product_overview', methods=['GET'])
+@login_required
+def get_product_overview():
+    try:
+        # Get the total number of products
+        total_products = mongo.db.products.count_documents({'store_owner_id': current_user.email})
+
+        # Get the number of products by status
+        available_products = mongo.db.products.count_documents({'store_owner_id': current_user.email, 'product_status': 'available'})
+        out_of_stock_products = mongo.db.products.count_documents({'store_owner_id': current_user.email, 'product_status': 'out_of_stock'})
+        discontinued_products = mongo.db.products.count_documents({'store_owner_id': current_user.email, 'product_status': 'discontinued'})
+
+        # Get the top 5 products by quantity
+        top_products = list(mongo.db.products.find(
+            {'store_owner_id': current_user.email},
+            {'product_name': 1, 'product_quantity': 1, '_id': 0}
+        ).sort('product_quantity', -1).limit(5))
+
+        return render_template('storefrontowner/product_overview.html',
+                               total_products=total_products,
+                               available_products=available_products,
+                               out_of_stock_products=out_of_stock_products,
+                               discontinued_products=discontinued_products,
+                               top_products=top_products)
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500

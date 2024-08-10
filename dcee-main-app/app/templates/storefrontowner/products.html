@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
-    <title>Store and Product details</title>
+    <title>Store and Product Details</title>
     <!-- Google font-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -27,13 +27,13 @@
     <link id="color" rel="stylesheet" href="{{ url_for('static', filename='css/color-1.css') }}" media="screen">
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
-  </head>
-  <body> 
+</head>
+<body>
     <!-- loader starts-->
     <div class="loader-wrapper">
-      <div class="loader"> 
-        <div class="loader4"></div>
-      </div>
+        <div class="loader">
+            <div class="loader4"></div>
+        </div>
     </div>
     <!-- loader ends-->
     <!-- tap on top starts-->
@@ -41,160 +41,303 @@
     <!-- tap on tap ends-->
     <!-- page-wrapper Start-->
     <div class="page-wrapper compact-wrapper" id="pageWrapper">
-      <!-- Page Header Start-->
-      <div class="page-header">
-        <div class="header-wrapper row m-0">
-          <div class="header-logo-wrapper col-auto p-0">  
-            <div class="logo-wrapper"> <a href="{{ url_for('storeowner.dashboard') }}"><img class="img-fluid for-light" src="{{ url_for('static', filename='images/logo/logo_dark.png') }}" alt="logo-light"><img class="img-fluid for-dark" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt="logo-dark"></a></div>
-            <div class="toggle-sidebar"> <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i></div>
-          </div>
-          <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0"></div>
-          <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
-            <ul class="nav-menus"> 
-              <li class="profile-nav onhover-dropdown"> 
-                <div class="media profile-media"><img class="b-r-10" src="{{ url_for('static', filename='images/dashboard/profile.png') }}" alt="">
-                  <div class="media-body d-xxl-block d-none">
-                    <div class="d-flex align-items-center gap-2"> <span>Alex Mora </span><i class="middle fa fa-angle-down"> </i></div>
-                    <p class="mb-0 font-roboto">Admin</p>
-                  </div>
+        <!-- Page Header Start-->
+        <div class="page-header">
+            <div class="header-wrapper row m-0">
+                <div class="header-logo-wrapper col-auto p-0">
+                    <div class="logo-wrapper"> <a href="{{ url_for('storeowner.dashboard') }}"><img class="img-fluid for-light" src="{{ url_for('static', filename='images/logo/1.png') }}" alt="logo-light"><img class="img-fluid for-dark" src="{{ url_for('static', filename='images/logo/1.png') }}" alt="logo-dark"></a></div>
+                    <div class="toggle-sidebar"> <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i></div>
                 </div>
-                <ul class="profile-dropdown onhover-show-div">
-                  <li><a href="{{ url_for('storeowner.get_profile') }}"><i data-feather="user"></i><span>My Profile</span></a></li>
-                 
-                  
-                </ul>
-              </li>
-            </ul>
-          </div>
+                <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0"></div>
+                <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
+                    <ul class="nav-menus">
+                        <li class="profile-nav onhover-dropdown">
+                            <div class="media profile-media"><img class="b-r-10" src="" alt="">
+                                <div class="media-body d-xxl-block d-none">
+                                    <div class="d-flex align-items-center gap-2"> <span>Fidha M </span><i class="middle fa fa-angle-down"> </i></div>
+                                    <p class="mb-0 font-roboto">Store Owner</p>
+                                </div>
+                            </div>
+                            <ul class="profile-dropdown onhover-show-div">
+                                <li><a href="{{ url_for('storeowner.get_profile') }}"><i data-feather="user"></i><span>My Profile</span></a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-      <!-- Page Header Ends                              -->
-      <!-- Page Body Start-->
-      <div class="page-body-wrapper">
-        <!-- Page Sidebar Start-->
-        <div class="sidebar-wrapper" data-layout="stroke-svg">
-          <div class="logo-wrapper"><a href="{{ url_for('storefrontowner.dashboard') }}"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt=""></a>
-            <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
-            <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
-          </div>
-          <div class="logo-icon-wrapper"><a href="{{ url_for('storefrontowner.dashboard') }}"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/logo-icon.png') }}" alt=""></a></div>
-          <nav class="sidebar-main">
-            <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
-            <div id="sidebar-menu">
-              <ul class="sidebar-links" id="simple-bar">
-                <li class="back-btn"><a href="{{ url_for('storefrontowner.dashboard') }}"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/logo-icon.png') }}" alt=""></a>
-                  <div class="mobile-back text-end"> <span>Back </span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
-                </li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ url_for('storefrontowner.dashboard') }}">
-                    <svg class="stroke-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
-                    </svg>
-                    <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-home') }}"></use>
-                    </svg><span>Dashboard</span></a></li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ url_for('storeowner.get_profile') }}">
-                    <svg class="stroke-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-user') }}"></use>
-                    </svg>
-                    <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-user') }}"></use>
-                    </svg><span>User Profile</span></a></li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ url_for('edit_profile') }}">
-                    <svg class="stroke-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-settings') }}"></use>
-                    </svg>
-                    <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-settings') }}"></use>
-                    </svg><span>Settings</span></a></li>
-              </ul>
-              <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+        <!-- Page Header Ends-->
+        <!-- Page Body Start-->
+        <div class="page-body-wrapper">
+            <!-- Page Sidebar Start-->
+            <div class="sidebar-wrapper" data-layout="stroke-svg">
+                <div class="logo-wrapper"><a href="{{ url_for('storeowner.dashboard') }}"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt=""></a>
+                    <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
+                    <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
+                </div>
+                <div class="logo-icon-wrapper"><a href="{{ url_for('storeowner.dashboard') }}"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/logo-icon.png') }}" alt=""></a></div>
+                <nav class="sidebar-main">
+                    <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+                    <div id="sidebar-menu">
+                        <ul class="sidebar-links" id="simple-bar">
+                            <li class="back-btn"><a href="{{ url_for('storeowner.dashboard') }}"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/logo-icon.png') }}" alt=""></a>
+                                <div class="mobile-back text-end"> <span>Back </span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
+                            </li>
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ url_for('storeowner.dashboard') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-home') }}"></use>
+                                </svg><span>Dashboard</span></a></li>
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ url_for('storeowner.get_profile') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-user') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-user') }}"></use>
+                                </svg><span>User Profile</span></a></li>
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="{{ url_for('storeowner.get_profile') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-settings') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-settings') }}"></use>
+                                </svg><span>Settings</span></a></li>
+                        </ul>
+                        <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+                    </div>
+                </nav>
             </div>
-          </nav>
+            <!-- Page Sidebar Ends-->
+            <div class="page-body">
+                <div class="container-fluid">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-6">
+                                <h4>Product List</h4>
+                            </div>
+                            <div class="col-6">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{ url_for('storeowner.dashboard') }}">
+                                        <svg class="stroke-icon">
+                                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
+                                        </svg></a></li>
+                                    <li class="breadcrumb-item"> Products</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Container-fluid starts-->
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Products List</h4>
+                                    <p class="f-m-light mt-1">View all Products.</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" id="productsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Product Name</th>
+                                                    <th>Product Price</th>
+                                                    <th>Product Status</th>
+                                                    <th>Product Quantity</th>
+                                                    <th>Product Added Date</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for products in product %}
+                                                <tr data-product-id="{{ products.id }}">
+                                                    <td>{{ products.name }}</td>
+                                                    <td>{{ products.price }}</td>
+                                                    <td>{{ products.status }}</td>
+                                                    <td>{{ products.quantity }}</td>
+                                                    <td>{{ products.added_date }}</td>
+                                                    <td>
+                                                        <button class="btn btn-primary btn-sm edit-product" data-product-id="{{ products.id }}">Edit</button>
+                                                        <button class="btn btn-danger btn-sm delete-product" data-product-id="{{ products.id }}">Delete</button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Container-fluid Ends-->
+            </div>
+            <!-- footer start-->
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 footer-copyright text-center">
+                            <p class="mb-0">Copyright 2024 © DCEE</p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
-        <!-- Page Sidebar Ends-->
-        <div class="page-body">
-          <div class="container-fluid">
-            <div class="page-title">
-              <div class="row">
-                <div class="col-6">
-                  <h4>Tree View</h4>
+    </div>
+    <!-- latest jquery-->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <!-- Bootstrap js-->
+    <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <!-- feather icon js-->
+    <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
+    <!-- scrollbar js-->
+    <script src="{{ url_for('static', filename='js/scrollbar/simplebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/scrollbar/custom.js') }}"></script>
+    <!-- Sidebar jquery-->
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <!-- Plugins JS start-->
+    <script src="{{ url_for('static', filename='js/sidebar-menu.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar-pin.js') }}"></script>
+    <!-- Plugins JS Ends-->
+    <!-- Theme js-->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#productsTable').on('click', '.delete-product', function() {
+                var productId = $(this).data('product-id');
+                var row = $(this).closest('tr');
+                
+                if (confirm('Are you sure you want to delete this product?')) {
+                    $.ajax({
+                        url: '{{ url_for("storeowner.delete_product", product_id="") }}' + productId,
+                        type: 'DELETE',
+                        success: function(result) {
+                            if (result.success) {
+                                row.remove();
+                                alert('Product deleted successfully');
+                            } else {
+                                alert('Failed to delete product: ' + result.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error details:', xhr.responseText);
+                            alert('An error occurred while deleting the product: ' + xhr.status + ' ' + error);
+                        }
+                    });
+                }
+            });
+
+            $('.edit-product').on('click', function() {
+                var productId = $(this).data('product-id');
+                editProduct(productId);
+            });
+        });
+
+        function editProduct(productId) {
+            console.log('Editing product with ID:', productId); // Debug log
+            $.ajax({
+                url: '/storeowner/get_product/' + productId,
+                type: 'GET',
+                success: function(response) {
+                    console.log('Product data received:', response); // Debug log
+                    if (response.success) {
+                        var product = response.product;
+                        $('#editProductId').val(product.id);
+                        $('#editProductName').val(product.name);
+                        $('#editProductPrice').val(product.price);
+                        $('#editProductStatus').val(product.status);
+                        $('#editProductQuantity').val(product.quantity);
+                        $('#editProductAddDate').val(product.added_date);
+                        $('#editProductModal').modal('show');
+                    } else {
+                        alert('Failed to fetch product details: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error details:', xhr.responseText);
+                    alert('An error occurred while fetching product details: ' + xhr.status + ' ' + error);
+                }
+            });
+        }
+
+        function updateProduct() {
+            var productId = $('#editProductId').val();
+            var updatedProduct = {
+                name: $('#editProductName').val(),
+                price: parseFloat($('#editProductPrice').val()),
+                status: $('#editProductStatus').val(),
+                quantity: parseInt($('#editProductQuantity').val()),
+                added_date: $('#editProductAddDate').val()
+            };
+
+            $.ajax({
+                url: '/storeowner/update_product/' + productId,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(updatedProduct),
+                success: function(response) {
+                    if (response.success) {
+                        alert('Product updated successfully');
+                        $('#editProductModal').modal('hide');
+                        location.reload(); // Refresh the page to show updated data
+                    } else {
+                        alert('Failed to update product: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error details:', xhr.responseText);
+                    alert('An error occurred while updating the product: ' + xhr.status + ' ' + error);
+                }
+            });
+        }
+    </script>
+
+    <!-- Make sure this modal is placed at the end of the body, just before the closing </body> tag -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="col-6">
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('storeowner.dashboard') }}">                                       
-                        <svg class="stroke-icon">
-                          <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
-                        </svg></a></li>
-                    <li class="breadcrumb-item"> Bonus Ui</li>
-                    <li class="breadcrumb-item active">Tree View</li>
-                  </ol>
+                <div class="modal-body">
+                    <form id="editProductForm">
+                        <input type="hidden" id="editProductId">
+                        <div class="form-group">
+                            <label for="editProductName">Product Name</label>
+                            <input type="text" class="form-control" id="editProductName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editProductPrice">Product Price</label>
+                            <input type="number" step="0.01" class="form-control" id="editProductPrice" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editProductStatus">Product Status</label>
+                            <input type="text" class="form-control" id="editProductStatus" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editProductQuantity">Product Quantity</label>
+                            <input type="number" class="form-control" id="editProductQuantity" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editProductAddDate">Product Added Date</label>
+                            <input type="date" class="form-control" id="editProductAddDate" required>
+                        </div>
+                    </form>
                 </div>
-              </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProduct()">Save changes</button>
+                </div>
             </div>
-          </div>
-          <!-- Container-fluid starts-->
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="card">
-                  <div class="card-header">
-                    <h4>Basic Tree</h4>
-                    <p class="f-m-light mt-1">Use the dynamic tree view with checkboxes.</p>
-                  </div>
-                  <div class="card-body">
-                    <div class="tree-container"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="card">
-                  <div class="card-header">
-                    <h4>Disabled Tree</h4>
-                    <p class="f-m-light mt-1">Use the dynamic tree view with checkboxes.</p>
-                  </div>
-                  <div class="card-body">
-                    <div class="disabled-container"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Container-fluid Ends-->
-          </div>
-          <!-- footer start-->
-          <footer class="footer">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-md-12 footer-copyright text-center">
-                  <p class="mb-0">Copyright 2024 © Riho theme by pixelstrap</p>
-                </div>
-              </div>
-            </div>
-          </footer>
-          </div>
-          </div>
-          <!-- latest jquery-->
-          <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-          <!-- Bootstrap js-->
-          <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
-          <!-- feather icon js-->
-          <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
-          <!-- scrollbar js-->
-          <script src="{{ url_for('static', filename='js/scrollbar/simplebar.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/scrollbar/custom.js') }}"></script>
-          <!-- Sidebar jquery-->
-          <script src="{{ url_for('static', filename='js/config.js') }}"></script>
-          <!-- Plugins JS start-->
-          <script src="{{ url_for('static', filename='js/sidebar-menu.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/sidebar-pin.js') }}"></script>
-          <!-- calendar js-->
-          <script src="{{ url_for('static', filename='js/tree/jstree.min.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/tree/tree.min.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/tree/tree.js') }}"></script>
-          <!-- Plugins JS Ends-->
-          <!-- Theme js-->
-          <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-          <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
-          </body>
-          </html>
+        </div>
+    </div>
+</body>
+</html>
