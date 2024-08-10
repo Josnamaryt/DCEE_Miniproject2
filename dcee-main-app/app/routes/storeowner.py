@@ -27,6 +27,7 @@ def allowed_file(filename):
 @login_required
 def get_profile():
     # Assuming current_user has attributes first_name, last_name, email, and gstin
+    global user_data
     user_data = {
         'first_name': current_user.first_name,
         'last_name': current_user.last_name,
@@ -83,25 +84,39 @@ def register_store():
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
-# Store modal
+# Store data
+@storeowner_bp.route('/fetch_stores', methods=['GET'])
+@login_required
+def fetch_stores():
+    user_email = current_user.email
+    stores = list(mongo.db.stores.find({'store_owner_id': user_email}))
+    formatted_stores = []
+    for store in stores:
+        formatted_store = {
+            'id': str(store['_id']),  # Include the store ID to help with debugging
+            'name': store.get('store_name', ''),
+            'address': store.get('store_address', ''),
+            'phone': store.get('store_phone', ''),
+            'email': store.get('store_email', ''),
+            'actions': f'<button onclick="editStore(\'{str(store["_id"])}\')">Edit</button> <button onclick="deleteStore(\'{str(store["_id"])}\')">Delete</button>'
+        }
+        formatted_stores.append(formatted_store)
+    print("Fetched Stores:", formatted_stores)
+    return jsonify({'data': formatted_stores})
+
 @storeowner_bp.route('/get_stores', methods=['GET'])
 @login_required
 def get_stores():
-    # Fetch stores from the 'stores' collection for the current user
-    stores = list(mongo.db.stores.find({'store_owner_id': current_user.email}))
-    for store in stores:
-        store['_id'] = str(store['_id'])
-        store['store_name'] = store.get('store_name', '')
-        store['store_type'] = store.get('store_type', '')
-        store['store_address'] = store.get('store_address', '')
-        store['store_gstin'] = store.get('store_gstin', '')
-        store['store_owner_id'] = store.get('store_owner_id', '')
-        established_date = store.get('store_established_date')
-        if established_date and isinstance(established_date, datetime):
-            store['store_established_date'] = established_date.strftime('%Y-%m-%d')
-        else:
-            store['store_established_date'] = None
-    return jsonify(stores)
+    response = fetch_stores()
+    stores = response.get_json().get('data', [])
+    user_data = {
+        'first_name': 'NA',
+        'last_name': 'NA',
+        'email': 'NA',
+        'gstin': 'NA'
+    }
+    return render_template('storefrontowner/stores.html', user_data=user_data, stores=stores)
+
 
 @storeowner_bp.route('/register_product', methods=['POST'])
 @login_required
@@ -111,19 +126,19 @@ def register_product():
     product_status = request.form.get('product_status')
     product_quantity = request.form.get('product_quantity')
     product_add_date = request.form.get('product_add_date')
-    product_image = request.files.get('product_image')
+    product_image = "Null"
 
     # Basic validation
     if not all([product_name, product_price, product_status, product_quantity, product_add_date, product_image]):
         return jsonify({'success': False, 'message': 'All fields are required'}), 400
 
-    if not allowed_file(product_image.filename):
-        return jsonify({'success': False, 'message': 'Invalid file type'}), 400
+    # if not allowed_file(product_image.filename):
+    #     return jsonify({'success': False, 'message': 'Invalid file type'}), 400
 
-    # Save the product image
-    filename = secure_filename(product_image.filename)
-    image_path = os.path.join(UPLOAD_FOLDER, filename)
-    product_image.save(image_path)
+    # # Save the product image
+    # filename = secure_filename(product_image.filename)
+    # image_path = os.path.join(UPLOAD_FOLDER, filename)
+    # product_image.save(image_path)
 
     product = {
         'product_name': product_name,
@@ -131,7 +146,7 @@ def register_product():
         'product_status': product_status,
         'product_quantity': int(product_quantity),
         'product_add_date': product_add_date,
-        'product_image': image_path,
+        'product_image': "image_path",
         'store_owner_id': current_user.email
     }
 
@@ -144,13 +159,16 @@ def register_product():
 @storeowner_bp.route('/get_products', methods=['GET'])
 @login_required
 def get_products():
-    # Fetch products from the 'products' collection
-    products = list(mongo.db.products.find())
-    
+    # Fetch products from the 'products' collection where store_owner_id matches the current user's email
+    products = list(mongo.db.products.find({'store_owner_id': current_user.email}))
     for product in products:
         product['_id'] = str(product['_id'])
-        product['product_add_date'] = product.get('product_add_date', '').strftime('%Y-%m-%d') if product.get('product_add_date') else None
+        # Convert product_add_date to datetime object before formatting
+        product_add_date = product.get('product_add_date')
+        if product_add_date and isinstance(product_add_date, datetime):
+            product['product_add_date'] = product_add_date.strftime('%Y-%m-%d')
+        else:
+            product['product_add_date'] = None
         product['product_image'] = product.get('product_image', '')
-        
     # Return the products as a JSON response
-    return jsonify(products)
+    return render_template('storefrontowner/products.html', products=products)

@@ -154,7 +154,7 @@
                       <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
                     </svg><span>Store Registration</span></a>
                     <ul class="sidebar-submenu">
-                      <li> <a href="#" data-bs-toggle="modal" data-bs-target=".storeDetailsModal">Store Details</a></li>
+                      <li> <a href="{{ url_for('storeowner.get_stores') }}">Store Details</a></li>
                       <li> <a href="#" data-bs-toggle="modal" data-bs-target="#productRegistrationModal">Product Registration</a></li>
                       <li> <a href="#" data-bs-toggle="modal" data-bs-target="#productDetailsModal">Product Details</a></li>
                     </ul>
@@ -312,7 +312,7 @@
       
           <label class="form-label col-12 m-0" for="product_image">Product Image <span class="txt-danger">*</span></label>
           <div class="col-12 custom-input">
-              <input class="form-control" id="product_image" name="product_image" type="file" accept="image/*" required>
+              <input class="form-control" id="product_image" name="product_image" type="file" accept="image/*">
               <div class="valid-feedback">Looks good!</div>
               <div class="invalid-feedback">Product image is required.</div>
           </div>
@@ -335,6 +335,7 @@
               <button type="submit" class="btn btn-primary">Register Product</button>
           </div>
         </form>
+        <div id="productRegistrationMessage" style="display: none;"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -497,6 +498,34 @@
         $(document).ready(function() {
           $('#productRegistrationModal').on('shown.bs.modal', function() {
             console.log('Product Registration modal shown');
+          });
+
+          $('#productRegistrationForm').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            var formData = new FormData(this);
+
+            $.ajax({
+              type: 'POST',
+              url: url,
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function(data) {
+                if (data.success) {
+                  $('#productRegistrationMessage').html('<div class="alert alert-success">' + data.message + '</div>');
+                  $('#productRegistrationMessage').show();
+                } else {
+                  $('#productRegistrationMessage').html('<div class="alert alert-danger">' + data.message + '</div>');
+                  $('#productRegistrationMessage').show();
+                }
+              },
+              error: function() {
+                $('#productRegistrationMessage').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                $('#productRegistrationMessage').show();
+              }
+            });
           });
         });
       </script>
