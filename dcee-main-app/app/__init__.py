@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_pymongo import PyMongo
 from flask_login import LoginManager, UserMixin
 from bson import ObjectId
@@ -18,6 +18,10 @@ def create_app(config_class='config.DevelopmentConfig'):
         mongo.init_app(app)
     except Exception as e:
         print(f"Error initializing Flask-PyMongo: {str(e)}")
+
+    @app.route('/')
+    def index():
+        return render_template('index.html')
     
     # Mail configuration
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'

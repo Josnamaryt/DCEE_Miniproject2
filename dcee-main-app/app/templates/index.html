@@ -1,525 +1,193 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Riho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
-    <meta name="keywords" content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
-    <meta name="author" content="pixelstrap">
-    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
-    <title>DCEE</title>
-    <!-- Google font-->
-    <link href="https://fonts.googleapis.com/css?family=Rubik:400,400i,500,500i,700,700i&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900&amp;display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/icofont.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='svg/landing-icons.svg') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/slick.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/slick-theme.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/animate.css') }}">
-    <!-- Bootstrap css-->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendors/bootstrap.css') }}">
-    <!-- App css-->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- Responsive css-->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
-  </head>
-  <body class="landing-page">
-    <!-- tap on top starts-->
-    <div class="tap-top"><i data-feather="chevrons-up"></i></div>
-    <!-- tap on tap ends-->
-    <!-- page-wrapper Start-->
-    <div class="landing-page"><span class="cursor"><span class="cursor-move-inner"><span class="cursor-inner"></span></span><span class="cursor-move-outer"><span class="cursor-outer"> </span></span></span>
-      <!-- Page Body Start-->
-      <div class="landing-home" id="home">
-        <div class="container-fluid"> 
-          <div class="sticky-header">
-            <header>
-              <nav class="navbar navbar-b navbar-dark navbar-trans navbar-expand-xl fixed-top nav-padding" id="sidebar-menu"><a class="navbar-brand p-0" href="#"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/landing_logo.png') }}" alt=""></a>
-                <button class="navbar-toggler navabr_btn-set custom_nav" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDefault" aria-controls="navbarDefault" aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
-                <div class="navbar-collapse justify-content-center collapse hidenav" id="navbarDefault">
-                  <ul class="navbar-nav navbar_nav_modify" id="scroll-spy">
-                    <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
-                    <li class="nav-item"> <a class="nav-link" id="page" href="#demo">Page</a></li>
-                    <li class="nav-item"><a class="nav-link" id="Feature" href="#framework">Feature</a></li>
-                    <li class="nav-item"><a class="nav-link" id="Portfolio" href="https://themeforest.net/user/pixelstrap/portfolio" target="_blank">Portfolio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLSe6hKUXw_By-pg7yabL0FxoTM02ZPTxoXy8PE3yboRuUCuyeA/viewform" target="_blank">Hire Us</a></li>
-                    <li class="nav-item"><a class="nav-link" id="documentation" href="https://docs.pixelstrap.net/admin/riho/document/" target="_blank">Documentation</a></li>
-                  </ul>
-                </div>
-                <div class="buy-btn"><a class="nav-link js-scroll" href="https://themeforest.net/user/pixelstrap/portfolio" target="_blank">Buy Now</a></div>
-              </nav>
-            </header>
-          </div>
-          <div class="row justify-content-center">
-            <div class="col-lg-8 col-sm-10">
-              <div class="best-selling"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/selling-product.png') }}" alt="selling-product">
-                <div class="img-shadow"></div>
-              </div>
-              <div class="nft-marketplace"> <img class="img-fluid" src="{{ url_for('static', filename='images/landing/nft-marketplace.png') }}" alt="nft-marketplace">
-                <div class="nft-marketplace-shadow"></div>
-              </div>
-              <div class="content text-center">
-                <div>
-                  <h1 class="text-center">The Premium Choice<span class="d-flex align-items-center justify-content-center pt-2 sub-content"><span>Admin</span>
-                      <button class="animate-button-slide"><span class="notification-slider"><span class="d-flex h-100"><span class="mb-0 f-w-400"> <span class="font-primary">Ecommerce</span></span><i class="icon-arrow-top-right f-light"> </i></span><span class="d-flex h-100"><span class="mb-0 f-w-400"><span class="f-light">PROJECT</span></span></span><span class="d-flex h-100"> <span class="mb-0 f-w-400"><span class="f-light">Default</span></span></span></span></button><span>HTML Template</span></span></h1>
-                  <div class="arrow-animate">
-                    <svg>
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#animated-arrow') }}"> </use>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="user-content"> <span class="text-center">The incredible and user-friendly HTML was created using flexible, contemporary, and strong unique parts.</span></div>
-              <div class="star-animate"> <img class="img-fluid" src="{{ url_for('static', filename='images/landing/Vector.png') }}" alt="Vector"></div>
-              <div class="screen-1"> <img class="img-fluid" src="{{ url_for('static', filename='images/landing/demo/dashboard-1.png') }}" alt="dashboard-img"></div>
-              <div class="screen-2"> <img class="img-fluid sidebar-cuts-image" src="{{ url_for('static', filename='images/landing/sidebarcuts.png') }}" alt="sidebarcuts">
-                <div class="screen-sidebar"></div>
-              </div>
-              <div class="total-revenue-img"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/totalrevenue.png') }}" alt="totalrevenue">
-                <div class="total-revenue-shadow"> </div>
-              </div>
-              <div class="star-img"> <img class="img-fluid start-animate fa-spin" src="{{ url_for('static', filename='images/landing/star.png') }}" alt="star"></div>
-              <div class="new-user-img"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/newuser.png') }}" alt="new-user">
-                <div class="new-user-shadow"> </div>
-              </div>
-              <div class="star-img-left">  <img class="img-fluid start-animate-rotate fa-spin" src="{{ url_for('static', filename='images/landing/star.png') }}" alt="star"></div>
+    <title>DCEE - Empowering Indian Small Businesses</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #4338ca, 0 0 10px #4338ca, 0 0 15px #4338ca;
+            }
+            to {
+                text-shadow: 0 0 10px #4338ca, 0 0 20px #4338ca, 0 0 30px #4338ca;
+            }
+        }
+        .hover-grow {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-grow:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(67, 56, 202, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+    <div class="navbar bg-base-100">
+        <div class="navbar-start">
+            <div class="dropdown">
+                <label tabindex="0" class="btn btn-ghost lg:hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+                </label>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a>Home</a></li>
+                    <li><a>About</a></li>
+                    <li><a>Features</a></li>
+                    <li><a>Contact</a></li>
+                </ul>
             </div>
-          </div>
+            <a class="btn btn-ghost normal-case text-xl glow">DCEE</a>
         </div>
-      </div>
-      <!-- demo section  -->
-      <section class="demo-section section-py-space" id="demo">
-        <div class="title text-center">
-          <h5>Trending & Clean Design Collection</h5>
-          <h2 class="mb-lg-2 mb-0">Creative & Unique Admin Layout</h2>
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1">
+                <li><a class="hover:text-primary">Home</a></li>
+                <li><a class="hover:text-primary">About</a></li>
+                <li><a class="hover:text-primary">Features</a></li>
+                <li><a class="hover:text-primary">Contact</a></li>
+            </ul>
         </div>
-        <div class="container"> 
-          <div class="row demo-block demo-imgs">
-            <div class="col-lg-4 col-sm-6">
-              <div class="demo-box dashboard-images">
-                <div class="layout-name">
-                  <div class="riho-demo-img">
-                    <ul class="dot-group"> 
-                      <li></li>
-                      <li></li>
-                      <li></li>
+        <div class="navbar-end">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-primary mr-2 hover-grow">Login</a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-secondary hover-grow">Create Account</a>
+        </div>
+    </div>
+
+    <div class="hero min-h-screen bg-base-200">
+        <div class="hero-content text-center">
+            <div class="max-w-md">
+                <h1 class="text-5xl font-bold mb-8 glow">DCEE</h1>
+                <p class="text-xl mb-8">Empowering small and local Indian businesses to thrive in the digital age.</p>
+                <button class="btn btn-primary btn-lg hover-grow">Get Started</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl font-bold mb-8 text-center glow">Our Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Digital Presence</h2>
+                    <p>Enhance your online visibility and reach more customers.</p>
+                </div>
+            </div>
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Rural Payments</h2>
+                    <p>Facilitate easy and secure transactions in rural areas.</p>
+                </div>
+            </div>
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Inventory Management</h2>
+                    <p>Optimize your stock and streamline your business operations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl font-bold mb-8 text-center glow">Who We Serve</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Digital Storefront Owners</h2>
+                    <ul class="list-disc list-inside">
+                        <li>Manage your profile</li>
+                        <li>Manage products</li>
+                        <li>View and manage customers</li>
                     </ul>
-                  </div><a href="index.html" target="_blank">Default Dashboard</a>
                 </div>
-                <div class="img-wrraper"><a href="index.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/demo/1.jpg') }}" alt=""></a></div>
-              </div>
             </div>
-            <div class="col-lg-4 col-sm-6">
-              <div class="demo-box dashboard-images">
-                <div class="layout-name">
-                  <div class="riho-demo-img">
-                    <ul class="dot-group"> 
-                      <li></li>
-                      <li></li>
-                      <li></li>
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Customers</h2>
+                    <ul class="list-disc list-inside">
+                        <li>Register and manage profile</li>
+                        <li>Buy products</li>
+                        <li>Manage cart and transactions</li>
                     </ul>
-                  </div><a href="dashboard-02.html" target="_blank">Ecommerce Dashboard</a>
                 </div>
-                <div class="img-wrraper"><a href="dashboard-02.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/demo/2.jpg') }}" alt=""></a></div>
-              </div>
             </div>
-            <div class="col-lg-4 col-sm-6"> 
-              <div class="demo-box dashboard-images">
-                <div class="layout-name">
-                  <div class="riho-demo-img">
-                    <ul class="dot-group"> 
-                      <li></li>
-                      <li></li>
-                      <li></li>
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Admins</h2>
+                    <ul class="list-disc list-inside">
+                        <li>Manage user profiles</li>
+                        <li>Add and edit products</li>
+                        <li>Manage security and transactions</li>
                     </ul>
-                  </div><a href="dashboard-03.html" target="_blank">Project Dashboard</a>
                 </div>
-                <div class="img-wrraper"> <a href="dashboard-03.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/demo/3.jpg') }}" alt=""></a></div>
-              </div>
             </div>
-          </div>
         </div>
-      </section>
-      <!--frameworks start-->
-      <section class="framework section-py-space light-bg">
-        <div class="container-lg container-fluid"> 
-          <div class="row"> 
-            <div class="col-sm-12 wow pulse">
-              <div class="title text-center"> 
-                <h5>10+ frameworks available</h5>
-                <h2 class="mb-lg-2 mb-0">Top Frameworks</h2>
-              </div>
-            </div>
-            <div class="col-sm-12 framworks"> 
-              <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane fade show active" id="pills-home" role="tabpanel">
-                  <ul class="framworks-list">
-                    <li class="box wow fadeInUp">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/bootstrap.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Bootstrap 5</h5>
-                    </li>
-                    <li class="box wow fadeInUp"> 
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/css.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">CSS</h5>
-                    </li>
-                    <li class="box wow fadeInUp">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/sass.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Sass</h5>
-                    </li>
-                    <li class="box wow fadeInUp">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/pug.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Pug</h5>
-                    </li>
-                    <li class="box wow fadeInUp">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/npm.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">NPM</h5>
-                    </li>
-                    <li class="box wow fadeInUp">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/charts.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Charts</h5>
-                    </li>
-                    <li class="box wow fadeInUp">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/gulp.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Gulp</h5>
-                    </li>
-                    <li class="box wow fadeInUp">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/web-pack.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Web pack</h5>
-                    </li>
-                    <li class="box wow bounceIn">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/kit.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Starter Kit</h5>
-                    </li>
-                    <li class="box wow bounceIn">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/uikits.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">40+ UI Kits</h5>
-                    </li>
-                    <li class="box wow bounceIn">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/builders.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Builders</h5>
-                    </li>
-                    <li class="box wow bounceIn">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/iconset.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">11 Icon Sets</h5>
-                    </li>
-                    <li class="box wow bounceIn"> 
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/forms.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Forms</h5>
-                    </li>
-                    <li class="box wow bounceIn">
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/table.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">Tables</h5>
-                    </li>
-                    <li class="box wow bounceIn"> 
-                      <div><img src="{{ url_for('static', filename='images/landing/icon/html/apps.png') }}" alt=""></div>
-                      <h5 class="mb-0 f-w-600">17+ Apps</h5>
-                    </li>
-                  </ul>
+    </div>
+
+    <div class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl font-bold mb-8 text-center glow">Key Modules</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Auth</h2>
+                    <ul class="list-disc list-inside">
+                        <li>Registration and login</li>
+                        <li>Password management</li>
+                        <li>Email reset</li>
+                    </ul>
                 </div>
-              </div>
             </div>
-          </div>
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Platform</h2>
+                    <ul class="list-disc list-inside">
+                        <li>Dashboard</li>
+                        <li>Profile management</li>
+                        <li>Storefront management</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Payment Module</h2>
+                    <p>Secure and easy money transfers</p>
+                </div>
+            </div>
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Analytics</h2>
+                    <p>Insights on storefronts, customers, and products</p>
+                </div>
+            </div>
+            <div class="card bg-base-100 shadow-xl hover-grow">
+                <div class="card-body">
+                    <h2 class="card-title">Chatbot</h2>
+                    <p>AI-powered assistance for users</p>
+                </div>
+            </div>
         </div>
-      </section>
-      <!--Applications start-->
-      <section class="application-section section-py-space application-sec" id="Applications">
-        <div class="title text-center">
-          <h5>Usefull Application</h5>
-          <h2 class="mb-lg-2 mb-0">Fast & Powerful Applications </h2>
+    </div>
+
+    <footer class="footer footer-center p-10 bg-base-200 text-base-content rounded">
+        <div class="grid grid-flow-col gap-4">
+            <a class="link link-hover">About us</a> 
+            <a class="link link-hover">Contact</a> 
+            <a class="link link-hover">Privacy Policy</a> 
+            <a class="link link-hover">Terms of Service</a>
+        </div> 
+        <div>
+            <div class="grid grid-flow-col gap-4">
+                <a><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="fill-current"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg></a> 
+                <a><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="fill-current"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path></svg></a> 
+                <a><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="fill-current"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path></svg></a>
+            </div>
+        </div> 
+        <div>
+            <p>Copyright © 2023 - All right reserved by DCEE</p>
         </div>
-        <div class="container"> 
-          <div class="row demo-block"> 
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box">
-                <div class="img-wrraper"> <a href="social-app.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/1.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">        
-                  <div class="demo-title">           <a class="btn btn-primary" href="social-app.html" target="_blank">Social App</a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box"> 
-                <div class="img-wrraper"><a href="knowledgebase.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/2.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">
-                  <div class="demo-title"> <a class="btn btn-primary" href="knowledgebase.html" target="_blank">Knowledgebase                           </a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box"> 
-                <div class="img-wrraper"><a href="support-ticket.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/3.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">                       
-                  <div class="demo-title"><a class="btn btn-primary" href="support-ticket.html" target="_blank">Support Ticket                           </a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box">
-                <div class="img-wrraper"> <a href="letter-box.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/4.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">                       
-                  <div class="demo-title"><a class="btn btn-primary" href="letter-box.html" target="_blank">Email Dashboard                           </a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box">
-                <div class="img-wrraper"><a href="to-do.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/5.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">                 
-                  <div class="demo-title">                  <a class="btn btn-primary" href="to-do.html" target="_blank">To-Do</a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box">
-                <div class="img-wrraper"><a href="job-cards-view.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/6.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">                       
-                  <div class="demo-title"><a class="btn btn-primary" href="job-cards-view.html" target="_blank">Job Search                           </a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box">
-                <div class="img-wrraper"><a href="product.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/7.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">                       
-                  <div class="demo-title"><a class="btn btn-primary" href="product.html" target="_blank">Ecommerce                           </a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box">
-                <div class="img-wrraper"><a href="kanban.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/8.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">                       
-                  <div class="demo-title"><a class="btn btn-primary" href="kanban.html" target="_blank">Kanban                           </a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box">
-                <div class="img-wrraper"><a href="file-manager.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/9.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">                       
-                  <div class="demo-title"><a class="btn btn-primary" href="file-manager.html" target="_blank">File Manager                           </a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box">
-                <div class="img-wrraper"><a href="projects.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/10.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">                       
-                  <div class="demo-title"><a class="btn btn-primary" href="projects.html" target="_blank">Project </a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box"> 
-                <div class="img-wrraper"><a href="contacts.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/11.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">                       
-                  <div class="demo-title"><a class="btn btn-primary" href="contacts.html" target="_blank">Contacts                           </a></div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-4 col-lg-4 col-sm-6 wow pulse">
-              <div class="app-box">
-                <div class="img-wrraper"><a href="private-chat.html" target="_blank"><img class="img-fluid" src="{{ url_for('static', filename='images/landing/application/12.jpg') }}" alt=""></a></div>
-                <div class="demo-detail">
-                  <div class="demo-title"><a class="btn btn-primary" href="private-chat.html" target="_blank">Chat</a></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!--choose Riho -->
-      <section class="section-py-space feature-section" id="framework"> 
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-12 wow pulse"> 
-              <div class="title text-center">
-                <h5>Why you choose Riho</h5>
-                <h2 class="mb-lg-2 mb-0">Unique Features </h2>
-              </div>
-            </div>
-          </div>
-          <div class="row g-4">
-            <div class="col-xxl-3 col-lg-4 col-sm-6 mb-4">
-              <div class="feature-box common-card bg-feature"> 
-                <div class="feature-icon bg-white">
-                  <div><img src="{{ url_for('static', filename='images/landing/feature-icon/1.svg') }}" alt="feature-icon"></div>
-                </div>
-                <h5 class="text-center">Quality & Clean Code</h5>
-                <p class="mb-0 f-light">All you need to know of using clean code as a manager to make your team and your software awesome.</p>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-sm-6">
-              <div class="feature-box common-card bg-feature">
-                <div class="feature-icon bg-white">
-                  <div><img src="{{ url_for('static', filename='images/landing/feature-icon/2.svg') }}" alt="feature-icon"></div>
-                </div>
-                <h5 class="text-center">Bootstrap v5.0 </h5>
-                <p class="mb-0 f-light">Powerful feature-packed frontend toolkit. Build and customize with Sass, utilize prebuilt grid system.</p>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-sm-6"> 
-              <div class="feature-box common-card bg-feature">
-                <div class="feature-icon bg-white"> 
-                  <div><img src="{{ url_for('static', filename='images/landing/feature-icon/3.svg') }}" alt="feature-icon"></div>
-                </div>
-                <h5 class="text-center">Handmade Icons</h5>
-                <p class="mb-0 f-light">let’s learn how to svg icons in riho admin template, handmade icons different materials.</p>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-sm-6"> 
-              <div class="feature-box common-card bg-feature">
-                <div class="feature-icon bg-white"> 
-                  <div><img src="{{ url_for('static', filename='images/landing/feature-icon/4.svg') }}" alt="feature-icon"></div>
-                </div>
-                <h5 class="text-center">Limitless Components</h5>
-                <p class="mb-0 f-light">The limitless layout collection and UI kit biggest collection of layouts for web design.</p>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-sm-6"> 
-              <div class="feature-box common-card bg-feature">
-                <div class="feature-icon bg-white"> 
-                  <div><img src="{{ url_for('static', filename='images/landing/feature-icon/5.svg') }}" alt="feature-icon"></div>
-                </div>
-                <h5 class="text-center">Easy Customizable</h5>
-                <p class="mb-0 f-light">Easy Step-By-Step Guide for Beginners.customize your layout, settings and content.</p>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-sm-6"> 
-              <div class="feature-box common-card bg-feature">
-                <div class="feature-icon bg-white"> 
-                  <div><img src="{{ url_for('static', filename='images/landing/feature-icon/6.svg') }}" alt="feature-icon"></div>
-                </div>
-                <h5 class="text-center">Responsive </h5>
-                <p class="mb-0 f-light">Use Responsive Design to Connect with all Device designing your website for mobile devices.</p>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-sm-6">
-              <div class="feature-box common-card bg-feature">
-                <div class="feature-icon bg-white">
-                  <div><img src="{{ url_for('static', filename='images/landing/feature-icon/7.svg') }}" alt="feature-icon"></div>
-                </div>
-                <h5 class="text-center">Premium Support</h5>
-                <p class="mb-0 f-light">We are always be their for your support and you are facing some issues you can create ticket.</p>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-4 col-sm-6"> 
-              <div class="feature-box common-card bg-feature">
-                <div class="feature-icon bg-white">
-                  <div><img src="{{ url_for('static', filename='images/landing/feature-icon/8.svg') }}" alt="feature-icon"></div>
-                </div>
-                <h5 class="text-center">Colors Options</h5>
-                <p class="mb-0 f-light">Riho provide unlimited main color option.other colors you can change easily using scss variables.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="unique-cards section-py-space light-bg position-relative">
-        <div class="support-title">
-          <h2>we give it as we think that excellent support is needed</h2>
-          <p>“fast issue resolution, and dedicated experts for a seamless experience”</p>
-          <div class="premium-button"> <a class="txt-light btn bg-primary f-w-700 support-button" href="https://support.pixelstrap.com/portal/en/signin" target="_blank">Premium Support</a></div>
-        </div>
-        <div class="pricing-section">
-          <div class="container"> 
-            <div class="row align-items-center">
-              <div class="col-12 support-img"> <img class="img-fluid" src="{{ url_for('static', filename='images/landing/unique.png') }}" alt="">
-                <h4>Premium Support</h4>
-                <div class="license-title"> 
-                  <h3>Our License</h3>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="marquee">
-          <div class="marquee-name"> 
-            <p class="big-title">Premium Support</h5>
-              <p class="mb-0 f-light">We are always be their for your support and you are facing some issues you can create ticket.</p>
-            </div>
-          </div>
-          <div class="col-xxl-3 col-lg-4 col-sm-6"> 
-            <div class="feature-box common-card bg-feature">
-              <div class="feature-icon bg-white">
-                <div><img src="{{ url_for('static', filename='images/landing/feature-icon/8.svg') }}" alt="feature-icon"></div>
-              </div>
-              <h5 class="text-center">Colors Options</h5>
-              <p class="mb-0 f-light">Riho provide unlimited main color option.other colors you can change easily using scss variables.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="unique-cards section-py-space light-bg position-relative">
-      <div class="support-title">
-        <h2>we give it as we think that excellent support is needed</h2>
-        <p>“fast issue resolution, and dedicated experts for a seamless experience”</p>
-        <div class="premium-button"> <a class="txt-light btn bg-primary f-w-700 support-button" href="https://support.pixelstrap.com/portal/en/signin" target="_blank">Premium Support</a></div>
-      </div>
-      <div class="pricing-section">
-        <div class="container"> 
-          <div class="row align-items-center">
-            <div class="col-12 support-img"> <img class="img-fluid" src="{{ url_for('static', filename='images/landing/unique.png') }}" alt="">
-              <h4>Premium Support</h4>
-              <div class="license-title"> 
-                <h3>Our License</h3>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="marquee">
-        <div class="marquee-name"> 
-          <p class="big-title">Premium Support. Our License . Premium Support .</p>
-        </div>
-      </div>
-    </section>
-    <section class="landing-footer section-py-space" id="footer">
-      <div class="custom-container">
-        <div class="row p-0 m-0">
-          <div class="col-12"> 
-            <div class="footer-contain">
-              <div class="rating-wrraper"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt="logo"></div>
-              <h2 class="f-w-600">"Riho Globally Trusted HTML Admin Theme"</h2>
-              <p class="f-w-500">Copyright 2024-25 © Riho All rights reserved.</p>
-              <ul class="star-rate"> 
-                <li><i class="fa fa-star font-warning"></i></li>
-                <li><i class="fa fa-star font-warning"></i></li>
-                <li><i class="fa fa-star font-warning"></i></li>
-                <li><i class="fa fa-star font-warning">   </i></li>
-                <li> <i class="fa fa-star font-warning"> </i></li>
-              </ul>
-              <div class="btn-footer"> <a class="btn btn-lg btn-primary" target="_blank" href="index.html" data-bs-original-title="" title="">Check Now</a><a class="btn btn-lg btn-secondary" target="_blank" href=" https://themeforest.net/user/pixelstrap/portfolio" data-bs-original-title="" title="">Buy Now</a><a class="btn btn-lg btn-success" target="_blank" href="https://themeforest.net/user/pixelstrap/portfolio" data-bs-original-title="" title="">Rate Us</a></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-  <!-- latest jquery-->
-  <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/cursor/stats.min.js') }}"> </script>
-  <!-- Bootstrap js-->
-  <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
-  <!-- feather icon js-->
-  <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/icons/feather-icon/feather-icon.js') }}"></script>
-  <!-- Plugins JS start-->
-  <script src="{{ url_for('static', filename='js/tooltip-init.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/animation/wow/wow.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/landing_sticky.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/slick/slick.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/slick/slick.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/landing-slick.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/header-slick.js') }}"></script>
-  <!-- Plugins JS Ends-->
+    </footer>
 </body>
 </html>

@@ -6,14 +6,12 @@ from bson import ObjectId  # Import ObjectId for proper ID handling
 
 customer_bp = Blueprint('customer', __name__)
 
-
 @customer_bp.route('/dashboard')
 @login_required
 def dashboard():
-    # Fetch the full user data from the database
-    global user_data
-    user_data = mongo.db.users.find_one({"_id": ObjectId(current_user.id)})
-    return render_template('customer/dashboard.html', user=user_data)
+    # Fetch all stores from the database
+    stores = list(mongo.db.stores.find({}, {'name': 1}))
+    return render_template('customer/dashboard.html', user=current_user, stores=stores)
 
 @customer_bp.route('/update_profile', methods=['POST'])
 @login_required

@@ -1,0 +1,42 @@
+* bab6878 - Josnamaryt, 88 minutes ago : last
+* 45d95ea - Josnamaryt, 4 hours ago : customer profile
+* b0363fb - Josnamaryt, 7 hours ago : profiles,edit delete
+* 1d5f792 - Josnamaryt, 25 hours ago : product, store completed
+* 361af60 - Josnamaryt, 35 hours ago : display details stores
+* 7d03df0 - Josnamaryt, 2 days ago : db
+* da8d7ad - Josnamaryt, 2 days ago : changes
+* 18cb5b9 - Josnamaryt, 3 days ago : modals for storeowner
+* 36ed7a8 - Josnamaryt, 3 days ago : modals store
+* 198cf6f - Josnamaryt, 4 days ago : add store
+* cd2cd83 - Josnamaryt, 4 days ago : inst
+* d55268b - Josnamaryt, 5 days ago : just
+* 418c825 - Josnamaryt, 8 days ago : modal
+* 25d340a - Josnamaryt, 8 days ago : sample1
+* c42b8f7 - Josnamaryt, 9 days ago : Figma
+* 855ec57 - Josnamaryt, 10 days ago : logout inst
+* 136391d - Josnamaryt, 11 days ago : instructor dashb
+* 58b1494 - Josnamaryt, 12 days ago : sample
+* e513b4f - Josnamaryt, 13 days ago : sto logout
+* dae66d3 - Josnamaryt, 13 days ago : admin page
+* bb8ce38 - Josnamaryt, 2 weeks ago : storefront dashboard
+* 28a0301 - Josnamaryt, 2 weeks ago : instructor
+* 601e8a3 - Josnamaryt, 2 weeks ago : forgotpassword, user dashboards
+* 70f5199 - Josnamaryt, 3 weeks ago : new
+* 1343812 - Josnamaryt, 3 weeks ago : img
+* ab22ece - Josnamaryt, 3 weeks ago : forgot password
+* 065879c - Josnamaryt, 3 weeks ago : gstin added
+* f2da701 - Josnamaryt, 3 weeks ago : modal completed
+* 316aa64 - Josnamaryt, 3 weeks ago : data table
+* d87c76e - Josnamaryt, 3 weeks ago : error
+* a3fa4d8 - Josnamaryt, 3 weeks ago : modal
+* 165a37b - Josnamaryt, 3 weeks ago : template
+* 408cc14 - Josnamaryt, 3 weeks ago : template for admin
+* 47d1a8f - Josnamaryt, 3 weeks ago : homepage
+* 237329c - Josnamaryt, 4 weeks ago : begining of google auth
+* 29675a7 - Josnamaryt, 4 weeks ago : login & reg
+* b956cc3 - Josnamaryt, 4 weeks ago : login reg
+* d9bc023 - Josnamaryt, 5 weeks ago : c
+* e24a625 - Josnamaryt, 6 weeks ago : today
+* baa1c24 - Josnamaryt, 6 weeks ago : Merge branch 'main' of https://github.com/Josnamaryt/DCEE_Miniproject2
+* 1a581f7 - Josnamaryt, 6 weeks ago : docss
+* e47386e - Josnamaryt, 8 weeks ago : Initial commit

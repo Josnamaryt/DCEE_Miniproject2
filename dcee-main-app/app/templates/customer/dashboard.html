@@ -159,7 +159,7 @@
             <div class="sidebar-wrapper">
               <div>
                 <div class="logo-wrapper">
-                  <a href="{{ url_for('admin.dashboard') }}"><img class="img-fluid for-light" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt=""><img class="img-fluid for-dark" src="{{ url_for('static', filename='images/logo/logo_dark.png') }}" alt=""></a>
+                  <a href="{{ url_for('admin.dashboard') }}"><img class="img-fluid for-light" src="{{ url_for('static', filename='images/logo/1.png') }}" alt=""><img class="img-fluid for-dark" src="{{ url_for('static', filename='images/logo/logo_dark.png') }}" alt=""></a>
                   <div class="back-btn"><i class="fa fa-angle-left"></i></div>
                   <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
                 </div>
@@ -218,46 +218,35 @@
                 <div class="page-title">
                   <div class="row">
                     <div class="col-6">
-                      <h4>STORES</h4>
+                      <h4>Dashboard</h4>
                     </div>
                     <div class="col-6">
                       <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">
+                        <li class="breadcrumb-item"><a href="{{ url_for('customer.dashboard') }}">
                           <svg class="stroke-icon">
                             <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
                           </svg></a></li>
-                        <li class="breadcrumb-item active">Stores Available for you</li>
+                        <li class="breadcrumb-item active">Dashboard</li>
                       </ol>
                     </div>
                   </div>
                 </div>
               </div>
               <!-- Container-fluid starts-->
-               
               <div class="container-fluid">
                 <div class="row">
-                  <div class="col-sm-12 col-xl-6">
-                    <div class="card shadow-none border">
+                  <div class="col-sm-12">
+                    <div class="card">
                       <div class="card-header">
-                        <h4>Without shadow Card</h4>
-                        <div class="card-header-right">
-                          <ul class="list-unstyled card-option">
-                            <li><i class="fa fa-spin fa-cog"></i></li>
-                            <li><i class="view-html fa fa-code"></i></li>
-                            <li><i class="icofont icofont-maximize full-card"></i></li>
-                            <li><i class="icofont icofont-minus minimize-card"></i></li>
-                            <li><i class="icofont icofont-refresh reload-card"></i></li>
-                            <li><i class="icofont icofont-error close-card"></i></li>
-                          </ul>
-                        </div>
+                        <h5>Stores Overview</h5>
                       </div>
                       <div class="card-body">
-                        <div class="flex-space flex-wrap align-items-center"><img class="tab-img" src="{{ url_for('static', filename='images/avtar/3.jpg') }}" alt="profile">
-                          <p> <strong>Visit Us: </strong>	2600 Hollywood Blvd,Florida, United States-	33020<br><strong>Mail Us:</strong>contact@us@gmail.com<br><strong>Contact Number: </strong>(954) 357-7760</p>
-                        </div>
-                        <div class="code-box-copy">
-                          demo
-                        </div>
+                        <h6>Total Stores: {{ stores|length }}</h6>
+                        <ul class="list-unstyled mt-3">
+                          {% for store in stores %}
+                            <li>{{ store.name }}</li>
+                          {% endfor %}
+                        </ul>
                       </div>
                     </div>
                   </div>
