@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from app import login_manager, mongo
+from bson import ObjectId
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -88,3 +89,26 @@ def get_storefrontowners():
     
     # Return the storefront owners as a JSON response
     return jsonify(storefrontowners)
+
+@admin_bp.route('/get_stores', methods=['GET'])
+@login_required
+def get_stores():
+    stores = list(mongo.db.stores.find({}, {'store_name': 1, '_id': 0}))
+    return jsonify(stores)
+
+@admin_bp.route('/get_products', methods=['GET'])
+@login_required
+def get_products():
+    products = list(mongo.db.products.find({}, {'product_name': 1, '_id': 0}))
+    return jsonify(products)
+
+
+@admin_bp.route('/get_admin_profile', methods=['GET'])
+@login_required
+def get_admin_profile():
+    admin = current_user
+    return jsonify({
+        'first_name': admin.first_name,
+        'last_name': admin.last_name,
+        'email': admin.email
+    })

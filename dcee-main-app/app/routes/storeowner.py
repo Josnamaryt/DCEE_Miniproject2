@@ -26,18 +26,21 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @storeowner_bp.route('/get_profile', methods=['GET'])
 @login_required
+
 def get_profile():
-    # Assuming current_user has attributes first_name, last_name, email, and gstin
-    global user_data
-    user_data = {
-        'first_name': current_user.first_name,
-        'last_name': current_user.last_name,
-        'email': current_user.email,
-        'gstin': current_user.gstin
-    }
-    return jsonify(user_data)
+    user = mongo.db.users.find_one({'email': current_user.email})
+    if user:
+        profile_data = {
+            'first_name': user.get('first_name', ''),
+            'email': user.get('email', ''),
+            'phone': user.get('phone', '')
+        }
+        return jsonify({'success': True, 'data': profile_data})
+    else:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
 
 @storeowner_bp.route('/dashboard')
 @login_required
@@ -60,27 +63,45 @@ def dashboard():
 
 @storeowner_bp.route('/register_store', methods=['POST'])
 @login_required
+
 def register_store():
     store_name = request.form.get('store_name')
+    store_type = request.form.get('store_type')
     store_address = request.form.get('store_address')
     store_gstin = request.form.get('store_gstin')
-    store_owner_id = current_user.email
-    store_type = request.form.get('store_type')
     store_established_date = request.form.get('store_established_date')
-    
-    # Basic validation
-    if not all([store_name, store_address, store_gstin, store_type, store_established_date]):
+
+    # Server-side validation
+    if not all([store_name, store_type, store_address, store_gstin, store_established_date]):
         return jsonify({'success': False, 'message': 'All fields are required'}), 400
+
+    # Validate store name and type
+    if not re.match(r'^[A-Za-z\s]+$', store_name) or not re.match(r'^[A-Za-z\s]+$', store_type):
+        return jsonify({'success': False, 'message': 'Store name and type should not contain numbers'}), 400
+
+    # Validate GSTIN
+    if not re.match(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$', store_gstin):
+        return jsonify({'success': False, 'message': 'Invalid GSTIN format'}), 400
+
+    # Check if store already exists
+    existing_store = mongo.db.stores.find_one({
+        '$or': [
+            {'store_name': store_name},
+            {'store_gstin': store_gstin}
+        ]
+    })
+    if existing_store:
+        return jsonify({'success': False, 'message': 'A store with this name or GSTIN already exists'}), 400
 
     store = {
         'store_name': store_name,
         'store_type': store_type,
         'store_address': store_address,
         'store_gstin': store_gstin,
-        'store_owner_id': store_owner_id,
-        'store_established_date': store_established_date
+        'store_established_date': store_established_date,
+        'store_owner_id': current_user.email
     }
-    
+
     try:
         mongo.db.stores.insert_one(store)
         return jsonify({'success': True, 'message': 'Store registered successfully'}), 201
@@ -347,5 +368,28 @@ def get_product_overview():
                                out_of_stock_products=out_of_stock_products,
                                discontinued_products=discontinued_products,
                                top_products=top_products)
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@storeowner_bp.route('/update_profile', methods=['POST'])
+@login_required
+def update_profile():
+    first_name = request.form.get('first_name')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+
+    if not all([first_name, email, phone]):
+        return jsonify({'success': False, 'message': 'All fields are required'}), 400
+
+    try:
+        mongo.db.users.update_one(
+            {'email': current_user.email},
+            {'$set': {
+                'first_name': first_name,
+                'email': email,
+                'phone': phone
+            }}
+        )
+        return jsonify({'success': True, 'message': 'Profile updated successfully'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500

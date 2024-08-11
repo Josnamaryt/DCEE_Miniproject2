@@ -90,6 +90,7 @@ def register():
         first_name = request.form['first_name']
         last_name = request.form['last_name']
         role = request.form['role']
+        gstin = request.form.get('gstin')  # Add this line to get GSTIN
         
         password_hash = generate_password_hash(password)
         created_at = datetime.now()
@@ -103,6 +104,7 @@ def register():
             'email': email,
             'password': password_hash,
             'role': role,
+            'gstin': gstin,  # Add GSTIN to user data
             'created_at': created_at,
             'updated_at': updated_at,
             'status': status
@@ -133,7 +135,6 @@ def register():
             return redirect(url_for('auth.login'))
         
         elif role == 'storefrontowner':
-            gstin = request.form['gstin']  # Add this line to get the GSTIN from the form
             add_storefrontowner = {
                 'first_name': first_name,
                 'last_name': last_name,

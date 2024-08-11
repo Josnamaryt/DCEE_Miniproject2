@@ -37,6 +37,7 @@
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   </head>
   <body> 
     <!-- loader starts-->
@@ -75,7 +76,7 @@
                 <h4 class="f-w-600">Welcome Admin</h4><img class="mt-0" src="{{ url_for('static', filename='images/hand.gif') }}" alt="hand-gif">
               </div>
             </div>
-            <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here’s what’s happening with your store today. </span></div>
+            <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's happening with your store today. </span></div>
           </div>
           <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
             <ul class="nav-menus"> 
@@ -115,7 +116,7 @@
                   </div>
                 </div>
                 <ul class="profile-dropdown onhover-show-div">
-                  <li><a href="user-profile.html"><i data-feather="user"></i><span>My Profile</span></a></li>
+                  <li><a href="#" id="myProfileLink"><i data-feather="user"></i><span>My Profile</span></a></li>
                   <li><a href="letter-box.html"><i data-feather="mail"></i><span>Inbox</span></a></li>
                   <li> <a href="edit-profile.html"> <i data-feather="settings"></i><span>Settings</span></a></li>
                   <li><a class="btn btn-pill btn-outline-primary btn-sm" href="{{ url_for('auth.login') }}">Log Out</a></li>
@@ -170,7 +171,6 @@
                   </svg><span class="lan-3">Users</span></a>
                   <ul class="sidebar-submenu">
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#customerModal">Customer</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#instructorModal">Instructor</a></li>
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#storefrontModal">StoreFront Owner</a></li>
                   </ul>
                 </li>
@@ -187,70 +187,13 @@
                     </svg>
                     <svg class="fill-icon">
                       <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-project') }}"></use>
-                    </svg><span>Project           </span></a>
+                    </svg><span>Marketplace</span></a>
                   <ul class="sidebar-submenu">
-                    <li><a href="projects.html">Project List</a></li>
-                    <li><a href="projectcreate.html">Create new</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#storesModal">Stores</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#productsModal">Products</a></li>
                   </ul>
                 </li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="file-manager.html">
-                    <svg class="stroke-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-file') }}"></use>
-                    </svg>
-                    <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-file') }}"></use>
-                    </svg><span>File manager</span></a></li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="kanban.html">
-                    <svg class="stroke-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-board') }}"></use>
-                    </svg>
-                    <svg class="fill-icon">
-                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-board') }}"></use>
-                    </svg><span>kanban Board</span></a></li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                  
-                  <svg class="stroke-icon">
-                    <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-ecommerce') }}"></use>
-                  </svg>
-                  <svg class="fill-icon">
-                    <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-ecommerce') }}"></use>
-                  </svg><span>Ecommerce</span></a>
-                    <ul class="sidebar-submenu">
-                      <li> <a href="add-products.html">Add Products</a></li>
-                      <li><a href="product.html">Product</a></li>
-                      <li><a href="category.html">Category page</a></li>
-                      <li><a href="product-page.html">Product page</a></li>
-                      <li><a href="list-products.html">Product list</a></li>
-                      <li><a href="payment-details.html">Payment Details</a></li>
-                      <li><a href="order-history.html">Order History</a></li>
-                      <li><a class="submenu-title" href="#">Invoices<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
-                        <ul class="nav-sub-childmenu submenu-content">
-                          <li><a href="invoice-1.html">Invoice-1</a></li>
-                          <li><a href="invoice-2.html">Invoice-2</a></li>
-                          <li><a href="invoice-3.html">Invoice-3</a></li>
-                          <li><a href="invoice-4.html">Invoice-4</a></li>
-                          <li><a href="invoice-5.html">Invoice-5</a></li>
-                          <li><a href="invoice-template.html">Invoice-6</a></li>
-                        </ul>
-                      </li>
-                      <li><a href="cart.html">Cart</a></li>
-                      <li><a href="list-wish.html">Wishlist</a></li>
-                      <li><a href="checkout.html">Checkout</a></li>
-                      <li><a href="pricing.html">Pricing      </a></li>
-                    </ul>
-                  </li>
-                  <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                      <svg class="stroke-icon">
-                        <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-chat') }}"></use>
-                      </svg>
-                      <svg class="fill-icon">
-                        <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-chat') }}"></use>
-                      </svg><span>Chat</span></a>
-                    <ul class="sidebar-submenu">
-                      <li><a href="private-chat.html">Private Chat</a></li>
-                      <li> <a href="group-chat.html">Group Chat</a></li>
-                    </ul>
-                  </li>
+                
                   <li class="sidebar-main-title">
                         <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
                         </div>
@@ -270,6 +213,104 @@
                           </div>
                           <!-- Container-fluid starts-->
                           <div class="container-fluid">
+                            <div class="row">
+                              <!-- Statistics Cards -->
+                              <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                  <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                      <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Store Owners</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_store_owners }}</div>
+                                      </div>
+                                      <div class="col-auto">
+                                        <i class="fas fa-store fa-2x text-gray-300"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-success shadow h-100 py-2">
+                                  <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                      <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Products</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_products }}</div>
+                                      </div>
+                                      <div class="col-auto">
+                                        <i class="fas fa-box fa-2x text-gray-300"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-info shadow h-100 py-2">
+                                  <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                      <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Customers</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_customers }}</div>
+                                      </div>
+                                      <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-warning shadow h-100 py-2">
+                                  <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                      <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Orders</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_orders }}</div>
+                                      </div>
+                                      <div class="col-auto">
+                                        <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- Graph -->
+                            <div class="row">
+                              <div class="col-xl-8 col-lg-7">
+                                <div class="card shadow mb-4">
+                                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Monthly Sales Overview</h6>
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="chart-area">
+                                      <canvas id="myAreaChart"></canvas>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Pie Chart -->
+                              <div class="col-xl-4 col-lg-5">
+                                <div class="card shadow mb-4">
+                                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Product Categories</h6>
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="chart-pie pt-4 pb-2">
+                                      <canvas id="myPieChart"></canvas>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- Original content -->
                             <div class="row">
                               <div class="col-sm-12">
                                 <div class="card">
@@ -335,11 +376,14 @@
           <h2>Customer Details</h2>
           <table id="customerTable" class="table table-striped table-bordered">
             <thead>
-              <th>created_at</th>
-              <th>email</th>
-              <th>first_name</th>
-              <th>last_name At</th>
-              <th>updated_at</th>
+              <tr>
+                <th>Created At</th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Updated At</th>
+                <th>Actions</th>
+              </tr>
             </thead>
             <tbody>
               <!-- Data will be populated here by DataTables -->
@@ -354,41 +398,6 @@
   </div>
 </div>
 <!-- End customer modal -->
-
-<!-- Instructor modal -->
-<div class="modal fade" id="instructorModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"><b>Instructor Details</b></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="container mt-5">
-          <h2>Instructor Details</h2>
-          <table id="instructorTable" class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th>Created At</th>
-                <th>Email</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Updated At</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Data will be populated here by JavaScript -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End instructor modal -->
 
 <!-- Storefront Owner modal -->
 <div class="modal fade" id="storefrontModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -408,8 +417,9 @@
                 <th>Email</th>
                 <th>First Name</th>
                 <th>Last Name</th>
-                <th>GSTIN</th>  <!-- Add GSTIN column header -->
+                <th>GSTIN</th>
                 <th>Updated At</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -425,6 +435,84 @@
   </div>
 </div>
 <!-- End storefront owner modal -->
+
+<!-- Stores Modal -->
+<div class="modal fade" id="storesModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><b>Registered Stores</b></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container mt-5">
+          <table id="storesTable" class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Store Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data will be populated here by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Products Modal -->
+<div class="modal fade" id="productsModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><b>Registered Products</b></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container mt-5">
+          <table id="productsTable" class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data will be populated here by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Profile Modal -->
+<div class="modal fade" id="adminProfileModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Admin Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>First Name:</strong> <span id="adminFirstName"></span></p>
+        <p><strong>Last Name:</strong> <span id="adminLastName"></span></p>
+        <p><strong>Email:</strong> <span id="adminEmail"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 <!-- DataTables JS -->
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
@@ -432,79 +520,283 @@
 
 <!-- Customer modal JS -->
 <script>
-  $(document).ready(function() {
-     $('#customerModal').on('shown.bs.modal', function() {
-        console.log('Modal shown, initializing DataTable...');
-        if (!$.fn.DataTable.isDataTable('#customerTable')) {
-           $('#customerTable').DataTable({
-              "ajax": {
-                 "url": "{{ url_for('admin.get_customers') }}",
-                 "dataSrc": ""
-              },
-              "columns": [
-                 { "data": "created_at" },
-                 { "data": "email" },
-                 { "data": "first_name" },
-                 { "data": "last_name" },
-                 { "data": "updated_at" }
-              ]
-           });
-        }
-     });
+$(document).ready(function() {
+  $('#customerModal').on('shown.bs.modal', function() {
+    if (!$.fn.DataTable.isDataTable('#customerTable')) {
+      $('#customerTable').DataTable({
+        "ajax": {
+          "url": "{{ url_for('admin.get_customers') }}",
+          "dataSrc": ""
+        },
+        "columns": [
+          { "data": "created_at" },
+          { "data": "email" },
+          { "data": "first_name" },
+          { "data": "last_name" },
+          { "data": "updated_at" },
+          {
+            "data": null,
+            "render": function(data, type, row) {
+              return '<button class="btn btn-danger btn-sm deactivate-customer" data-id="' + row._id + '">Deactivate</button>';
+            }
+          }
+        ]
+      });
+    }
   });
-  </script>
 
-  <!-- End customer modal -->
-
-  <!-- Instructor modal JS -->
-  <script>
-  $(document).ready(function() {
-    $('#instructorModal').on('shown.bs.modal', function() {
-       console.log('Instructor modal shown, initializing DataTable...');
-       if (!$.fn.DataTable.isDataTable('#instructorTable')) {
-          $('#instructorTable').DataTable({
-             "ajax": {
-                "url": "{{ url_for('admin.get_instructors') }}",
-                "dataSrc": ""
-             },
-             "columns": [
-                { "data": "created_at" },
-                { "data": "email" },
-                { "data": "first_name" },
-                { "data": "last_name" },
-                { "data": "updated_at" }
-             ]
-          });
-       }
-    });
- });
+  // Deactivate customer
+  $('#customerTable').on('click', '.deactivate-customer', function() {
+    var table = $('#customerTable').DataTable();
+    var tr = $(this).closest('tr');
+    var row = table.row(tr);
+    
+    // Visually remove the row
+    row.remove().draw(false);
+  });
+});
 </script>
 
-<!-- end Instructor modal js -->
+<!-- End customer modal -->
 
 <!-- StoreFront owner JS -->
- <script>
-  $(document).ready(function() {
-    $('#storefrontModal').on('shown.bs.modal', function() {
-        console.log('Storefront Owner modal shown, initializing DataTable...');
-        if (!$.fn.DataTable.isDataTable('#storefrontTable')) {
-            $('#storefrontTable').DataTable({
-                "ajax": {
-                    "url": "{{ url_for('admin.get_storefrontowners') }}",
-                    "dataSrc": ""
-                },
-                "columns": [
-                    { "data": "createdAt" },
-                    { "data": "email" },
-                    { "data": "first_name" },
-                    { "data": "last_name" },
-                    { "data": "gstin" },  // Add GSTIN column
-                    { "data": "updatedAt" }
-                ]
-            });
-        }
-    });
+<script>
+$(document).ready(function() {
+  $('#storefrontModal').on('shown.bs.modal', function() {
+    if (!$.fn.DataTable.isDataTable('#storefrontTable')) {
+      $('#storefrontTable').DataTable({
+        "ajax": {
+          "url": "{{ url_for('admin.get_storefrontowners') }}",
+          "dataSrc": ""
+        },
+        "columns": [
+          { "data": "createdAt" },
+          { "data": "email" },
+          { "data": "first_name" },
+          { "data": "last_name" },
+          { "data": "gstin" },
+          { "data": "updatedAt" },
+          {
+            "data": null,
+            "render": function(data, type, row) {
+              return '<button class="btn btn-danger btn-sm deactivate-storefront" data-id="' + row._id + '">Deactivate</button>';
+            }
+          }
+        ]
+      });
+    }
+  });
+
+  // Deactivate storefront owner
+  $('#storefrontTable').on('click', '.deactivate-storefront', function() {
+    var table = $('#storefrontTable').DataTable();
+    var tr = $(this).closest('tr');
+    var row = table.row(tr);
+    
+    // Visually remove the row
+    row.remove().draw(false);
+  });
 });
 </script>
 <!-- end storefront owner modal JS -->
+
+<!-- Add DataTables initialization for Stores and Products -->
+<script>
+$(document).ready(function() {
+  $('#storesModal').on('shown.bs.modal', function() {
+    if (!$.fn.DataTable.isDataTable('#storesTable')) {
+      $('#storesTable').DataTable({
+        "ajax": {
+          "url": "{{ url_for('admin.get_stores') }}",
+          "dataSrc": ""
+        },
+        "columns": [
+          { "data": "store_name" }
+        ]
+      });
+    }
+  });
+
+  $('#productsModal').on('shown.bs.modal', function() {
+    if (!$.fn.DataTable.isDataTable('#productsTable')) {
+      $('#productsTable').DataTable({
+        "ajax": {
+          "url": "{{ url_for('admin.get_products') }}",
+          "dataSrc": ""
+        },
+        "columns": [
+          { "data": "product_name" }
+        ]
+      });
+    }
+  });
+});
+</script>
+
+<!-- Add Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Add charts initialization -->
+<script>
+  // Area Chart
+  var ctx = document.getElementById("myAreaChart");
+  var myLineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      datasets: [{
+        label: "Sales",
+        lineTension: 0.3,
+        backgroundColor: "rgba(78, 115, 223, 0.05)",
+        borderColor: "rgba(78, 115, 223, 1)",
+        pointRadius: 3,
+        pointBackgroundColor: "rgba(78, 115, 223, 1)",
+        pointBorderColor: "rgba(78, 115, 223, 1)",
+        pointHoverRadius: 3,
+        pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+        pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+        pointHitRadius: 10,
+        pointBorderWidth: 2,
+        data: [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000],
+      }],
+    },
+    options: {
+      maintainAspectRatio: false,
+      layout: {
+        padding: {
+          left: 10,
+          right: 25,
+          top: 25,
+          bottom: 0
+        }
+      },
+      scales: {
+        xAxes: [{
+          time: {
+            unit: 'date'
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          ticks: {
+            maxTicksLimit: 7
+          }
+        }],
+        yAxes: [{
+          ticks: {
+            maxTicksLimit: 5,
+            padding: 10,
+            // Include a dollar sign in the ticks
+            callback: function(value, index, values) {
+              return '$' + number_format(value);
+            }
+          },
+          gridLines: {
+            color: "rgb(234, 236, 244)",
+            zeroLineColor: "rgb(234, 236, 244)",
+            drawBorder: false,
+            borderDash: [2],
+            zeroLineBorderDash: [2]
+          }
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        backgroundColor: "rgb(255,255,255)",
+        bodyFontColor: "#858796",
+        titleMarginBottom: 10,
+        titleFontColor: '#6e707e',
+        titleFontSize: 14,
+        borderColor: '#dddfeb',
+        borderWidth: 1,
+        xPadding: 15,
+        yPadding: 15,
+        displayColors: false,
+        intersect: false,
+        mode: 'index',
+        caretPadding: 10,
+        callbacks: {
+          label: function(tooltipItem, chart) {
+            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+            return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+          }
+        }
+      }
+    }
+  });
+
+  // Pie Chart
+  var ctx = document.getElementById("myPieChart");
+  var myPieChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ["Electronics", "Clothing", "Books", "Home & Garden"],
+      datasets: [{
+        data: [40, 30, 15, 15],
+        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e'],
+        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#f4b619'],
+        hoverBorderColor: "rgba(234, 236, 244, 1)",
+      }],
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        backgroundColor: "rgb(255,255,255)",
+        bodyFontColor: "#858796",
+        borderColor: '#dddfeb',
+        borderWidth: 1,
+        xPadding: 15,
+        yPadding: 15,
+        displayColors: false,
+        caretPadding: 10,
+      },
+      legend: {
+        display: false
+      },
+      cutoutPercentage: 80,
+    },
+  });
+
+  function number_format(number, decimals, dec_point, thousands_sep) {
+    // ... (implement number formatting function)
+  }
+</script>
+
+<script>
+$(document).ready(function() {
+  console.log("Document ready");
+
+  $('#myProfileLink').on('click', function(e) {
+    console.log("My Profile link clicked");
+    e.preventDefault();
+    
+    // Try to show the modal immediately (for testing)
+    $('#adminProfileModal').modal('show');
+    
+    // Fetch admin profile data
+    $.ajax({
+      url: "{{ url_for('admin.get_admin_profile') }}",
+      method: "GET",
+      success: function(response) {
+        console.log("Admin profile data:", response);
+        $('#adminFirstName').text(response.first_name);
+        $('#adminLastName').text(response.last_name);
+        $('#adminEmail').text(response.email);
+        
+        // Show the modal
+        $('#adminProfileModal').modal('show');
+      },
+      error: function(xhr, status, error) {
+        console.error("Failed to fetch admin profile. Status:", status);
+        console.error("Error:", error);
+        console.error("Response:", xhr.responseText);
+        alert("Failed to fetch admin profile. Please try again.");
+      }
+    });
+  });
+});
+</script>
 </html>
