@@ -46,7 +46,7 @@
           <div class="page-header">
             <div class="header-wrapper row m-0">
               <div class="header-logo-wrapper col-auto p-0">
-                <div class="logo-wrapper"><a href="{{ url_for('admin.dashboard') }}"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt=""></a></div>
+                <div class="logo-wrapper"><a href="{{ url_for('admin.dashboard') }}"><img class="img-fluid" src="{{ url_for('static', filename='images/logo/1.png') }}" alt=""></a></div>
                 <div class="toggle-sidebar">
                   <div class="status_toggle sidebar-toggle d-flex">        
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -159,7 +159,7 @@
             <div class="sidebar-wrapper">
               <div>
                 <div class="logo-wrapper">
-                  <a href="{{ url_for('admin.dashboard') }}"><img class="img-fluid for-light" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt=""><img class="img-fluid for-dark" src="{{ url_for('static', filename='images/logo/logo_dark.png') }}" alt=""></a>
+                  <a href="{{ url_for('admin.dashboard') }}"><img class="img-fluid for-light" src="{{ url_for('static', filename='images/logo/1.png') }}" alt=""><img class="img-fluid for-dark" src="{{ url_for('static', filename='images/logo/logo_dark.png') }}" alt=""></a>
                   <div class="back-btn"><i class="fa fa-angle-left"></i></div>
                   <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
                 </div>
@@ -236,31 +236,41 @@
                
               <div class="container-fluid">
                 <div class="row">
-                  <div class="col-sm-12 col-xl-6">
-                    <div class="card shadow-none border">
-                      <div class="card-header">
-                        <h4>Without shadow Card</h4>
-                        <div class="card-header-right">
-                          <ul class="list-unstyled card-option">
-                            <li><i class="fa fa-spin fa-cog"></i></li>
-                            <li><i class="view-html fa fa-code"></i></li>
-                            <li><i class="icofont icofont-maximize full-card"></i></li>
-                            <li><i class="icofont icofont-minus minimize-card"></i></li>
-                            <li><i class="icofont icofont-refresh reload-card"></i></li>
-                            <li><i class="icofont icofont-error close-card"></i></li>
-                          </ul>
+                  {% for store in stores %}
+                    {% if loop.index0 % 3 == 0 %}
+                      </div><div class="row">
+                    {% endif %}
+                    <div class="col-sm-12 col-md-4 mb-4">
+                      <div class="card shadow-none border h-100">
+                        <div class="card-header">
+                          <h4>{{ store.store_name }}</h4>
+                          <div class="card-header-right">
+                            <ul class="list-unstyled card-option">
+                              <li><i class="fa fa-spin fa-cog"></i></li>
+                              <li><i class="view-html fa fa-code"></i></li>
+                              <li><i class="icofont icofont-maximize full-card"></i></li>
+                              <li><i class="icofont icofont-minus minimize-card"></i></li>
+                              <li><i class="icofont icofont-refresh reload-card"></i></li>
+                              <li><i class="icofont icofont-error close-card"></i></li>
+                            </ul>
+                          </div>
                         </div>
-                      </div>
-                      <div class="card-body">
-                        <div class="flex-space flex-wrap align-items-center"><img class="tab-img" src="{{ url_for('static', filename='images/avtar/3.jpg') }}" alt="profile">
-                          <p> <strong>Visit Us: </strong>	2600 Hollywood Blvd,Florida, United States-	33020<br><strong>Mail Us:</strong>contact@us@gmail.com<br><strong>Contact Number: </strong>(954) 357-7760</p>
-                        </div>
-                        <div class="code-box-copy">
-                          demo
+                        <div class="card-body d-flex flex-column">
+                          <div class="flex-space flex-wrap align-items-center mb-3">
+                            <p>
+                              <strong>Store Type:</strong> {{ store.store_type }}<br>
+                              <strong>Store Address:</strong> {{ store.store_address }}<br>
+                              <strong>Store's GSTIN:</strong> {{ store.store_gstin }}<br>
+                              <strong>Store Email:</strong> {{ store.store_owner_id }}
+                            </p>
+                          </div>
+                          <div class="mt-auto">
+                            <a href="{{ url_for('customer.store_details', store_owner_id=store.store_owner_id) }}" class="btn btn-primary">Explore Store</a>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  {% endfor %}
                 </div>
               </div>
               <!-- Container-fluid Ends-->
@@ -270,7 +280,7 @@
               <div class="container-fluid">
                 <div class="row">
                   <div class="col-md-12 footer-copyright text-center">
-                    <p class="mb-0">Copyright 2024 © DCEE  </p>
+                    <p class="mb-0">Copyright 2024 © DCEE </p>
                   </div>
                 </div>
               </div>
@@ -298,7 +308,7 @@
         <!-- Plugins JS Ends-->
         <!-- Theme js-->
         <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    
+       
         <!-- login js-->
         <!-- Plugin used-->
 

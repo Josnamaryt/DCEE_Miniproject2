@@ -144,6 +144,7 @@ def get_stores():
 @storeowner_bp.route('/register_product', methods=['POST'])
 @login_required
 def register_product():
+    # store_id to be done
     product_name = request.form.get('product_name')
     product_price = request.form.get('product_price')
     product_status = request.form.get('product_status')
