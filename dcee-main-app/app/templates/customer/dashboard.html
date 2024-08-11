@@ -130,15 +130,12 @@
                   </li>
                   <li class="profile-nav onhover-dropdown pe-0 py-0">
                     <div class="media profile-media">
-                        <div class="media-body"><span>Josna</span>
+                        <div class="media-body"><span>{{ user.first_name }}</span>
                           <p class="mb-0 font-roboto">Customer <i class="middle fa fa-angle-down"></i></p>
                         </div>
                     </div>
                     <ul class="profile-dropdown onhover-show-div">
-                      <li><a href="#"><i data-feather="user"></i><span>Account </span></a></li>
-                      <li><a href="#"><i data-feather="mail"></i><span>Inbox</span></a></li>
-                      <li><a href="#"><i data-feather="file-text"></i><span>Taskboard</span></a></li>
-                      <li><a href="#"><i data-feather="settings"></i><span>Settings</span></a></li>
+                      <li><a href="#" id="myProfileLink"><i data-feather="user"></i><span>My Profile </span></a></li>
                       <li><a href="{{ url_for('auth.logout') }}"><i data-feather="log-out"> </i><span>Log out</span></a></li>
                     </ul>
                   </li>
@@ -333,5 +330,124 @@
         <script src="{{ url_for('static', filename='js/theme-customizer/customizer.js') }}"></script>
         <!-- login js-->
         <!-- Plugin used-->
+
+        <!-- Add this modal HTML at the end of your body tag -->
+        <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">My Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p><strong>First Name:</strong> <span id="profileFirstName"></span></p>
+                <p><strong>Last Name:</strong> <span id="profileLastName"></span></p>
+                <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="editProfileBtn">Edit</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="editProfileForm">
+                  <div class="mb-3">
+                    <label for="editFirstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="editFirstName" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editLastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="editLastName" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="editEmail" required>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+        $(document).ready(function() {
+          function loadProfileData() {
+            $.ajax({
+              url: "{{ url_for('customer.get_profile') }}",
+              type: 'GET',
+              success: function(response) {
+                if (response.success) {
+                  $('#profileFirstName').text(response.data.first_name);
+                  $('#profileLastName').text(response.data.last_name);
+                  $('#profileEmail').text(response.data.email);
+                  $('#profileModal').modal('show');
+                } else {
+                  alert('Failed to fetch profile data');
+                }
+              },
+              error: function() {
+                alert('An error occurred while fetching profile data');
+              }
+            });
+          }
+
+          $('#myProfileLink').on('click', function(e) {
+            e.preventDefault();
+            loadProfileData();
+          });
+
+          $('#editProfileBtn').on('click', function() {
+            $('#profileModal').modal('hide');
+            $('#editFirstName').val($('#profileFirstName').text());
+            $('#editLastName').val($('#profileLastName').text());
+            $('#editEmail').val($('#profileEmail').text());
+            $('#editProfileModal').modal('show');
+          });
+
+          $('#saveProfileBtn').on('click', function() {
+            var updatedData = {
+              first_name: $('#editFirstName').val(),
+              last_name: $('#editLastName').val(),
+              email: $('#editEmail').val()
+            };
+
+            $.ajax({
+              url: "{{ url_for('customer.update_profile') }}",
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify(updatedData),
+              success: function(response) {
+                if (response.success) {
+                  $('#editProfileModal').modal('hide');
+                  loadProfileData();  // Reload the profile data to show updated info
+                } else {
+                  alert('Failed to update profile: ' + response.message);
+                }
+              },
+              error: function() {
+                alert('An error occurred while updating the profile');
+              }
+            });
+          });
+        });
+        </script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
       </body>
     </html>

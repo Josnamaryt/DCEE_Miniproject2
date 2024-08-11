@@ -36,26 +36,20 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
-        user = mongo.db.users.find_one({'email': email})
-        if user:
-            if check_password_hash(user['password'], password):
-                user_obj = User(
-                    _id=user['_id'],
-                    email=user['email'],
-                    password_hash=user['password'],
-                    role=user.get('role'),
-                    status=user.get('status')
-                )
-                login_user(user_obj)
+        user_data = mongo.db.users.find_one({'email': email})
+        if user_data:
+            if check_password_hash(user_data['password'], password):
+                user = User(user_data)
+                login_user(user)
                 flash('Login successful!', 'success')
                 # Redirect based on user role
-                if user['role'] == 'admin':
+                if user_data['role'] == 'admin':
                     return redirect(url_for('admin.dashboard'))
-                elif user['role'] == 'customer':
+                elif user_data['role'] == 'customer':
                     return redirect(url_for('customer.dashboard'))
-                elif user['role'] == 'instructor':
+                elif user_data['role'] == 'instructor':
                     return redirect(url_for('instructor.dashboard'))
-                elif user['role'] == 'storefrontowner':
+                elif user_data['role'] == 'storefrontowner':
                     return redirect(url_for('storeowner.dashboard'))
                 else:
                     flash('Invalid user role.', 'danger')
