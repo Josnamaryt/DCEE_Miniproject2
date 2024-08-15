@@ -811,14 +811,22 @@ $(document).ready(function() {
           <div class="mb-3">
             <label for="editFirstName" class="form-label">First Name</label>
             <input type="text" class="form-control" id="editFirstName" name="first_name" required>
+            <div class="invalid-feedback" id="firstNameError"></div>
+          </div>
+          <div class="mb-3">
+            <label for="editLastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="editLastName" name="last_name" required>
+            <div class="invalid-feedback" id="lastNameError"></div>
           </div>
           <div class="mb-3">
             <label for="editEmail" class="form-label">Email</label>
             <input type="email" class="form-control" id="editEmail" name="email" required>
+            <div class="invalid-feedback" id="emailError"></div>
           </div>
           <div class="mb-3">
             <label for="editPhone" class="form-label">Phone Number</label>
             <input type="tel" class="form-control" id="editPhone" name="phone" required>
+            <div class="invalid-feedback" id="phoneError"></div>
           </div>
           <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
@@ -829,6 +837,100 @@ $(document).ready(function() {
 
 <script>
 $(document).ready(function() {
+  function validateName(name) {
+    return /^[A-Za-z]+$/.test(name);
+  }
+
+  function validateEmail(email) {
+    return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+  }
+
+  function validatePhone(phone) {
+    return /^[0-9]{10}$/.test(phone);
+  }
+
+  function showError(inputId, message) {
+    $('#' + inputId).addClass('is-invalid');
+    $('#' + inputId + 'Error').text(message);
+  }
+
+  function clearError(inputId) {
+    $('#' + inputId).removeClass('is-invalid');
+    $('#' + inputId + 'Error').text('');
+  }
+
+  $('#editFirstName, #editLastName').on('input', function() {
+    const inputId = $(this).attr('id');
+    if (validateName($(this).val())) {
+      clearError(inputId);
+    } else {
+      showError(inputId, 'Name should contain only alphabets');
+    }
+  });
+
+  $('#editEmail').on('input', function() {
+    if (validateEmail($(this).val())) {
+      clearError('editEmail');
+    } else {
+      showError('editEmail', 'Please enter a valid Gmail address');
+    }
+  });
+
+  $('#editPhone').on('input', function() {
+    if (validatePhone($(this).val())) {
+      clearError('editPhone');
+    } else {
+      showError('editPhone', 'Phone number should be 10 digits');
+    }
+  });
+
+  $('#editProfileForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    let isValid = true;
+
+    if (!validateName($('#editFirstName').val())) {
+      showError('editFirstName', 'First name should contain only alphabets');
+      isValid = false;
+    }
+
+    if (!validateName($('#editLastName').val())) {
+      showError('editLastName', 'Last name should contain only alphabets');
+      isValid = false;
+    }
+
+    if (!validateEmail($('#editEmail').val())) {
+      showError('editEmail', 'Please enter a valid Gmail address');
+      isValid = false;
+    }
+
+    if (!validatePhone($('#editPhone').val())) {
+      showError('editPhone', 'Phone number should be 10 digits');
+      isValid = false;
+    }
+
+    if (isValid) {
+      var formData = $(this).serialize();
+      $.ajax({
+        url: "{{ url_for('storeowner.update_profile') }}",
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+          if (response.success) {
+            alert('Profile updated successfully');
+            $('#editProfileModal').modal('hide');
+            loadUserProfile();
+          } else {
+            alert('Error updating profile: ' + response.message);
+          }
+        },
+        error: function() {
+          alert('An error occurred while updating the profile. Please try again.');
+        }
+      });
+    }
+  });
+
   function loadUserProfile() {
     $.ajax({
       url: "{{ url_for('storeowner.get_profile') }}",
@@ -862,29 +964,6 @@ $(document).ready(function() {
   $('#editProfileBtn').on('click', function() {
     $('#userProfileModal').modal('hide');
     $('#editProfileModal').modal('show');
-  });
-
-  $('#editProfileForm').on('submit', function(e) {
-    e.preventDefault();
-    var formData = $(this).serialize();
-    $.ajax({
-      url: "{{ url_for('storeowner.update_profile') }}",
-      type: 'POST',
-      data: formData,
-      success: function(response) {
-        if (response.success) {
-          alert('Profile updated successfully');
-          $('#editProfileModal').modal('hide');
-          loadUserProfile();
-          $('#userProfileModal').modal('show');
-        } else {
-          alert('Error updating profile: ' + response.message);
-        }
-      },
-      error: function() {
-        alert('An error occurred while updating the profile. Please try again.');
-      }
-    });
   });
 });
 </script>
@@ -903,14 +982,22 @@ $(document).ready(function() {
           <div class="mb-3">
             <label for="editFirstName" class="form-label">First Name</label>
             <input type="text" class="form-control" id="editFirstName" name="first_name" required>
+            <div class="invalid-feedback" id="firstNameError"></div>
+          </div>
+          <div class="mb-3">
+            <label for="editLastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="editLastName" name="last_name" required>
+            <div class="invalid-feedback" id="lastNameError"></div>
           </div>
           <div class="mb-3">
             <label for="editEmail" class="form-label">Email</label>
             <input type="email" class="form-control" id="editEmail" name="email" required>
+            <div class="invalid-feedback" id="emailError"></div>
           </div>
           <div class="mb-3">
             <label for="editPhone" class="form-label">Phone Number</label>
             <input type="tel" class="form-control" id="editPhone" name="phone" required>
+            <div class="invalid-feedback" id="phoneError"></div>
           </div>
           <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
@@ -921,6 +1008,100 @@ $(document).ready(function() {
 
 <script>
 $(document).ready(function() {
+  function validateName(name) {
+    return /^[A-Za-z]+$/.test(name);
+  }
+
+  function validateEmail(email) {
+    return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+  }
+
+  function validatePhone(phone) {
+    return /^[0-9]{10}$/.test(phone);
+  }
+
+  function showError(inputId, message) {
+    $('#' + inputId).addClass('is-invalid');
+    $('#' + inputId + 'Error').text(message);
+  }
+
+  function clearError(inputId) {
+    $('#' + inputId).removeClass('is-invalid');
+    $('#' + inputId + 'Error').text('');
+  }
+
+  $('#editFirstName, #editLastName').on('input', function() {
+    const inputId = $(this).attr('id');
+    if (validateName($(this).val())) {
+      clearError(inputId);
+    } else {
+      showError(inputId, 'Name should contain only alphabets');
+    }
+  });
+
+  $('#editEmail').on('input', function() {
+    if (validateEmail($(this).val())) {
+      clearError('editEmail');
+    } else {
+      showError('editEmail', 'Please enter a valid Gmail address');
+    }
+  });
+
+  $('#editPhone').on('input', function() {
+    if (validatePhone($(this).val())) {
+      clearError('editPhone');
+    } else {
+      showError('editPhone', 'Phone number should be 10 digits');
+    }
+  });
+
+  $('#editProfileForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    let isValid = true;
+
+    if (!validateName($('#editFirstName').val())) {
+      showError('editFirstName', 'First name should contain only alphabets');
+      isValid = false;
+    }
+
+    if (!validateName($('#editLastName').val())) {
+      showError('editLastName', 'Last name should contain only alphabets');
+      isValid = false;
+    }
+
+    if (!validateEmail($('#editEmail').val())) {
+      showError('editEmail', 'Please enter a valid Gmail address');
+      isValid = false;
+    }
+
+    if (!validatePhone($('#editPhone').val())) {
+      showError('editPhone', 'Phone number should be 10 digits');
+      isValid = false;
+    }
+
+    if (isValid) {
+      var formData = $(this).serialize();
+      $.ajax({
+        url: "{{ url_for('storeowner.update_profile') }}",
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+          if (response.success) {
+            alert('Profile updated successfully');
+            $('#editProfileModal').modal('hide');
+            loadUserProfile();
+          } else {
+            alert('Error updating profile: ' + response.message);
+          }
+        },
+        error: function() {
+          alert('An error occurred while updating the profile. Please try again.');
+        }
+      });
+    }
+  });
+
   function loadUserProfile() {
     $.ajax({
       url: "{{ url_for('storeowner.get_profile') }}",
@@ -954,29 +1135,6 @@ $(document).ready(function() {
   $('#editProfileBtn').on('click', function() {
     $('#userProfileModal').modal('hide');
     $('#editProfileModal').modal('show');
-  });
-
-  $('#editProfileForm').on('submit', function(e) {
-    e.preventDefault();
-    var formData = $(this).serialize();
-    $.ajax({
-      url: "{{ url_for('storeowner.update_profile') }}",
-      type: 'POST',
-      data: formData,
-      success: function(response) {
-        if (response.success) {
-          alert('Profile updated successfully');
-          $('#editProfileModal').modal('hide');
-          loadUserProfile();
-          $('#userProfileModal').modal('show');
-        } else {
-          alert('Error updating profile: ' + response.message);
-        }
-      },
-      error: function() {
-        alert('An error occurred while updating the profile. Please try again.');
-      }
-    });
   });
 });
 </script>

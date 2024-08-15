@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,10 +25,27 @@
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(67, 56, 202, 0.7);
         }
+        body {
+            background-color: #f0f4f8; /* Light grayish blue background */
+        }
+        .card {
+            background-color: #ffffff; /* White card background */
+            border: 1px solid #e2e8f0; /* Light border */
+        }
+        .navbar {
+            background-color: #2d3748; /* Dark blue-gray navbar */
+        }
+        .navbar a {
+            color: #f7fafc; /* Very light gray text for navbar links */
+        }
+        .footer {
+            background-color: #4a5568; /* Medium blue-gray footer */
+            color: #e2e8f0; /* Light gray text for footer */
+        }
     </style>
 </head>
-<body class="bg-black text-white">
-    <div class="navbar bg-base-100">
+<body class="text-gray-800">
+    <div class="navbar">
         <div class="navbar-start">
             <div class="dropdown">
                 <label tabindex="0" class="btn btn-ghost lg:hidden">
@@ -57,32 +74,32 @@
         </div>
     </div>
 
-    <div class="hero min-h-screen bg-base-200">
+    <div class="hero min-h-screen bg-gray-200">
         <div class="hero-content text-center">
             <div class="max-w-md">
-                <h1 class="text-5xl font-bold mb-8 glow">DCEE</h1>
-                <p class="text-xl mb-8">Empowering small and local Indian businesses to thrive in the digital age.</p>
+                <h1 class="text-5xl font-bold mb-8 glow text-gray-900">DCEE</h1>
+                <p class="text-xl mb-8 text-gray-700">Empowering small and local Indian businesses to thrive in the digital age.</p>
                 <button class="btn btn-primary btn-lg hover-grow">Get Started</button>
             </div>
         </div>
     </div>
 
     <div class="container mx-auto px-4 py-16">
-        <h2 class="text-3xl font-bold mb-8 text-center glow">Our Features</h2>
+        <h2 class="text-3xl font-bold mb-8 text-center glow text-gray-900">Our Features</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
                     <h2 class="card-title">Digital Presence</h2>
                     <p>Enhance your online visibility and reach more customers.</p>
                 </div>
             </div>
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
                     <h2 class="card-title">Rural Payments</h2>
                     <p>Facilitate easy and secure transactions in rural areas.</p>
                 </div>
             </div>
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
                     <h2 class="card-title">Inventory Management</h2>
                     <p>Optimize your stock and streamline your business operations.</p>
@@ -92,9 +109,9 @@
     </div>
 
     <div class="container mx-auto px-4 py-16">
-        <h2 class="text-3xl font-bold mb-8 text-center glow">Who We Serve</h2>
+        <h2 class="text-3xl font-bold mb-8 text-center glow text-gray-900">Who We Serve</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
                     <h2 class="card-title">Digital Storefront Owners</h2>
                     <ul class="list-disc list-inside">
@@ -104,7 +121,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
                     <h2 class="card-title">Customers</h2>
                     <ul class="list-disc list-inside">
@@ -114,7 +131,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
                     <h2 class="card-title">Admins</h2>
                     <ul class="list-disc list-inside">
@@ -128,50 +145,75 @@
     </div>
 
     <div class="container mx-auto px-4 py-16">
-        <h2 class="text-3xl font-bold mb-8 text-center glow">Key Modules</h2>
+        <h2 class="text-3xl font-bold mb-8 text-center glow text-gray-900">Key Modules</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
-                    <h2 class="card-title">Auth</h2>
-                    <ul class="list-disc list-inside">
+                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('auth')">
+                        Auth
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </h2>
+                    <ul id="auth" class="list-disc list-inside hidden mt-2">
                         <li>Registration and login</li>
                         <li>Password management</li>
                         <li>Email reset</li>
                     </ul>
                 </div>
             </div>
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
-                    <h2 class="card-title">Platform</h2>
-                    <ul class="list-disc list-inside">
+                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('platform')">
+                        Platform
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </h2>
+                    <ul id="platform" class="list-disc list-inside hidden mt-2">
                         <li>Dashboard</li>
                         <li>Profile management</li>
                         <li>Storefront management</li>
                     </ul>
                 </div>
             </div>
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
-                    <h2 class="card-title">Payment Module</h2>
-                    <p>Secure and easy money transfers</p>
+                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('payment')">
+                        Payment Module
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </h2>
+                    <p id="payment" class="hidden mt-2">Secure and easy money transfers</p>
                 </div>
             </div>
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
-                    <h2 class="card-title">Analytics</h2>
-                    <p>Insights on storefronts, customers, and products</p>
+                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('analytics')">
+                        Analytics
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </h2>
+                    <p id="analytics" class="hidden mt-2">Insights on storefronts, customers, and products</p>
                 </div>
             </div>
-            <div class="card bg-base-100 shadow-xl hover-grow">
+            <div class="card shadow-xl hover-grow">
                 <div class="card-body">
-                    <h2 class="card-title">Chatbot</h2>
-                    <p>AI-powered assistance for users</p>
+                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('chatbot')">
+                        Chatbot
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </h2>
+                    <p id="chatbot" class="hidden mt-2">AI-powered assistance for users</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="footer footer-center p-10 bg-base-200 text-base-content rounded">
+    <footer class="footer footer-center p-10 rounded">
         <div class="grid grid-flow-col gap-4">
             <a class="link link-hover">About us</a> 
             <a class="link link-hover">Contact</a> 
@@ -191,3 +233,15 @@
     </footer>
 </body>
 </html>
+
+<script>
+function toggleContent(id) {
+    const content = document.getElementById(id);
+    const arrow = content.previousElementSibling.querySelector('svg');
+    content.classList.toggle('hidden');
+    arrow.classList.toggle('rotate-180');
+    
+    const card = content.closest('.card');
+    card.classList.toggle('bg-blue-200');
+}
+</script>

@@ -35,6 +35,32 @@
         <link id="color" rel="stylesheet" href="{{ url_for('static', filename='css/color-1.css') }}" media="screen">
         <!-- Responsive css-->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
+        <style>
+          .product-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+          }
+          .product-box:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+          }
+          .product-img {
+            height: 200px;
+            overflow: hidden;
+          }
+          .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          .product-details {
+            padding: 15px;
+          }
+          .product-details h6 {
+            margin-bottom: 5px;
+          }
+        </style>
       </head>
       <body>
         <!-- tap on top starts-->
@@ -234,6 +260,35 @@
               </div>
               <!-- Container-fluid starts-->
               <div class="container-fluid">
+                <!-- Featured Products Section -->
+                <div class="row">
+                  <div class="col-sm-12">
+                    <div class="card">
+                      <div class="card-header">
+                        <h5>Featured Products</h5>
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          {% for product in featured_products %}
+                            <div class="col-md-4 col-sm-6 mb-4">
+                              <div class="product-box">
+                                <div class="product-img">
+                                  <img src="{{ url_for('static', filename='images/products/' + product.image) }}" alt="{{ product.name }}" class="img-fluid">
+                                </div>
+                                <div class="product-details">
+                                  <h6>{{ product.name }}</h6>
+                                  <p class="text-muted">{{ product.store_type }}</p>
+                                </div>
+                              </div>
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Stores Overview Section -->
                 <div class="row">
                   <div class="col-sm-12">
                     <div class="card">
@@ -321,18 +376,21 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form id="editProfileForm">
+                <form id="editProfileForm" novalidate>
                   <div class="mb-3">
                     <label for="editFirstName" class="form-label">First Name</label>
                     <input type="text" class="form-control" id="editFirstName" required>
+                    <div class="invalid-feedback" id="firstNameError"></div>
                   </div>
                   <div class="mb-3">
                     <label for="editLastName" class="form-label">Last Name</label>
                     <input type="text" class="form-control" id="editLastName" required>
+                    <div class="invalid-feedback" id="lastNameError"></div>
                   </div>
                   <div class="mb-3">
                     <label for="editEmail" class="form-label">Email</label>
                     <input type="email" class="form-control" id="editEmail" required>
+                    <div class="invalid-feedback" id="emailError"></div>
                   </div>
                 </form>
               </div>
@@ -379,30 +437,60 @@
             $('#editProfileModal').modal('show');
           });
 
-          $('#saveProfileBtn').on('click', function() {
-            var updatedData = {
-              first_name: $('#editFirstName').val(),
-              last_name: $('#editLastName').val(),
-              email: $('#editEmail').val()
-            };
+          function validateInput(input, regex, errorMsg) {
+            const value = input.val().trim();
+            const isValid = regex.test(value);
+            input.toggleClass('is-invalid', !isValid);
+            input.toggleClass('is-valid', isValid);
+            input.siblings('.invalid-feedback').text(isValid ? '' : errorMsg);
+            return isValid;
+          }
 
-            $.ajax({
-              url: "{{ url_for('customer.update_profile') }}",
-              type: 'POST',
-              contentType: 'application/json',
-              data: JSON.stringify(updatedData),
-              success: function(response) {
-                if (response.success) {
-                  $('#editProfileModal').modal('hide');
-                  loadProfileData();  // Reload the profile data to show updated info
-                } else {
-                  alert('Failed to update profile: ' + response.message);
+          $('#editFirstName, #editLastName, #editEmail').on('input', function() {
+            const input = $(this);
+            const id = input.attr('id');
+            
+            if (id === 'editFirstName' || id === 'editLastName') {
+              validateInput(input, /^[A-Za-z]+$/, 'Should contain only alphabets');
+            } else if (id === 'editEmail') {
+              validateInput(input, /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Please enter a valid email address');
+            }
+          });
+
+          function validateForm() {
+            const firstNameValid = validateInput($('#editFirstName'), /^[A-Za-z]+$/, 'Should contain only alphabets');
+            const lastNameValid = validateInput($('#editLastName'), /^[A-Za-z]+$/, 'Should contain only alphabets');
+            const emailValid = validateInput($('#editEmail'), /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Please enter a valid email address');
+
+            return firstNameValid && lastNameValid && emailValid;
+          }
+
+          $('#saveProfileBtn').on('click', function() {
+            if (validateForm()) {
+              var updatedData = {
+                first_name: $('#editFirstName').val().trim(),
+                last_name: $('#editLastName').val().trim(),
+                email: $('#editEmail').val().trim()
+              };
+
+              $.ajax({
+                url: "{{ url_for('customer.update_profile') }}",
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(updatedData),
+                success: function(response) {
+                  if (response.success) {
+                    $('#editProfileModal').modal('hide');
+                    loadProfileData();  // Reload the profile data to show updated info
+                  } else {
+                    alert('Failed to update profile: ' + response.message);
+                  }
+                },
+                error: function() {
+                  alert('An error occurred while updating the profile');
                 }
-              },
-              error: function() {
-                alert('An error occurred while updating the profile');
-              }
-            });
+              });
+            }
           });
         });
         </script>

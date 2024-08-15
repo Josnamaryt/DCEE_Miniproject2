@@ -11,7 +11,18 @@ customer_bp = Blueprint('customer', __name__)
 def dashboard():
     # Fetch all stores from the database
     stores = list(mongo.db.stores.find({}, {'name': 1}))
-    return render_template('customer/dashboard.html', user=current_user, stores=stores)
+    
+    # Sample featured products for different store types
+    featured_products = [
+        {"name": "Vanilla Ice Cream", "image": "ice_cream_vanilla.jpg", "store_type": "Ice Cream Parlour"},
+        {"name": "Chocolate Ice Cream", "image": "ice_cream_chocolate.jpg", "store_type": "Ice Cream Parlour"},
+        {"name": "Fresh Apples", "image": "apples.jpg", "store_type": "Grocery Store"},
+        {"name": "Whole Wheat Bread", "image": "bread.jpg", "store_type": "Grocery Store"},
+        {"name": "Latest Smartphone", "image": "smartphone.jpg", "store_type": "Mobile Shop"},
+        {"name": "Wireless Earbuds", "image": "earbuds.jpg", "store_type": "Mobile Shop"},
+    ]
+    
+    return render_template('customer/dashboard.html', user=current_user, stores=stores, featured_products=featured_products)
 
 @customer_bp.route('/update_profile', methods=['POST'])
 @login_required
