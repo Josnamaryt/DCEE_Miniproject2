@@ -104,31 +104,52 @@ def add_to_cart(product_id):
     try:
         product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
         if product:
-            cart = session.get('cart', {})
-            cart[str(product_id)] = cart.get(str(product_id), 0) + 1
-            session['cart'] = cart
+            email = current_user.email
+            cart_item = {
+                "email": email,
+                "product_id": str(product_id),
+                "quantity": 1
+            }
+            
+            # Check if the item already exists in the cart
+            existing_item = mongo.db.cart.find_one({"email": email, "product_id": str(product_id)})
+            
+            if existing_item:
+                # If the item exists, update the quantity
+                mongo.db.cart.update_one(
+                    {"email": email, "product_id": str(product_id)},
+                    {"$inc": {"quantity": 1}}
+                )
+            else:
+                # If the item doesn't exist, insert a new document
+                mongo.db.cart.insert_one(cart_item)
+            
             return jsonify({"success": True, "message": "Product added to cart"})
         return jsonify({"success": False, "message": "Product not found"}), 404
     except Exception as e:
         print(f"Error adding to cart: {str(e)}")
         return jsonify({"success": False, "message": "An error occurred"}), 500
 
+        
 @customer_bp.route('/view_cart')
 @login_required
 def view_cart():
-    cart = session.get('cart', {})
     cart_items = []
     total = 0
-    for product_id, quantity in cart.items():
-        product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
+    email = current_user.email
+    cart_data = mongo.db.cart.find({"email": email})
+    
+    for item in cart_data:
+        product = mongo.db.products.find_one({"_id": ObjectId(item['product_id'])})
         if product:
-            item_total = float(product['product_price']) * quantity
+            item_total = float(product['product_price']) * item['quantity']
             cart_items.append({
                 'product': product,
-                'quantity': quantity,
+                'quantity': item['quantity'],
                 'item_total': item_total
             })
             total += item_total
+    
     return render_template('customer/cart.html', cart_items=cart_items, total=total)
 
 @customer_bp.route('/update_cart/<product_id>', methods=['POST'])
@@ -148,12 +169,13 @@ def update_cart(product_id):
 @customer_bp.route('/remove_from_cart/<product_id>', methods=['POST'])
 @login_required
 def remove_from_cart(product_id):
-    cart = session.get('cart', {})
-    if product_id in cart:
-        del cart[product_id]
+    email = current_user.email
+    result = mongo.db.cart.delete_one({"email": email, "product_id": product_id})
     
-    session['cart'] = cart
-    return jsonify({"success": True, "message": "Item removed from cart successfully"})
+    if result.deleted_count > 0:
+        return jsonify({"success": True, "message": "Item removed from cart successfully"})
+    else:
+        return jsonify({"success": False, "message": "Failed to remove item from cart"}), 400
 
 @customer_bp.route('/get_cart_count')
 @login_required
@@ -165,13 +187,15 @@ def get_cart_count():
 @customer_bp.route('/get_cart_info')
 @login_required
 def get_cart_info():
-    cart = session.get('cart', {})
-    count = sum(cart.values())
+    email = current_user.email
+    cart_data = mongo.db.cart.find({"email": email})
+    count = 0
     subtotal = 0
-    for product_id, quantity in cart.items():
-        product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
+    for item in cart_data:
+        product = mongo.db.products.find_one({"_id": ObjectId(item['product_id'])})
         if product:
-            subtotal += float(product['product_price']) * quantity
+            count += item['quantity']
+            subtotal += float(product['product_price']) * item['quantity']
     return jsonify({"count": count, "subtotal": subtotal})
 
 @customer_bp.route('/debug_session')

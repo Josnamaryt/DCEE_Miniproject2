@@ -7,23 +7,25 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         function addToCart(productId, buyNow = false) {
-            axios.post(`/customer/add_to_cart/${productId}`)
-                .then(response => {
-                    if (response.data.success) {
-                        updateCartInfo();
-                        if (buyNow) {
-                            window.location.href = "{{ url_for('customer.view_cart') }}";
-                        } else {
-                            alert(response.data.message);
-                        }
+            axios.post(`/customer/add_to_cart/${productId}`, {
+                email: "{{ current_user.email }}"  // Assuming current_user is available in the template
+            })
+            .then(response => {
+                if (response.data.success) {
+                    updateCartInfo();
+                    if (buyNow) {
+                        window.location.href = "{{ url_for('customer.view_cart') }}";
                     } else {
-                        alert('Failed to add product to cart');
+                        alert(response.data.message);
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while adding to cart');
-                });
+                } else {
+                    alert('Failed to add product to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding to cart');
+            });
         }
 
         function updateCartInfo() {

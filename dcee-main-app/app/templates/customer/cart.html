@@ -6,11 +6,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        function updateQuantity(productId, change) {
+        function updateQuantity(productId, change, currentQuantity, price) {
+            const newQuantity = currentQuantity + change;
+            if (newQuantity < 1 || newQuantity > 5) {
+                alert(newQuantity < 1 ? "Quantity cannot be less than 1" : "Quantity cannot exceed 5");
+                return;
+            }
+
             axios.post(`/customer/update_cart/${productId}`, { change: change })
                 .then(response => {
                     if (response.data.success) {
-                        location.reload();
+                        const quantityElement = document.getElementById(`quantity-${productId}`);
+                        const totalElement = document.getElementById(`total-${productId}`);
+                        const cartTotalElement = document.getElementById('cart-total');
+
+                        quantityElement.textContent = newQuantity;
+                        const newTotal = (newQuantity * price).toFixed(2);
+                        totalElement.textContent = `₹${newTotal}`;
+
+                        // Update cart total
+                        const currentTotal = parseFloat(cartTotalElement.textContent.replace('₹', ''));
+                        const difference = (change * price);
+                        const newCartTotal = (currentTotal + difference).toFixed(2);
+                        cartTotalElement.textContent = `₹${newCartTotal}`;
                     } else {
                         alert('Failed to update cart');
                     }
@@ -25,7 +43,21 @@
             axios.post(`/customer/remove_from_cart/${productId}`)
                 .then(response => {
                     if (response.data.success) {
-                        location.reload();
+                        const row = document.getElementById(`row-${productId}`);
+                        row.remove();
+
+                        // Update cart total
+                        updateCartTotal();
+
+                        // If cart is empty, show empty cart message
+                        if (document.querySelectorAll('tbody tr').length === 0) {
+                            document.querySelector('.cart-container').innerHTML = `
+                                <div class="p-6 text-center">
+                                    <p class="text-gray-600">Your cart is empty.</p>
+                                    <a href="{{ url_for('customer.stores') }}" class="btn btn-primary mt-4">Continue Shopping</a>
+                                </div>
+                            `;
+                        }
                     } else {
                         alert('Failed to remove item from cart');
                     }
@@ -34,6 +66,15 @@
                     console.error('Error:', error);
                     alert('An error occurred while removing the item from cart');
                 });
+        }
+
+        function updateCartTotal() {
+            const totalElements = document.querySelectorAll('[id^="total-"]');
+            let newTotal = 0;
+            totalElements.forEach(el => {
+                newTotal += parseFloat(el.textContent.replace('₹', ''));
+            });
+            document.getElementById('cart-total').textContent = `₹${newTotal.toFixed(2)}`;
         }
     </script>
     <style>
@@ -65,17 +106,17 @@
                         </thead>
                         <tbody>
                             {% for item in cart_items %}
-                            <tr class="border-b">
+                            <tr class="border-b" id="row-{{ item.product._id }}">
                                 <td class="py-4">{{ item.product.product_name }}</td>
                                 <td class="py-4">₹{{ item.product.product_price }}</td>
                                 <td class="py-4">
-                                    <div class="flex items-center">
-                                        <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1)">-</button>
-                                        <span class="mx-2">{{ item.quantity }}</span>
-                                        <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1)">+</button>
+                                    <div class="flex items-center justify-center">
+                                        <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1, {{ item.quantity }}, {{ item.product.product_price }})">-</button>
+                                        <span class="mx-2 quantity-display" id="quantity-{{ item.product._id }}">{{ item.quantity }}</span>
+                                        <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1, {{ item.quantity }}, {{ item.product.product_price }})">+</button>
                                     </div>
                                 </td>
-                                <td class="py-4">₹{{ item.item_total }}</td>
+                                <td class="py-4" id="total-{{ item.product._id }}">₹{{ item.item_total }}</td>
                                 <td class="py-4">
                                     <button class="btn btn-sm btn-error" onclick="removeItem('{{ item.product._id }}')">Remove</button>
                                 </td>
@@ -85,7 +126,7 @@
                     </table>
                 </div>
                 <div class="mt-6 text-right">
-                    <h2 class="text-2xl font-bold text-gray-800">Total: ₹{{ total }}</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">Total: <span id="cart-total">₹{{ total }}</span></h2>
                     <button class="btn btn-primary mt-4">Proceed to Checkout</button>
                 </div>
             </div>
