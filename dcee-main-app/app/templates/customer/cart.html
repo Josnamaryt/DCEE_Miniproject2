@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>Your Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function updateQuantity(productId, change) {
+            axios.post(`/customer/update_cart/${productId}`, { change: change })
+                .then(response => {
+                    if (response.data.success) {
+                        location.reload();
+                    } else {
+                        alert('Failed to update cart');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating the cart');
+                });
+        }
+
+        function removeItem(productId) {
+            axios.post(`/customer/remove_from_cart/${productId}`)
+                .then(response => {
+                    if (response.data.success) {
+                        location.reload();
+                    } else {
+                        alert('Failed to remove item from cart');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while removing the item from cart');
+                });
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f7f7f7;
+        }
+        .cart-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Your Cart</h1>
+        {% if cart_items %}
+            <div class="cart-container p-6">
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="text-left">Product</th>
+                                <th class="text-left">Price</th>
+                                <th class="text-left">Quantity</th>
+                                <th class="text-left">Total</th>
+                                <th class="text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr class="border-b">
+                                <td class="py-4">{{ item.product.product_name }}</td>
+                                <td class="py-4">₹{{ item.product.product_price }}</td>
+                                <td class="py-4">
+                                    <div class="flex items-center">
+                                        <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1)">-</button>
+                                        <span class="mx-2">{{ item.quantity }}</span>
+                                        <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1)">+</button>
+                                    </div>
+                                </td>
+                                <td class="py-4">₹{{ item.item_total }}</td>
+                                <td class="py-4">
+                                    <button class="btn btn-sm btn-error" onclick="removeItem('{{ item.product._id }}')">Remove</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-6 text-right">
+                    <h2 class="text-2xl font-bold text-gray-800">Total: ₹{{ total }}</h2>
+                    <button class="btn btn-primary mt-4">Proceed to Checkout</button>
+                </div>
+            </div>
+        {% else %}
+            <div class="cart-container p-6 text-center">
+                <p class="text-gray-600">Your cart is empty.</p>
+                <a href="{{ url_for('customer.stores') }}" class="btn btn-primary mt-4">Continue Shopping</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

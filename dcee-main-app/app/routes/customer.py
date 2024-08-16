@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
 from flask_login import login_required, current_user
 from app import mongo  # Import mongo from your app package
 from bson import ObjectId  # Import ObjectId for proper ID handling
@@ -86,6 +86,7 @@ def store_details(store_owner_id):
     products = mongo.db.products.find({"store_owner_id": store_owner_id})
     for product in products:
         product_data.append({
+            '_id': str(product['_id']),  # Convert ObjectId to string
             'product_name': product.get('product_name', ''),
             'product_price': product.get('product_price', ''),
             'product_status': product.get('product_status', ''),
@@ -96,3 +97,83 @@ def store_details(store_owner_id):
         return render_template('customer/store_details.html', store=store_data, product_data=product_data)
     else:
         return 'Store not found', 404
+
+@customer_bp.route('/add_to_cart/<product_id>', methods=['POST'])
+@login_required
+def add_to_cart(product_id):
+    try:
+        product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
+        if product:
+            cart = session.get('cart', {})
+            cart[str(product_id)] = cart.get(str(product_id), 0) + 1
+            session['cart'] = cart
+            return jsonify({"success": True, "message": "Product added to cart"})
+        return jsonify({"success": False, "message": "Product not found"}), 404
+    except Exception as e:
+        print(f"Error adding to cart: {str(e)}")
+        return jsonify({"success": False, "message": "An error occurred"}), 500
+
+@customer_bp.route('/view_cart')
+@login_required
+def view_cart():
+    cart = session.get('cart', {})
+    cart_items = []
+    total = 0
+    for product_id, quantity in cart.items():
+        product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
+        if product:
+            item_total = float(product['product_price']) * quantity
+            cart_items.append({
+                'product': product,
+                'quantity': quantity,
+                'item_total': item_total
+            })
+            total += item_total
+    return render_template('customer/cart.html', cart_items=cart_items, total=total)
+
+@customer_bp.route('/update_cart/<product_id>', methods=['POST'])
+@login_required
+def update_cart(product_id):
+    cart = session.get('cart', {})
+    change = int(request.json.get('change', 0))
+    
+    if product_id in cart:
+        cart[product_id] += change
+        if cart[product_id] <= 0:
+            del cart[product_id]
+    
+    session['cart'] = cart
+    return jsonify({"success": True, "message": "Cart updated successfully"})
+
+@customer_bp.route('/remove_from_cart/<product_id>', methods=['POST'])
+@login_required
+def remove_from_cart(product_id):
+    cart = session.get('cart', {})
+    if product_id in cart:
+        del cart[product_id]
+    
+    session['cart'] = cart
+    return jsonify({"success": True, "message": "Item removed from cart successfully"})
+
+@customer_bp.route('/get_cart_count')
+@login_required
+def get_cart_count():
+    cart = session.get('cart', {})
+    count = sum(cart.values())
+    return jsonify({"count": count})
+
+@customer_bp.route('/get_cart_info')
+@login_required
+def get_cart_info():
+    cart = session.get('cart', {})
+    count = sum(cart.values())
+    subtotal = 0
+    for product_id, quantity in cart.items():
+        product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
+        if product:
+            subtotal += float(product['product_price']) * quantity
+    return jsonify({"count": count, "subtotal": subtotal})
+
+@customer_bp.route('/debug_session')
+def debug_session():
+    return jsonify(dict(session))
