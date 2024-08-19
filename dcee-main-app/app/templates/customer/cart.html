@@ -92,32 +92,33 @@
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-6 text-gray-800">Your Cart</h1>
         {% if cart_items %}
-            <div class="cart-container p-6">
-                <div class="overflow-x-auto">
-                    <table class="table w-full">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="text-left">Product</th>
-                                <th class="text-left">Price</th>
-                                <th class="text-left">Quantity</th>
-                                <th class="text-left">Total</th>
-                                <th class="text-left">Actions</th>
-                            </tr>
-                        </thead>
+            <div class="overflow-x-auto">
+                <table class="table w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="text-left">Product</th>
+                            <th class="text-left">Price</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-right">Total</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
                         <tbody>
                             {% for item in cart_items %}
                             <tr class="border-b" id="row-{{ item.product._id }}">
                                 <td class="py-4">{{ item.product.product_name }}</td>
                                 <td class="py-4">₹{{ item.product.product_price }}</td>
                                 <td class="py-4">
-                                    <div class="flex items-center justify-center">
-                                        <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1, {{ item.quantity }}, {{ item.product.product_price }})">-</button>
-                                        <span class="mx-2 quantity-display" id="quantity-{{ item.product._id }}">{{ item.quantity }}</span>
-                                        <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1, {{ item.quantity }}, {{ item.product.product_price }})">+</button>
-                                    </div>
+                                    
+                                        <div class="flex items-center justify-center">
+                                            <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1, {{ item.product.product_price }})">-</button>
+                                            <span class="mx-2 quantity-display" id="quantity-{{ item.product._id }}">{{ item.quantity }}</span>
+                                            <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1, {{ item.product.product_price }})">+</button>
+                                        </div>
+                                    </td>
                                 </td>
-                                <td class="py-4" id="total-{{ item.product._id }}">₹{{ item.item_total }}</td>
-                                <td class="py-4">
+                                <td class="py-4 text-right" id="total-{{ item.product._id }}">₹{{ item.item_total }}</td>
+                                <td class="py-4 text-center">
                                     <button class="btn btn-sm btn-error" onclick="removeItem('{{ item.product._id }}')">Remove</button>
                                 </td>
                             </tr>
@@ -139,3 +140,39 @@
     </div>
 </body>
 </html>
+<script>
+    function updateQuantity(productId, change, price) {
+    const quantityElement = document.getElementById(`quantity-${productId}`);
+    const currentQuantity = parseInt(quantityElement.textContent);
+    const newQuantity = currentQuantity + change;
+
+    if (newQuantity < 1 || newQuantity > 5) {
+        alert(newQuantity < 1 ? "Quantity cannot be less than 1" : "Quantity cannot exceed 5");
+        return;
+    }
+
+    axios.post(`/customer/update_cart/${productId}`, { change: change })
+        .then(response => {
+            if (response.data.success) {
+                const totalElement = document.getElementById(`total-${productId}`);
+                const cartTotalElement = document.getElementById('cart-total');
+
+                quantityElement.textContent = newQuantity;
+                const newTotal = (newQuantity * price).toFixed(2);
+                totalElement.textContent = `₹${newTotal}`;
+
+                // Update cart total
+                const currentTotal = parseFloat(cartTotalElement.textContent.replace('₹', ''));
+                const difference = (change * price);
+                const newCartTotal = (currentTotal + difference).toFixed(2);
+                cartTotalElement.textContent = `₹${newCartTotal}`;
+            } else {
+                alert('Failed to update cart');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the cart');
+        });
+}
+</script>
