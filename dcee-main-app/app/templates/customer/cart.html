@@ -86,93 +86,144 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+        .dashboard-container {
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background-color: #2a303c;
+            color: white;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .top-nav {
+            background-color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">Your Cart</h1>
-        {% if cart_items %}
-            <div class="overflow-x-auto">
-                <table class="table w-full">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="text-left">Product</th>
-                            <th class="text-left">Price</th>
-                            <th class="text-center">Quantity</th>
-                            <th class="text-right">Total</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                        <tbody>
-                            {% for item in cart_items %}
-                            <tr class="border-b" id="row-{{ item.product._id }}">
-                                <td class="py-4">{{ item.product.product_name }}</td>
-                                <td class="py-4">₹{{ item.product.product_price }}</td>
-                                <td class="py-4">
-                                    
-                                        <div class="flex items-center justify-center">
-                                            <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1, {{ item.product.product_price }})">-</button>
-                                            <span class="mx-2 quantity-display" id="quantity-{{ item.product._id }}">{{ item.quantity }}</span>
-                                            <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1, {{ item.product.product_price }})">+</button>
-                                        </div>
-                                    </td>
-                                </td>
-                                <td class="py-4 text-right" id="total-{{ item.product._id }}">₹{{ item.item_total }}</td>
-                                <td class="py-4 text-center">
-                                    <button class="btn btn-sm btn-error" onclick="removeItem('{{ item.product._id }}')">Remove</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-6 text-right">
-                    <h2 class="text-2xl font-bold text-gray-800">Total: <span id="cart-total">₹{{ total }}</span></h2>
-                    <button class="btn btn-primary mt-4">Proceed to Checkout</button>
-                </div>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <!-- Sidebar content -->
+            <div class="p-4">
+                <h2 class="text-xl font-bold mb-4">Dashboard</h2>
+                <ul>
+                    <li><a href="#" class="block py-2"></a></li>
+                    <li><a href="#" class="block py-2"></a></li>
+                    <li><a href="#" class="block py-2 font-bold"></a></li>
+                    <li><a href="#" class="block py-2"></a></li>
+                </ul>
             </div>
-        {% else %}
-            <div class="cart-container p-6 text-center">
-                <p class="text-gray-600">Your cart is empty.</p>
-                <a href="{{ url_for('customer.stores') }}" class="btn btn-primary mt-4">Continue Shopping</a>
-            </div>
-        {% endif %}
+        </aside>
+        <div class="flex-1">
+            <nav class="top-nav">
+                <!-- Top navigation content -->
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <button onclick="history.back()" class="btn btn-sm btn-outline mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 mr-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Back
+                        </button>
+                        <h1 class="text-xl font-bold">Your Cart</h1>
+                    </div>
+                    <div>
+                        <span>Welcome, User</span>
+                        <a href="#" class="btn btn-sm ml-2"></a>
+                    </div>
+                </div>
+            </nav>
+            <main class="main-content">
+                <div class="container mx-auto px-4 py-8">
+                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Your Cart</h1>
+                    {% if cart_items %}
+                        <div class="overflow-x-auto">
+                            <table class="table w-full">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="text-left">Product</th>
+                                        <th class="text-left">Price</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-right">Total</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                    <tr class="border-b" id="row-{{ item.product._id }}">
+                                        <td class="py-4">{{ item.product.product_name }}</td>
+                                        <td class="py-4">₹{{ item.product.product_price }}</td>
+                                        <td class="py-4">
+                                            <div class="flex items-center justify-center">
+                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1, {{ item.product.product_price }})">-</button>
+                                                <span class="mx-2 quantity-display" id="quantity-{{ item.product._id }}">{{ item.quantity }}</span>
+                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1, {{ item.product.product_price }})">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 text-right" id="total-{{ item.product._id }}">₹{{ item.item_total }}</td>
+                                        <td class="py-4 text-center">
+                                            <button class="btn btn-sm btn-error" onclick="removeItem('{{ item.product._id }}')">Remove</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-6 text-right">
+                            <h2 class="text-2xl font-bold text-gray-800">Total: <span id="cart-total">₹{{ total }}</span></h2>
+                            <button class="btn btn-primary mt-4">Proceed to Checkout</button>
+                        </div>
+                    {% else %}
+                        <div class="cart-container p-6 text-center">
+                            <p class="text-gray-600">Your cart is empty.</p>
+                            <a href="{{ url_for('customer.stores') }}" class="btn btn-primary mt-4">Continue Shopping</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </main>
+        </div>
     </div>
+    <script>
+        function updateQuantity(productId, change, price) {
+        const quantityElement = document.getElementById(`quantity-${productId}`);
+        const currentQuantity = parseInt(quantityElement.textContent);
+        const newQuantity = currentQuantity + change;
+
+        if (newQuantity < 1 || newQuantity > 5) {
+            alert(newQuantity < 1 ? "Quantity cannot be less than 1" : "Quantity cannot exceed 5");
+            return;
+        }
+
+        axios.post(`/customer/update_cart/${productId}`, { change: change })
+            .then(response => {
+                if (response.data.success) {
+                    const totalElement = document.getElementById(`total-${productId}`);
+                    const cartTotalElement = document.getElementById('cart-total');
+
+                    quantityElement.textContent = newQuantity;
+                    const newTotal = (newQuantity * price).toFixed(2);
+                    totalElement.textContent = `₹${newTotal}`;
+
+                    // Update cart total
+                    const currentTotal = parseFloat(cartTotalElement.textContent.replace('₹', ''));
+                    const difference = (change * price);
+                    const newCartTotal = (currentTotal + difference).toFixed(2);
+                    cartTotalElement.textContent = `₹${newCartTotal}`;
+                } else {
+                    alert('Failed to update cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the cart');
+            });
+    }
+    </script>
 </body>
 </html>
-<script>
-    function updateQuantity(productId, change, price) {
-    const quantityElement = document.getElementById(`quantity-${productId}`);
-    const currentQuantity = parseInt(quantityElement.textContent);
-    const newQuantity = currentQuantity + change;
-
-    if (newQuantity < 1 || newQuantity > 5) {
-        alert(newQuantity < 1 ? "Quantity cannot be less than 1" : "Quantity cannot exceed 5");
-        return;
-    }
-
-    axios.post(`/customer/update_cart/${productId}`, { change: change })
-        .then(response => {
-            if (response.data.success) {
-                const totalElement = document.getElementById(`total-${productId}`);
-                const cartTotalElement = document.getElementById('cart-total');
-
-                quantityElement.textContent = newQuantity;
-                const newTotal = (newQuantity * price).toFixed(2);
-                totalElement.textContent = `₹${newTotal}`;
-
-                // Update cart total
-                const currentTotal = parseFloat(cartTotalElement.textContent.replace('₹', ''));
-                const difference = (change * price);
-                const newCartTotal = (currentTotal + difference).toFixed(2);
-                cartTotalElement.textContent = `₹${newCartTotal}`;
-            } else {
-                alert('Failed to update cart');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating the cart');
-        });
-}
-</script>
