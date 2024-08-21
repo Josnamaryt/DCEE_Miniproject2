@@ -177,7 +177,7 @@
                         </div>
                         <div class="mt-6 text-right">
                             <h2 class="text-2xl font-bold text-gray-800">Total: <span id="cart-total">₹{{ total }}</span></h2>
-                            <button class="btn btn-primary mt-4">Proceed to Checkout</button>
+                            <a href="{{ url_for('customer.checkout') }}" class="btn btn-primary mt-4">Proceed to Checkout</a>
                         </div>
                     {% else %}
                         <div class="cart-container p-6 text-center">

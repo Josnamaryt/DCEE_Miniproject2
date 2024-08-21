@@ -201,3 +201,46 @@ def get_cart_info():
 @customer_bp.route('/debug_session')
 def debug_session():
     return jsonify(dict(session))
+
+@customer_bp.route('/checkout')
+@login_required
+def checkout():
+    cart_items = []
+    total = 0
+    email = current_user.email
+    cart_data = mongo.db.cart.find({"email": email})
+    
+    for item in cart_data:
+        product = mongo.db.products.find_one({"_id": ObjectId(item['product_id'])})
+        if product:
+            item_total = float(product['product_price']) * item['quantity']
+            cart_items.append({
+                'product': product,
+                'quantity': item['quantity'],
+                'item_total': item_total
+            })
+            total += item_total
+    
+    return render_template('customer/checkout.html', cart_items=cart_items, total=total)
+
+@customer_bp.route('/save_address', methods=['POST'])
+@login_required
+def save_address():
+    try:
+        address_data = request.json
+        address_data['user_id'] = str(current_user.id)
+        
+        # Save the address to the database
+        result = mongo.db.addresses.update_one(
+            {'user_id': str(current_user.id)},
+            {'$set': address_data},
+            upsert=True
+        )
+
+        if result.acknowledged:
+            return jsonify({"success": True, "message": "Address saved successfully"})
+        else:
+            return jsonify({"success": False, "message": "Failed to save address"}), 400
+    except Exception as e:
+        print(f"Error saving address: {str(e)}")
+        return jsonify({"success": False, "message": "An error occurred"}), 500

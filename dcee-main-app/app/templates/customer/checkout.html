@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>Checkout</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body { background-color: #f1f3f6; }
+        .checkout-container { background-color: white; }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-2">
+                <div class="checkout-container p-4 mb-4 rounded shadow">
+                    <h2 class="text-xl font-bold mb-4">1. Login</h2>
+                    <p>{{ current_user.email }}</p>
+                </div>
+                <div class="checkout-container p-4 mb-4 rounded shadow">
+                    <h2 class="text-xl font-bold mb-4">2. Delivery Address</h2>
+                    <form id="addressForm">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="name" placeholder="Name" class="input input-bordered w-full" required />
+                            <input type="text" id="mobile" placeholder="Mobile number" class="input input-bordered w-full" required />
+                        </div>
+                        <input type="text" id="address" placeholder="Address (Area and Street)" class="input input-bordered w-full mt-4" required />
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <input type="text" id="city" placeholder="City" class="input input-bordered w-full" required />
+                            <select id="state" class="select select-bordered w-full" required>
+                                <option value="">Select State</option>
+                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                <option value="Jharkhand">Jharkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Manipur">Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Odisha">Odisha</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                <option value="Uttarakhand">Uttarakhand</option>
+                                <option value="West Bengal">West Bengal</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">Save and Deliver Here</button>
+                    </form>
+                </div>
+                <div class="checkout-container p-4 mb-4 rounded shadow">
+                    <h2 class="text-xl font-bold mb-4">3. Order Summary</h2>
+                    {% for item in cart_items %}
+                    <div class="flex justify-between items-center mb-2">
+                        <span>{{ item.product.product_name }} x {{ item.quantity }}</span>
+                        <span>₹{{ item.item_total }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="checkout-container p-4 mb-4 rounded shadow">
+                    <h2 class="text-xl font-bold mb-4">4. Payment Options</h2>
+                    <div class="flex flex-col">
+                        <label class="cursor-pointer label">
+                            <input type="radio" name="payment" class="radio" checked />
+                            <span class="label-text ml-2">Cash on Delivery</span>
+                        </label>
+                        <label class="cursor-pointer label">
+                            <input type="radio" name="payment" class="radio" />
+                            <span class="label-text ml-2">Credit/Debit Card</span>
+                        </label>
+                        <label class="cursor-pointer label">
+                            <input type="radio" name="payment" class="radio" />
+                            <span class="label-text ml-2">Net Banking</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="md:col-span-1">
+                <div class="checkout-container p-4 rounded shadow">
+                    <h2 class="text-xl font-bold mb-4">Price Details</h2>
+                    <div class="flex justify-between mb-2">
+                        <span>Price ({{ cart_items|length }} items)</span>
+                        <span>₹{{ total }}</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span>Delivery Charges</span>
+                        <span class="text-green-500">FREE</span>
+                    </div>
+                    <div class="border-t pt-4 mt-4">
+                        <div class="flex justify-between items-center font-bold">
+                            <span>Total Amount</span>
+                            <span>₹{{ total }}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary w-full mt-4">Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('addressForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const addressData = {
+                name: document.getElementById('name').value,
+                mobile: document.getElementById('mobile').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value
+            };
+
+            axios.post('/customer/save_address', addressData)
+                .then(function (response) {
+                    if (response.data.success) {
+                        alert('Address saved successfully!');
+                        // You can update the UI here to show the saved address
+                    } else {
+                        alert('Failed to save address. Please try again.');
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving the address.');
+                });
+        });
+    </script>
+</body>
+</html>
