@@ -102,30 +102,37 @@ def store_details(store_owner_id):
 @login_required
 def add_to_cart(product_id):
     try:
+        data = request.json
+        quantity = int(data.get('quantity', 1))
         product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
-        if product:
-            email = current_user.email
+        
+        if not product:
+            return jsonify({"success": False, "message": "Product not found"}), 404
+        
+        if quantity > product['product_quantity']:
+            return jsonify({"success": False, "message": "Requested quantity exceeds available stock"}), 400
+        
+        email = current_user.email
+        existing_item = mongo.db.cart.find_one({"email": email, "product_id": str(product_id)})
+        
+        if existing_item:
+            new_quantity = existing_item['quantity'] + quantity
+            if new_quantity > product['product_quantity']:
+                return jsonify({"success": False, "message": "Requested quantity exceeds available stock"}), 400
+            
+            mongo.db.cart.update_one(
+                {"email": email, "product_id": str(product_id)},
+                {"$set": {"quantity": new_quantity}}
+            )
+        else:
             cart_item = {
                 "email": email,
                 "product_id": str(product_id),
-                "quantity": 1
+                "quantity": quantity
             }
-            
-            # Check if the item already exists in the cart
-            existing_item = mongo.db.cart.find_one({"email": email, "product_id": str(product_id)})
-            
-            if existing_item:
-                # If the item exists, update the quantity
-                mongo.db.cart.update_one(
-                    {"email": email, "product_id": str(product_id)},
-                    {"$inc": {"quantity": 1}}
-                )
-            else:
-                # If the item doesn't exist, insert a new document
-                mongo.db.cart.insert_one(cart_item)
-            
-            return jsonify({"success": True, "message": "Product added to cart"})
-        return jsonify({"success": False, "message": "Product not found"}), 404
+            mongo.db.cart.insert_one(cart_item)
+        
+        return jsonify({"success": True, "message": "Product added to cart"})
     except Exception as e:
         print(f"Error adding to cart: {str(e)}")
         return jsonify({"success": False, "message": "An error occurred"}), 500
@@ -154,17 +161,37 @@ def view_cart():
 
 @customer_bp.route('/update_cart/<product_id>', methods=['POST'])
 @login_required
+
 def update_cart(product_id):
-    cart = session.get('cart', {})
-    change = int(request.json.get('change', 0))
-    
-    if product_id in cart:
-        cart[product_id] += change
-        if cart[product_id] <= 0:
-            del cart[product_id]
-    
-    session['cart'] = cart
-    return jsonify({"success": True, "message": "Cart updated successfully"})
+    try:
+        data = request.json
+        new_quantity = int(data.get('quantity', 0))
+        
+        product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
+        if not product:
+            return jsonify({"success": False, "message": "Product not found"}), 404
+        
+        email = current_user.email
+        cart_item = mongo.db.cart.find_one({"email": email, "product_id": str(product_id)})
+        
+        if not cart_item:
+            return jsonify({"success": False, "message": "Item not found in cart"}), 404
+        
+        if new_quantity < 1:
+            return jsonify({"success": False, "message": "Quantity cannot be less than 1"}), 400
+        
+        if new_quantity > product['product_quantity']:
+            return jsonify({"success": False, "message": f"Available stock is {product['product_quantity']}"}), 400
+        
+        mongo.db.cart.update_one(
+            {"email": email, "product_id": str(product_id)},
+            {"$set": {"quantity": new_quantity}}
+        )
+        
+        return jsonify({"success": True, "message": "Cart updated successfully", "new_quantity": new_quantity})
+    except Exception as e:
+        print(f"Error updating cart: {str(e)}")
+        return jsonify({"success": False, "message": "An error occurred"}), 500
 
 @customer_bp.route('/remove_from_cart/<product_id>', methods=['POST'])
 @login_required

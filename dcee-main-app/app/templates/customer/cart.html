@@ -6,36 +6,44 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        function updateQuantity(productId, change, currentQuantity, price) {
+        function updateQuantity(productId, change, maxQuantity, price) {
+            const quantityElement = document.getElementById(`quantity-${productId}`);
+            const currentQuantity = parseInt(quantityElement.textContent);
             const newQuantity = currentQuantity + change;
-            if (newQuantity < 1 || newQuantity > 5) {
-                alert(newQuantity < 1 ? "Quantity cannot be less than 1" : "Quantity cannot exceed 5");
+            const errorElement = document.getElementById(`error-${productId}`);
+            
+            if (newQuantity > maxQuantity) {
+                errorElement.textContent = `Available stock is ${maxQuantity}`;
+                errorElement.classList.remove('hidden');
                 return;
             }
 
-            axios.post(`/customer/update_cart/${productId}`, { change: change })
+            if (newQuantity < 1) {
+                errorElement.textContent = `Quantity cannot be less than 1`;
+                errorElement.classList.remove('hidden');
+                return;
+            }
+
+            errorElement.classList.add('hidden');
+
+            axios.post(`/customer/update_cart/${productId}`, { quantity: newQuantity })
                 .then(response => {
                     if (response.data.success) {
-                        const quantityElement = document.getElementById(`quantity-${productId}`);
-                        const totalElement = document.getElementById(`total-${productId}`);
-                        const cartTotalElement = document.getElementById('cart-total');
-
                         quantityElement.textContent = newQuantity;
+                        const totalElement = document.getElementById(`total-${productId}`);
                         const newTotal = (newQuantity * price).toFixed(2);
                         totalElement.textContent = `₹${newTotal}`;
 
-                        // Update cart total
-                        const currentTotal = parseFloat(cartTotalElement.textContent.replace('₹', ''));
-                        const difference = (change * price);
-                        const newCartTotal = (currentTotal + difference).toFixed(2);
-                        cartTotalElement.textContent = `₹${newCartTotal}`;
+                        updateCartTotal();
                     } else {
-                        alert('Failed to update cart');
+                        errorElement.textContent = response.data.message;
+                        errorElement.classList.remove('hidden');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while updating the cart');
+                    errorElement.textContent = 'An error occurred while updating the cart';
+                    errorElement.classList.remove('hidden');
                 });
         }
 
@@ -133,9 +141,9 @@
                         </button>
                         <h1 class="text-xl font-bold">Your Cart</h1>
                     </div>
-                    <div>
-                        <span>Welcome, User</span>
-                        <a href="#" class="btn btn-sm ml-2"></a>
+                    <div class="flex items-center">
+                        <span class="mr-4">Welcome, {{ current_user.email }}</span>
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-sm btn-outline">Logout</a>
                     </div>
                 </div>
             </nav>
@@ -161,10 +169,11 @@
                                         <td class="py-4">₹{{ item.product.product_price }}</td>
                                         <td class="py-4">
                                             <div class="flex items-center justify-center">
-                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1, {{ item.product.product_price }})">-</button>
+                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1, {{ item.product.product_quantity }}, {{ item.product.product_price }})">-</button>
                                                 <span class="mx-2 quantity-display" id="quantity-{{ item.product._id }}">{{ item.quantity }}</span>
-                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1, {{ item.product.product_price }})">+</button>
+                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1, {{ item.product.product_quantity }}, {{ item.product.product_price }})">+</button>
                                             </div>
+                                            <div id="error-{{ item.product._id }}" class="text-error text-sm mt-1 hidden"></div>
                                         </td>
                                         <td class="py-4 text-right" id="total-{{ item.product._id }}">₹{{ item.item_total }}</td>
                                         <td class="py-4 text-center">
@@ -189,41 +198,5 @@
             </main>
         </div>
     </div>
-    <script>
-        function updateQuantity(productId, change, price) {
-        const quantityElement = document.getElementById(`quantity-${productId}`);
-        const currentQuantity = parseInt(quantityElement.textContent);
-        const newQuantity = currentQuantity + change;
-
-        if (newQuantity < 1 || newQuantity > 5) {
-            alert(newQuantity < 1 ? "Quantity cannot be less than 1" : "Quantity cannot exceed 5");
-            return;
-        }
-
-        axios.post(`/customer/update_cart/${productId}`, { change: change })
-            .then(response => {
-                if (response.data.success) {
-                    const totalElement = document.getElementById(`total-${productId}`);
-                    const cartTotalElement = document.getElementById('cart-total');
-
-                    quantityElement.textContent = newQuantity;
-                    const newTotal = (newQuantity * price).toFixed(2);
-                    totalElement.textContent = `₹${newTotal}`;
-
-                    // Update cart total
-                    const currentTotal = parseFloat(cartTotalElement.textContent.replace('₹', ''));
-                    const difference = (change * price);
-                    const newCartTotal = (currentTotal + difference).toFixed(2);
-                    cartTotalElement.textContent = `₹${newCartTotal}`;
-                } else {
-                    alert('Failed to update cart');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while updating the cart');
-            });
-    }
-    </script>
 </body>
 </html>
