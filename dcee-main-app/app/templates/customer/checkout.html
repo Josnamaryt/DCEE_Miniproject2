@@ -5,6 +5,7 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         body { background-color: #f1f3f6; }
         .checkout-container { background-color: white; }
@@ -107,7 +108,7 @@
                             <span>₹{{ total }}</span>
                         </div>
                     </div>
-                    <button class="btn btn-primary w-full mt-4">Place Order</button>
+                    <button id="rzp-button" class="btn btn-primary w-full mt-4">Proceed to Payment</button>
                 </div>
             </div>
         </div>
@@ -138,6 +139,91 @@
                     alert('An error occurred while saving the address.');
                 });
         });
+
+        document.getElementById('rzp-button').onclick = function(e){
+            e.preventDefault();
+
+            // First, save the address
+            const addressData = {
+                name: document.getElementById('name').value,
+                mobile: document.getElementById('mobile').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value
+            };
+
+            axios.post('/customer/save_address', addressData)
+                .then(function (response) {
+                    if (response.data.success) {
+                        // Address saved successfully, now initiate Razorpay payment
+                        initiateRazorpayPayment();
+                    } else {
+                        alert('Failed to save address. Please try again.');
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving the address.');
+                });
+        }
+
+        function initiateRazorpayPayment() {
+            console.log('Initiating Razorpay payment...');
+            axios.post('/customer/create_order', {
+                amount: {{ total * 100 }}  // Amount in paise
+            })
+            .then(function (response) {
+                console.log('Create order response:', response.data);
+                if (response.data.success) {
+                    var options = {
+                        "key": "{{ rzp_test_p9ccnzVHbdWZkL }}", // Enter the Key ID generated from the Dashboard
+                        "amount": "{{ total * 100 }}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                        "currency": "INR",
+                        "name": "Smart Mobiles",
+                        "description": "Order Payment",
+                        "image": "https://example.com/your_logo.png",
+                        "order_id": response.data.order_id,
+                        "handler": function (response){
+                            // Send the payment details to your server
+                            axios.post('/customer/payment_success', {
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature
+                            })
+                            .then(function (response) {
+                                if (response.data.success) {
+                                    alert('Payment successful!');
+                                    window.location.href = '/customer/order_confirmation';
+                                } else {
+                                    alert('Payment verification failed. Please contact support.');
+                                }
+                            })
+                            .catch(function (error) {
+                                console.error('Error:', error);
+                                alert('An error occurred while verifying the payment.');
+                            });
+                        },
+                        "prefill": {
+                            "name": document.getElementById('name').value,
+                            "email": "{{ current_user.email }}",
+                            "contact": document.getElementById('mobile').value
+                        },
+                        "theme": {
+                            "color": "#3399cc"
+                        }
+                    };
+                    var rzp1 = new Razorpay(options);
+                    rzp1.open();
+                } else {
+                    console.error('Failed to create order:', response.data.error);
+                    alert('Failed to create order. Please try again.');
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+                alert('An error occurred while creating the order.');
+            });
+        }
     </script>
 </body>
 </html>

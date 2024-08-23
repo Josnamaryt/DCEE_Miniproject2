@@ -6,10 +6,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        function updateQuantity(productId, change, currentQuantity, maxQuantity, price) {
+        function updateQuantity(productId, change, maxQuantity, price) {
+            const quantityElement = document.getElementById(`quantity-${productId}`);
+            const currentQuantity = parseInt(quantityElement.textContent);
             const newQuantity = currentQuantity + change;
             const errorElement = document.getElementById(`error-${productId}`);
-            const quantityElement = document.getElementById(`quantity-${productId}`);
             
             if (newQuantity > maxQuantity) {
                 errorElement.textContent = `Available stock is ${maxQuantity}`;
@@ -168,9 +169,9 @@
                                         <td class="py-4">₹{{ item.product.product_price }}</td>
                                         <td class="py-4">
                                             <div class="flex items-center justify-center">
-                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1, {{ item.quantity }}, {{ item.product.product_quantity }}, {{ item.product.product_price }})">-</button>
+                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', -1, {{ item.product.product_quantity }}, {{ item.product.product_price }})">-</button>
                                                 <span class="mx-2 quantity-display" id="quantity-{{ item.product._id }}">{{ item.quantity }}</span>
-                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1, {{ item.quantity }}, {{ item.product.product_quantity }}, {{ item.product.product_price }})">+</button>
+                                                <button class="btn btn-sm btn-outline" onclick="updateQuantity('{{ item.product._id }}', 1, {{ item.product.product_quantity }}, {{ item.product.product_price }})">+</button>
                                             </div>
                                             <div id="error-{{ item.product._id }}" class="text-error text-sm mt-1 hidden"></div>
                                         </td>
@@ -197,5 +198,13 @@
             </main>
         </div>
     </div>
+    <script>
+        // Prevent going back to this page after logout
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+    </script>
 </body>
 </html>

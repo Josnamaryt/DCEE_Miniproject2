@@ -1,10 +1,14 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, flash, make_response
 from flask_login import login_required, current_user
 from app import mongo  # Import mongo from your app package
 from bson import ObjectId  # Import ObjectId for proper ID handling
-
+import razorpay
+import logging
 
 customer_bp = Blueprint('customer', __name__)
+
+# Initialize Razorpay client
+razorpay_client = razorpay.Client(auth=("rzp_test_p9ccnzVHbdWZkL", "F7DG9MYbPufdAjo6sGo8hltX"))
 
 @customer_bp.route('/dashboard')
 @login_required
@@ -141,6 +145,9 @@ def add_to_cart(product_id):
 @customer_bp.route('/view_cart')
 @login_required
 def view_cart():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
     cart_items = []
     total = 0
     email = current_user.email
@@ -157,11 +164,14 @@ def view_cart():
             })
             total += item_total
     
-    return render_template('customer/cart.html', cart_items=cart_items, total=total)
+    response = make_response(render_template('customer/cart.html', cart_items=cart_items, total=total))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @customer_bp.route('/update_cart/<product_id>', methods=['POST'])
 @login_required
-
 def update_cart(product_id):
     try:
         data = request.json
@@ -248,7 +258,7 @@ def checkout():
             })
             total += item_total
     
-    return render_template('customer/checkout.html', cart_items=cart_items, total=total)
+    return render_template('customer/checkout.html', cart_items=cart_items, total=total, razorpay_key_id="rzp_test_p9ccnzVHbdWZkL")
 
 @customer_bp.route('/save_address', methods=['POST'])
 @login_required
@@ -271,3 +281,72 @@ def save_address():
     except Exception as e:
         print(f"Error saving address: {str(e)}")
         return jsonify({"success": False, "message": "An error occurred"}), 500
+
+@customer_bp.route('/create_order', methods=['POST'])
+@login_required
+def create_order():
+    try:
+        amount = request.json.get('amount')
+        order_currency = 'INR'
+        
+        # Create Razorpay Order
+        razorpay_order = razorpay_client.order.create(dict(
+            amount=amount,
+            currency=order_currency,
+            payment_capture='0'
+        ))
+        
+        # Save order details to your database here
+        
+        return jsonify({
+            'success': True,
+            'order_id': razorpay_order['id']
+        })
+    except Exception as e:
+        current_app.logger.error(f"Error creating Razorpay order: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@customer_bp.route('/payment_success', methods=['POST'])
+@login_required
+def payment_success():
+    # Verify the payment signature
+    params_dict = {
+        'razorpay_payment_id': request.json.get('razorpay_payment_id'),
+        'razorpay_order_id': request.json.get('razorpay_order_id'),
+        'razorpay_signature': request.json.get('razorpay_signature')
+    }
+    
+    try:
+        razorpay_client.utility.verify_payment_signature(params_dict)
+    except:
+        return jsonify({'success': False})
+    
+    # If verification is successful, you can update your database to mark the order as paid
+    # Also, you can clear the user's cart here
+    
+    return jsonify({'success': True})
+
+@customer_bp.route('/order_confirmation')
+@login_required
+def order_confirmation():
+    # Fetch the latest order for the current user
+    order = mongo.db.orders.find_one(
+        {"user_id": current_user.id},
+        sort=[("date", -1)]
+    )
+    
+    if not order:
+        # Handle case where no order is found
+        flash("No recent order found.", "error")
+        return redirect(url_for('customer.stores'))
+    
+    # Format the order data for the template
+    formatted_order = {
+        "id": str(order["_id"]),
+        "date": order["date"].strftime("%Y-%m-%d %H:%M:%S"),
+        "total": order["total"],
+        "items": order["items"],
+        "address": order["address"]
+    }
+    
+    return render_template('customer/order_confirmation.html', order=formatted_order)

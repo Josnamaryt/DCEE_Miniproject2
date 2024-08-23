@@ -41,6 +41,7 @@ def login():
             if check_password_hash(user_data['password'], password):
                 user = User(user_data)
                 login_user(user)
+                session['user_id'] = str(user.id)  # Ensure user_id is in session
                 flash('Login successful!', 'success')
                 # Redirect based on user role
                 if user_data['role'] == 'admin':
@@ -162,7 +163,8 @@ def register():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.', 'success')
+    session.clear()  # Clear the session
+    flash('You have been logged out.', 'info')
     return redirect(url_for('auth.login'))
 
 # Initialize Flask-Mail
