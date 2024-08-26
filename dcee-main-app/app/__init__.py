@@ -5,7 +5,9 @@ from bson import ObjectId
 from flask_mail import Mail
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 mongo = PyMongo()
 login_manager = LoginManager()
 mail = Mail()
@@ -28,7 +30,7 @@ def create_app(config_class='config.DevelopmentConfig'):
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USERNAME'] = 'josnamarythomas2025@mca.ajce.in'
-    app.config['MAIL_PASSWORD'] = 'JOSNA#987dd'
+    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASS')
     app.config['MAIL_DEFAULT_SENDER'] = 'josnamarythomas2025@mca.ajce.in'
     mail.init_app(app)
     

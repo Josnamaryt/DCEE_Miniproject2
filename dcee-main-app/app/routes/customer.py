@@ -4,11 +4,13 @@ from app import mongo  # Import mongo from your app package
 from bson import ObjectId  # Import ObjectId for proper ID handling
 import razorpay
 import logging
+import os
+from dotenv import load_dotenv
 
 customer_bp = Blueprint('customer', __name__)
 
-# Initialize Razorpay client
-razorpay_client = razorpay.Client(auth=("rzp_test_p9ccnzVHbdWZkL", "F7DG9MYbPufdAjo6sGo8hltX"))
+load_dotenv()
+razorpay_client = razorpay.Client(auth=(os.environ.get('RAZORPAY_KEY_ID'), os.environ.get('RAZORPAY_SECRET_KEY')))
 
 @customer_bp.route('/dashboard')
 @login_required
