@@ -352,3 +352,10 @@ def order_confirmation():
     }
     
     return render_template('customer/order_confirmation.html', order=formatted_order)
+
+@customer_bp.route('/orders')
+@login_required
+def orders():
+    # Logic to fetch order details
+    orders = get_orders_for_user(current_user.id)  # Example function to get orders
+    return render_template('customer/orders.html', orders=orders)
