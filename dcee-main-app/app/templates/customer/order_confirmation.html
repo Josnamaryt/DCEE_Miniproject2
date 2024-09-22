@@ -1,51 +1,105 @@
 <!DOCTYPE html>
-<html data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmation</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { background-color: #f1f3f6; }
-        .confirmation-container { background-color: white; }
-    </style>
 </head>
-<body>
-    <div class="container mx-auto p-4">
-        <div class="confirmation-container p-8 rounded shadow">
-            <h1 class="text-3xl font-bold mb-6 text-center text-green-600">Order Confirmed!</h1>
-            <div class="text-center mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-            <p class="text-lg text-center mb-6">Thank you for your purchase!</p>
-            
-            <div class="mb-6">
-                <h2 class="text-xl font-semibold mb-2">Order Details</h2>
-                <p><strong>Order ID:</strong> {{ order.id }}</p>
-                <p><strong>Date:</strong> {{ order.date }}</p>
-                <p><strong>Total Amount:</strong> ₹{{ order.total }}</p>
-            </div>
-            
-            <div class="mb-6">
-                <h2 class="text-xl font-semibold mb-2">Items Ordered</h2>
-                <ul class="list-disc list-inside">
-                    {% for item in order.items %}
-                    <li>{{ item.product_name }} x {{ item.quantity }} - ₹{{ item.total }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            
-            <div class="mb-6">
-                <h2 class="text-xl font-semibold mb-2">Shipping Address</h2>
-                <p>{{ order.address.name }}</p>
-                <p>{{ order.address.address }}</p>
-                <p>{{ order.address.city }}, {{ order.address.state }}</p>
-                <p>Phone: {{ order.address.mobile }}</p>
-            </div>
-            
-            <div class="text-center">
-                <a href="{{ url_for('customer.stores') }}" class="btn btn-primary">Continue Shopping</a>
+<body class="bg-base-300 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body">
+                <h1 class="card-title text-3xl mb-6">Order Confirmation</h1>
+                
+                <div class="divider"></div>
+                
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Order Details</h2>
+                    <div class="stats stats-vertical lg:stats-horizontal shadow">
+                        <div class="stat">
+                            <div class="stat-title">Order ID</div>
+                            <div class="stat-value text-primary">{{ order.id }}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Date</div>
+                            <div class="stat-value">{{ order.date }}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Total Amount</div>
+                            <div class="stat-value text-secondary">₹{{ order.total }}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Status</div>
+                            <div class="stat-value">
+                                <span class="badge badge-success badge-lg">{{ order.status }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Items Ordered</h2>
+                    {% if order.items and order.items is iterable %}
+                        <div class="overflow-x-auto">
+                            <table class="table table-zebra w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items %}
+                                        <tr>
+                                            <td>{{ item.get('product_name', 'N/A') }}</td>
+                                            <td>{{ item.get('quantity', 'N/A') }}</td>
+                                            <td>₹{{ item.get('price', 'N/A') }}</td>
+                                            <td>₹{{ item.get('total', 'N/A') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                            <span>No items found in this order or items are not in the expected format.</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Shipping Address</h2>
+                    {% if order.address %}
+                        <div class="card bg-base-100 shadow-sm">
+                            <div class="card-body">
+                                <p class="text-lg">{{ order.address.get('name', 'N/A') }}</p>
+                                <p>{{ order.address.get('address', 'N/A') }}</p>
+                                <p>{{ order.address.get('city', 'N/A') }}, {{ order.address.get('state', 'N/A') }}</p>
+                                <p>Phone: {{ order.address.get('mobile', 'N/A') }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-error">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span>No address information available.</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-actions justify-end">
+                    <a href="{{ url_for('customer.dashboard') }}" class="btn btn-primary">
+                        Return to Dashboard
+                    </a>
+                </div>
             </div>
         </div>
     </div>

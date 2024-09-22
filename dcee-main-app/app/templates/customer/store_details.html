@@ -96,10 +96,13 @@
 
     <div class="container mx-auto px-4 py-8">
         <h2 class="text-3xl font-bold mb-6">Our Products</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <p>Number of products: {{ product_data|length }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {% for product in product_data %}
-            <div class="card bg-base-100 shadow-xl">
-                <figure><img src="https://picsum.photos/seed/{{ loop.index }}/400/250" alt="{{ product.product_name }}" /></figure>
+            <div class="card w-96 bg-base-100 shadow-xl">
+                <figure>
+                    <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="w-full h-48 object-cover" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'"/>
+                </figure>
                 <div class="card-body">
                     <h2 class="card-title">{{ product.product_name }}</h2>
                     <p class="text-primary font-bold">₹{{ product.product_price }}</p>
@@ -108,11 +111,48 @@
                     <div class="card-actions justify-end">
                         <button class="btn btn-primary" onclick="addToCart('{{ product._id }}', true)">Buy Now</button>
                         <button class="btn btn-ghost" onclick="addToCart('{{ product._id }}')">Add to Cart</button>
+                        <button class="btn btn-secondary" onclick="openProductModal('{{ product._id }}')">View Product</button>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-box">
+            <h3 id="modal-product-name" class="font-bold text-lg"></h3>
+            <img id="modal-product-image" src="" alt="Product Image" class="w-full h-64 object-cover mb-4">
+            <p id="modal-product-description" class="py-4"></p>
+            <p id="modal-product-price" class="font-bold"></p>
+            <p id="modal-product-status"></p>
+            <p id="modal-product-quantity"></p>
+            <div class="modal-action">
+                <button class="btn" onclick="closeProductModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function openProductModal(productId) {
+        fetch(`/customer/get_product_details/${productId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('modal-product-name').textContent = data.product_name;
+                document.getElementById('modal-product-image').src = data.product_image;
+                document.getElementById('modal-product-description').textContent = data.product_description;
+                document.getElementById('modal-product-price').textContent = `Price: $${data.product_price}`;
+                document.getElementById('modal-product-status').textContent = `Status: ${data.product_status}`;
+                document.getElementById('modal-product-quantity').textContent = `Stock Available: ${data.product_quantity}`;
+                
+                document.getElementById('product-modal').classList.add('modal-open');
+            });
+    }
+
+    function closeProductModal() {
+        document.getElementById('product-modal').classList.remove('modal-open');
+    }
+    </script>
 </body>
 </html>

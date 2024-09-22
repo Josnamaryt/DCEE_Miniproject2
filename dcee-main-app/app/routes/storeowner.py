@@ -20,7 +20,12 @@ from flask import jsonify
 storeowner_bp = Blueprint('storeowner', __name__)
 
 # Define the upload folder for product images
-UPLOAD_FOLDER = 'static/images/product'
+UPLOAD_FOLDER = os.path.join('dcee-main-app', 'app', 'static', 'images', 'product')
+PRODUCT_IMAGES_FOLDER = os.path.join('dcee-main-app', 'app', 'static', 'images', 'product', 'product_images')
+
+# Ensure the product_images folder exists
+os.makedirs(PRODUCT_IMAGES_FOLDER, exist_ok=True)
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
@@ -144,25 +149,35 @@ def get_stores():
 @storeowner_bp.route('/register_product', methods=['POST'])
 @login_required
 def register_product():
-    # store_id to be done
+    print("flag1")
     product_name = request.form.get('product_name')
     product_price = request.form.get('product_price')
     product_status = request.form.get('product_status')
     product_quantity = request.form.get('product_quantity')
     product_add_date = request.form.get('product_add_date')
-    product_image = "Null"
+    product_description = request.form.get('product_description')
+    print("flag2")
+    print(product_description)
+    product_image = request.files.get('product_image')
+    print(product_image)
 
     # Basic validation
-    if not all([product_name, product_price, product_status, product_quantity, product_add_date, product_image]):
+    if not all([product_name, product_price, product_status, product_quantity, product_add_date, product_description, product_image]):
         return jsonify({'success': False, 'message': 'All fields are required'}), 400
 
-    # if not allowed_file(product_image.filename):
-    #     return jsonify({'success': False, 'message': 'Invalid file type'}), 400
+    if not allowed_file(product_image.filename):
+        return jsonify({'success': False, 'message': 'Invalid file type'}), 400
 
-    # # Save the product image
-    # filename = secure_filename(product_image.filename)
-    # image_path = os.path.join(UPLOAD_FOLDER, filename)
-    # product_image.save(image_path)
+    # Save the product image
+    try:
+        filename = secure_filename(product_image.filename)
+        image_path = os.path.join('product_images', filename)
+        full_path = os.path.join(PRODUCT_IMAGES_FOLDER, filename)
+        product_image.save(full_path)
+        print(f"Image saved at: {full_path}")
+    except Exception as e:
+        print(f"Error saving image: {str(e)}")
+        return jsonify({'success': False, 'message': f'Error saving image: {str(e)}'}), 500
 
     product = {
         'product_name': product_name,
@@ -170,15 +185,20 @@ def register_product():
         'product_status': product_status,
         'product_quantity': int(product_quantity),
         'product_add_date': product_add_date,
-        'product_image': "image_path",
+        'product_description': product_description,
+        'product_image': image_path,
         'store_owner_id': current_user.email
     }
+    print(product)
 
     try:
         mongo.db.products.insert_one(product)
+        print(f"Product registered: {product}")
         return jsonify({'success': True, 'message': 'Product registered successfully'}), 201
     except Exception as e:
+        print(f"Error inserting product into database: {str(e)}")
         return jsonify({'success': False, 'message': str(e)}), 500
+
 
 # @storeowner_bp.route('/get_products', methods=['GET'])
 # @login_required

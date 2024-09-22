@@ -108,7 +108,7 @@
                             <span>₹{{ total }}</span>
                         </div>
                     </div>
-                    <button id="rzp-button" class="btn btn-primary w-full mt-4">Proceed to Payment</button>
+                    <button id="rzp-button" class="btn btn-primary w-full mt-4" disabled>Proceed to Payment</button>
                 </div>
             </div>
         </div>
@@ -117,19 +117,38 @@
         document.getElementById('addressForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
+            // Validate form fields
+            const name = document.getElementById('name').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const state = document.getElementById('state').value;
+
+            if (!name || !mobile || !address || !city || !state) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Validate mobile number (10 digits)
+            if (!/^\d{10}$/.test(mobile)) {
+                alert('Please enter a valid 10-digit mobile number');
+                return;
+            }
+
             const addressData = {
-                name: document.getElementById('name').value,
-                mobile: document.getElementById('mobile').value,
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value
+                name: name,
+                mobile: mobile,
+                address: address,
+                city: city,
+                state: state
             };
 
             axios.post('/customer/save_address', addressData)
                 .then(function (response) {
                     if (response.data.success) {
                         alert('Address saved successfully!');
-                        // You can update the UI here to show the saved address
+                        // Enable the payment button
+                        document.getElementById('rzp-button').disabled = false;
                     } else {
                         alert('Failed to save address. Please try again.');
                     }
@@ -143,28 +162,13 @@
         document.getElementById('rzp-button').onclick = function(e){
             e.preventDefault();
 
-            // First, save the address
-            const addressData = {
-                name: document.getElementById('name').value,
-                mobile: document.getElementById('mobile').value,
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value
-            };
+            // Check if address is saved
+            if (this.disabled) {
+                alert('Please save your address before proceeding to payment');
+                return;
+            }
 
-            axios.post('/customer/save_address', addressData)
-                .then(function (response) {
-                    if (response.data.success) {
-                        // Address saved successfully, now initiate Razorpay payment
-                        initiateRazorpayPayment();
-                    } else {
-                        alert('Failed to save address. Please try again.');
-                    }
-                })
-                .catch(function (error) {
-                    console.error('Error:', error);
-                    alert('An error occurred while saving the address.');
-                });
+            initiateRazorpayPayment();
         }
 
         function initiateRazorpayPayment() {
@@ -176,7 +180,7 @@
                 console.log('Create order response:', response.data);
                 if (response.data.success) {
                     var options = {
-                        "key": "{{ rzp_test_p9ccnzVHbdWZkL }}", // Enter the Key ID generated from the Dashboard
+                        "key": "{{ razorpay_key_id }}", // Enter the Key ID generated from the Dashboard
                         "amount": "{{ total * 100 }}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
                         "currency": "INR",
                         "name": "Smart Mobiles",
