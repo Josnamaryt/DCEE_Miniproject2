@@ -6,6 +6,7 @@ import razorpay
 import logging
 import os
 from dotenv import load_dotenv
+from datetime import datetime
 
 customer_bp = Blueprint('customer', __name__)
 
@@ -282,19 +283,46 @@ def save_address():
         address_data = request.json
         address_data['user_id'] = str(current_user.id)
         
-        # Save the address to the database
-        result = mongo.db.addresses.update_one(
-            {'user_id': str(current_user.id)},
-            {'$set': address_data},
-            upsert=True
-        )
-
-        if result.acknowledged:
-            return jsonify({"success": True, "message": "Address saved successfully"})
+        # Create a new order
+        order_data = {
+            'user_id': str(current_user.id),
+            'email': current_user.email,
+            'address': address_data,
+            'items': [],
+            'total': 0,
+            'status': 'pending',
+            'date': datetime.utcnow(),
+            'razorpay_order_id': None,
+            'razorpay_payment_id': None
+        }
+        
+        # Get cart items and add them to the order
+        cart_items = mongo.db.cart.find({"email": current_user.email})
+        for item in cart_items:
+            product = mongo.db.products.find_one({"_id": ObjectId(item['product_id'])})
+            if product:
+                order_item = {
+                    'product_id': str(product['_id']),
+                    'product_name': product['product_name'],
+                    'quantity': item['quantity'],
+                    'price': float(product['product_price']),
+                    'total': float(product['product_price']) * item['quantity'],
+                    'store_id': product['store_owner_id']
+                }
+                order_data['items'].append(order_item)
+                order_data['total'] += order_item['total']
+        
+        # Insert the order into the database
+        result = mongo.db.orders.insert_one(order_data)
+        
+        if result.inserted_id:
+            # Save the order ID in the session for later use
+            session['current_order_id'] = str(result.inserted_id)
+            return jsonify({"success": True, "message": "Order created successfully", "order_id": str(result.inserted_id)})
         else:
-            return jsonify({"success": False, "message": "Failed to save address"}), 400
+            return jsonify({"success": False, "message": "Failed to create order"}), 400
     except Exception as e:
-        print(f"Error saving address: {str(e)}")
+        print(f"Error creating order: {str(e)}")
         return jsonify({"success": False, "message": "An error occurred"}), 500
 
 @customer_bp.route('/create_order', methods=['POST'])
@@ -311,7 +339,13 @@ def create_order():
             payment_capture='0'
         ))
         
-        # Save order details to your database here
+        # Update the order in our database with the Razorpay order ID
+        order_id = session.get('current_order_id')
+        if order_id:
+            mongo.db.orders.update_one(
+                {"_id": ObjectId(order_id)},
+                {"$set": {"razorpay_order_id": razorpay_order['id']}}
+            )
         
         return jsonify({
             'success': True,
@@ -334,37 +368,63 @@ def payment_success():
     try:
         razorpay_client.utility.verify_payment_signature(params_dict)
     except:
-        return jsonify({'success': False})
+        return jsonify({'success': False, 'message': 'Invalid payment signature'})
     
-    # If verification is successful, you can update your database to mark the order as paid
-    # Also, you can clear the user's cart here
-    
-    return jsonify({'success': True})
+    # Update the order in our database
+    order_id = session.get('current_order_id')
+    if order_id:
+        mongo.db.orders.update_one(
+            {"_id": ObjectId(order_id)},
+            {
+                "$set": {
+                    "status": "paid",
+                    "razorpay_payment_id": params_dict['razorpay_payment_id']
+                }
+            }
+        )
+        
+        # Clear the user's cart
+        mongo.db.cart.delete_many({"email": current_user.email})
+        
+        # Clear the current_order_id from the session
+        session.pop('current_order_id', None)
+        
+        return jsonify({'success': True, 'message': 'Payment successful and order updated'})
+    else:
+        return jsonify({'success': False, 'message': 'Order not found'}), 404
 
 @customer_bp.route('/order_confirmation')
 @login_required
 def order_confirmation():
-    # Fetch the latest order for the current user
+    # Retrieve the most recent order for the current user
     order = mongo.db.orders.find_one(
-        {"user_id": current_user.id},
+        {"user_id": str(current_user.id)},
         sort=[("date", -1)]
     )
-    
-    if not order:
-        # Handle case where no order is found
-        flash("No recent order found.", "error")
-        return redirect(url_for('customer.stores'))
-    
-    # Format the order data for the template
-    formatted_order = {
-        "id": str(order["_id"]),
-        "date": order["date"].strftime("%Y-%m-%d %H:%M:%S"),
-        "total": order["total"],
-        "items": order["items"],
-        "address": order["address"]
-    }
-    
-    return render_template('customer/order_confirmation.html', order=formatted_order)
+
+    if order:
+        # Print raw order for debugging
+        print("Raw order:", order)
+        
+        # Explicitly convert items to a list
+        items = list(order.get("items", []))
+        print("Items:", items)
+        
+        # Format the order data
+        formatted_order = {
+            "id": str(order["_id"]),
+            "date": order["date"].strftime("%Y-%m-%d %H:%M:%S"),
+            "total": order["total"],
+            "items": items,  # Use the explicitly converted list
+            "address": order.get("address", {}),
+            "status": order["status"]
+        }
+        print("Formatted order:", formatted_order)
+        return render_template('customer/order_confirmation.html', order=formatted_order)
+    else:
+        flash("No order found.", "error")
+        return redirect(url_for('customer.dashboard'))
+
 
 @customer_bp.route('/orders')
 @login_required
@@ -396,3 +456,4 @@ def get_product_details(product_id):
         })
     else:
         return jsonify({'error': 'Product not found'}), 404
+    

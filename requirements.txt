@@ -6,3 +6,5 @@ flask_pymongo
 pytorch
 pillow
 transformers
+pandas
+prophet
