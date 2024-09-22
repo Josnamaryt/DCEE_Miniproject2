@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, flash, make_response
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, flash, make_response, current_app
 from flask_login import login_required, current_user
 from app import mongo  # Import mongo from your app package
 from bson import ObjectId  # Import ObjectId for proper ID handling
@@ -86,19 +86,32 @@ def stores():
 @customer_bp.route('/store_details/<store_owner_id>', methods=['GET'])
 @login_required
 def store_details(store_owner_id):
+    print(f"Fetching store details for owner ID: {store_owner_id}")
     store_data = mongo.db.stores.find_one({"store_owner_id": store_owner_id})
-    print(store_data)
     product_data = []
     products = mongo.db.products.find({"store_owner_id": store_owner_id})
     for product in products:
+        image_path = product.get('product_image', '')
+        print(f"Original image path: {image_path}")
+        if image_path:
+            # Replace backslashes with forward slashes and remove 'product_images' from the start
+            image_path = image_path.replace('\\', '/').lstrip('product_images/')
+            # Generate the correct URL for the image
+            image_url = url_for('static', filename=f'images/product/product_images/{image_path}')
+            print(f"Generated image URL: {image_url}")
+        else:
+            image_url = url_for('static', filename='images/placeholder.jpg')
+        
         product_data.append({
-            '_id': str(product['_id']),  # Convert ObjectId to string
+            '_id': str(product['_id']),
             'product_name': product.get('product_name', ''),
             'product_price': product.get('product_price', ''),
             'product_status': product.get('product_status', ''),
-            'product_quantity': product.get('product_quantity', '')
+            'product_quantity': product.get('product_quantity', ''),
+            'product_description': product.get('product_description', ''),
+            'product_image': image_url
         })
-        print(product_data)
+    print(f"Number of products found: {len(product_data)}")
     if store_data:
         return render_template('customer/store_details.html', store=store_data, product_data=product_data)
     else:
@@ -359,3 +372,27 @@ def orders():
     # Logic to fetch order details
     orders = get_orders_for_user(current_user.id)  # Example function to get orders
     return render_template('customer/orders.html', orders=orders)
+
+@customer_bp.route('/get_product_details/<product_id>')
+@login_required
+def get_product_details(product_id):
+    product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
+    if product:
+        image_path = product.get('product_image', '')
+        if image_path:
+            # Replace backslashes with forward slashes and remove 'product_images' from the start
+            image_path = image_path.replace('\\', '/').lstrip('product_images/')
+            image_url = url_for('static', filename=f'images/product/product_images/{image_path}')
+        else:
+            image_url = url_for('static', filename='images/placeholder.jpg')
+        
+        return jsonify({
+            'product_name': product.get('product_name', ''),
+            'product_price': product.get('product_price', ''),
+            'product_status': product.get('product_status', ''),
+            'product_quantity': product.get('product_quantity', ''),
+            'product_description': product.get('product_description', ''),
+            'product_image': image_url
+        })
+    else:
+        return jsonify({'error': 'Product not found'}), 404

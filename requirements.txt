@@ -2,3 +2,7 @@ flask
 requests
 pymongo
 login
+flask_pymongo
+pytorch
+pillow
+transformers

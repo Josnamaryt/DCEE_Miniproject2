@@ -271,6 +271,7 @@
   </div>
 <!-- End Store Details Modal -->
 <!-- Modal for Product Registration -->
+<!-- Modal for Product Registration -->
 <div class="modal fade" id="productRegistrationModal" tabindex="-1" aria-labelledby="productRegistrationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
@@ -302,6 +303,13 @@
               <option value="out_of_stock">Out of Stock</option>
               <option value="discontinued">Discontinued</option>
             </select>
+            <div class="valid-feedback">Looks good!</div>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <label class="form-label col-12 m-0" for="product_description">Product Description <span class="txt-danger">*</span></label>
+          <div class="col-12 custom-input">
+            <textarea class="form-control" id="product_description" name="product_description" required></textarea>
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback"></div>
           </div>
@@ -339,6 +347,8 @@
     </div>
   </div>
 </div>
+<!-- End Product Registration Modal -->
+
 <!-- End Product Registration Modal -->
  
           <!-- footer start-->
