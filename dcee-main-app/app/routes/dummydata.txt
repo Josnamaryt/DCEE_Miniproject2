@@ -1,0 +1,16 @@
+product_id,product_name,date,quantity
+1,Product A,2023-01-01,100
+1,Product A,2023-01-02,95
+1,Product A,2023-01-03,90
+1,Product A,2023-01-04,85
+1,Product A,2023-01-05,80
+2,Product B,2023-01-01,50
+2,Product B,2023-01-02,48
+2,Product B,2023-01-03,45
+2,Product B,2023-01-04,43
+2,Product B,2023-01-05,40
+3,Product C,2023-01-01,200
+3,Product C,2023-01-02,190
+3,Product C,2023-01-03,185
+3,Product C,2023-01-04,180
+3,Product C,2023-01-05,175
