@@ -15,7 +15,9 @@ from werkzeug.utils import secure_filename
 import os
 from bson.errors import InvalidId
 from flask import jsonify
-
+import pandas as pd
+from prophet import Prophet
+import numpy as np
 
 storeowner_bp = Blueprint('storeowner', __name__)
 
@@ -34,7 +36,6 @@ def allowed_file(filename):
 
 @storeowner_bp.route('/get_profile', methods=['GET'])
 @login_required
-
 def get_profile():
     user = mongo.db.users.find_one({'email': current_user.email})
     if user:
@@ -68,7 +69,6 @@ def dashboard():
 
 @storeowner_bp.route('/register_store', methods=['POST'])
 @login_required
-
 def register_store():
     store_name = request.form.get('store_name')
     store_type = request.form.get('store_type')
@@ -414,3 +414,63 @@ def update_profile():
         return jsonify({'success': True, 'message': 'Profile updated successfully'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
+
+def load_dummy_data():
+    df = pd.read_csv('app/routes/dummydata.txt')
+    df['ds'] = pd.to_datetime(df['date'])
+    return df
+
+@storeowner_bp.route('/stock_management')
+@login_required
+def stock_management():
+    # Load dummy data instead of fetching from the database
+    dummy_data = load_dummy_data()
+    
+    # Group the data by product_id to create a list of products
+    products = []
+    for product_id, group in dummy_data.groupby('product_id'):
+        product = {
+            '_id': str(product_id),
+            'product_name': group['product_name'].iloc[0],
+            'product_quantity': group['quantity'].iloc[-1],
+            'stock_history': group[['ds', 'quantity']].rename(columns={'ds': 'date'}).to_dict('records')
+        }
+        products.append(product)
+    
+    # Prepare data for stock prediction
+    stock_data = prepare_stock_data(products)
+    
+    # Generate predictions
+    predictions = generate_stock_predictions(stock_data)
+    
+    # Convert predictions to a format suitable for JSON serialization
+    serializable_predictions = {}
+    for product_id, pred in predictions.items():
+        serializable_predictions[product_id] = pred.to_dict('records')
+    
+    return render_template('storefrontowner/stock_management.html', products=products, predictions=serializable_predictions)
+
+def prepare_stock_data(products):
+    stock_data = []
+    for product in products:
+        if 'stock_history' in product:
+            for entry in product['stock_history']:
+                stock_data.append({
+                    'product_id': str(product['_id']),
+                    'product_name': product['product_name'],
+                    'ds': pd.to_datetime(entry['date']),
+                    'y': float(entry['quantity'])
+                })
+    return pd.DataFrame(stock_data)
+
+def generate_stock_predictions(stock_data):
+    predictions = {}
+    for product_id in stock_data['product_id'].unique():
+        product_data = stock_data[stock_data['product_id'] == product_id]
+        if len(product_data) > 1:  # Prophet requires at least 2 data points
+            model = Prophet()
+            model.fit(product_data[['ds', 'y']])
+            future = model.make_future_dataframe(periods=30)  # Predict for the next 30 days
+            forecast = model.predict(future)
+            predictions[product_id] = forecast.tail(30)[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+    return predictions

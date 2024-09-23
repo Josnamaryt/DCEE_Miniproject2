@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            background-color: #1f2937;
+            color: #e5e7eb;
+        }
+        .card {
+            background-color: #374151;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold mb-8 text-center">Stock Management</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {% for product in products %}
+            <div class="card shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">{{ product.product_name }}</h2>
+                    <p class="text-lg mb-4">Current Stock: <span class="font-bold">{{ product.product_quantity }}</span></p>
+                    <div id="chart-{{ product._id }}" class="w-full h-80 mb-4"></div>
+                    <div class="card-actions justify-end">
+                        <button class="btn btn-primary" onclick="updateStock('{{ product._id }}')">Update Stock</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        {% for product in products %}
+        var predictionData = {{ predictions.get(product._id, [])|tojson }};
+        if (predictionData && predictionData.length > 0) {
+            var data = [
+                {
+                    x: predictionData.map(d => d.ds),
+                    y: predictionData.map(d => d.yhat),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Forecast',
+                    line: {color: '#10B981'}
+                },
+                {
+                    x: predictionData.map(d => d.ds),
+                    y: predictionData.map(d => d.yhat_lower),
+                    fill: 'tonexty',
+                    type: 'scatter',
+                    mode: 'none',
+                    name: 'Lower Bound',
+                    fillcolor: 'rgba(16, 185, 129, 0.1)'
+                },
+                {
+                    x: predictionData.map(d => d.ds),
+                    y: predictionData.map(d => d.yhat_upper),
+                    fill: 'tonexty',
+                    type: 'scatter',
+                    mode: 'none',
+                    name: 'Upper Bound',
+                    fillcolor: 'rgba(16, 185, 129, 0.1)'
+                }
+            ];
+
+            var layout = {
+                title: {
+                    text: 'Stock Forecast',
+                    font: {color: '#E5E7EB'}
+                },
+                xaxis: { 
+                    title: 'Date',
+                    color: '#E5E7EB',
+                    gridcolor: '#4B5563'
+                },
+                yaxis: { 
+                    title: 'Stock',
+                    color: '#E5E7EB',
+                    gridcolor: '#4B5563'
+                },
+                paper_bgcolor: '#374151',
+                plot_bgcolor: '#374151',
+                margin: {t: 40, r: 20, b: 40, l: 40},
+                legend: {font: {color: '#E5E7EB'}},
+                hovermode: 'closest'
+            };
+
+            var config = {responsive: true}
+
+            Plotly.newPlot('chart-{{ product._id }}', data, layout, config);
+        } else {
+            document.getElementById('chart-{{ product._id }}').innerHTML = '<p class="text-center text-lg">No prediction data available for this product.</p>';
+        }
+        {% endfor %}
+
+        function updateStock(productId) {
+            // Implement stock update logic here
+            console.log('Updating stock for product:', productId);
+        }
+    </script>
+</body>
+</html>
