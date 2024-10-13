@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-theme="dark">
+<html data-theme="light">
 <head>
     <title>{{ store.store_name }}</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
@@ -44,7 +44,7 @@
     </script>
     <style>
         .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.8); /* Adjusted for light theme */
             backdrop-filter: blur(10px);
             border-radius: 10px;
             padding: 20px;
@@ -52,19 +52,19 @@
     </style>
 </head>
 <body>
-    <div class="sticky top-0 z-30 navbar bg-base-100">
+    <div class="sticky top-0 z-30 navbar bg-gray-800 text-white shadow-lg"> <!-- Adjusted background color and text color -->
         <div class="flex-1">
-            <a href="{{ url_for('customer.stores') }}" class="btn btn-ghost">
+            <a href="{{ url_for('customer.stores') }}" class="btn btn-ghost text-white"> <!-- Adjusted text color -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Go Back
             </a>
-            <a class="btn btn-ghost normal-case text-xl">{{ store.store_name }}</a>
+            <a class="btn btn-ghost normal-case text-xl text-white">{{ store.store_name }}</a> <!-- Adjusted text color -->
         </div>
         <div class="flex-none">
             <div class="dropdown dropdown-end">
-                <label tabindex="0" class="btn btn-ghost btn-circle">
+                <label tabindex="0" class="btn btn-ghost btn-circle text-white"> <!-- Adjusted text color -->
                     <div class="indicator">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                         <span class="badge badge-sm indicator-item" id="cartCount">0</span>
@@ -142,7 +142,7 @@
                 document.getElementById('modal-product-name').textContent = data.product_name;
                 document.getElementById('modal-product-image').src = data.product_image;
                 document.getElementById('modal-product-description').textContent = data.product_description;
-                document.getElementById('modal-product-price').textContent = `Price: $${data.product_price}`;
+                document.getElementById('modal-product-price').textContent = `Price: ₹${data.product_price}`;  // Changed to ₹
                 document.getElementById('modal-product-status').textContent = `Status: ${data.product_status}`;
                 document.getElementById('modal-product-quantity').textContent = `Stock Available: ${data.product_quantity}`;
                 
