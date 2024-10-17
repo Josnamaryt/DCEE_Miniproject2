@@ -494,109 +494,91 @@
       <!-- Product Registration Modal JS -->
       <script>
         $(document).ready(function() {
-          // Real-time validation for product registration
-          $('#product_name, #product_price, #product_status, #product_image, #product_quantity, #product_add_date').on('input change', function() {
-            validateProductField($(this));
-          });
-
-          $('#productRegistrationForm').on('submit', function(e) {
-            e.preventDefault();
-            var form = $(this)[0];
-            var formData = new FormData(form);
-
-            // Final validation before submission
-            var isValid = validateProductForm();
-
-            if (isValid) {
-              $.ajax({
-                type: 'POST',
-                url: form.action,
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(data) {
-                  if (data.success) {
-                    $('#productRegistrationMessage').html('<div class="alert alert-success">' + data.message + '</div>');
-                    $('#productRegistrationMessage').show();
-                    form.reset(); // Reset the form
-                  } else {
-                    $('#productRegistrationMessage').html('<div class="alert alert-danger">' + data.message + '</div>');
-                    $('#productRegistrationMessage').show();
-                  }
-                },
-                error: function() {
-                  $('#productRegistrationMessage').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
-                  $('#productRegistrationMessage').show();
-                }
-              });
-            }
-          });
-
-          function validateProductField($field) {
-            var fieldId = $field.attr('id');
-            var value = $field.val();
-            var isValid = true;
-            var errorMessage = '';
-
-            switch(fieldId) {
-              case 'product_name':
-                if (value.trim() === '') {
-                  isValid = false;
-                  errorMessage = 'Product name is required';
-                }
-                break;
-              case 'product_price':
-                if (isNaN(value) || parseFloat(value) <= 0) {
-                  isValid = false;
-                  errorMessage = 'Price must be a positive number';
-                }
-                break;
-              case 'product_status':
-                if (value === '') {
-                  isValid = false;
-                  errorMessage = 'Please select a product status';
-                }
-                break;
-              case 'product_image':
-                if ($field[0].files.length === 0) {
-                  isValid = false;
-                  errorMessage = 'Please select an image file';
-                }
-                break;
-              case 'product_quantity':
-                if (isNaN(value) || parseInt(value) < 0) {
-                  isValid = false;
-                  errorMessage = 'Quantity must be a non-negative integer';
-                }
-                break;
-              case 'product_add_date':
-                if (value === '') {
-                  isValid = false;
-                  errorMessage = 'Please select a date';
-                }
-                break;
-            }
-
-            if (isValid) {
-              $field.removeClass('is-invalid').addClass('is-valid');
-              $field.siblings('.invalid-feedback').hide();
-            } else {
-              $field.removeClass('is-valid').addClass('is-invalid');
-              $field.siblings('.invalid-feedback').text(errorMessage).show();
-            }
-
-            return isValid;
-          }
-
-          function validateProductForm() {
-            var isValid = true;
-            $('#productRegistrationForm input[required], #productRegistrationForm select[required]').each(function() {
-              if (!validateProductField($(this))) {
-                isValid = false;
-              }
+            // Real-time validation for product registration
+            $('#product_name, #product_price, #product_quantity').on('input change', function() {
+                validateProductField($(this));
             });
-            return isValid;
-          }
+
+            $('#productRegistrationForm').on('submit', function(e) {
+                e.preventDefault();
+                var form = $(this)[0];
+                var formData = new FormData(form);
+
+                // Final validation before submission
+                var isValid = validateProductForm();
+
+                if (isValid) {
+                    $.ajax({
+                        type: 'POST',
+                        url: form.action,
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            if (data.success) {
+                                $('#productRegistrationMessage').html('<div class="alert alert-success">' + data.message + '</div>');
+                                $('#productRegistrationMessage').show();
+                                form.reset(); // Reset the form
+                            } else {
+                                $('#productRegistrationMessage').html('<div class="alert alert-danger">' + data.message + '</div>');
+                                $('#productRegistrationMessage').show();
+                            }
+                        },
+                        error: function() {
+                            $('#productRegistrationMessage').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                            $('#productRegistrationMessage').show();
+                        }
+                    });
+                }
+            });
+
+            function validateProductField($field) {
+                var fieldId = $field.attr('id');
+                var value = $field.val();
+                var isValid = true;
+                var errorMessage = '';
+
+                switch(fieldId) {
+                    case 'product_name':
+                        if (!/^[A-Za-z0-9\s]+$/.test(value)) { // Allow alphabets and numbers
+                            isValid = false;
+                            errorMessage = 'Product name should contain only alphabets and numbers';
+                        }
+                        break;
+                    case 'product_price':
+                        if (isNaN(value) || parseFloat(value) <= 0) { // Ensure it's a positive number
+                            isValid = false;
+                            errorMessage = 'Price must be a positive number';
+                        }
+                        break;
+                    case 'product_quantity':
+                        if (isNaN(value) || parseInt(value) < 0) { // Ensure it's a non-negative integer
+                            isValid = false;
+                            errorMessage = 'Quantity must be a non-negative integer';
+                        }
+                        break;
+                }
+
+                if (isValid) {
+                    $field.removeClass('is-invalid').addClass('is-valid');
+                    $field.siblings('.invalid-feedback').hide();
+                } else {
+                    $field.removeClass('is-valid').addClass('is-invalid');
+                    $field.siblings('.invalid-feedback').text(errorMessage).show();
+                }
+
+                return isValid;
+            }
+
+            function validateProductForm() {
+                var isValid = true;
+                $('#productRegistrationForm input[required], #productRegistrationForm select[required]').each(function() {
+                    if (!validateProductField($(this))) {
+                        isValid = false;
+                    }
+                });
+                return isValid;
+            }
         });
       </script>
       <!-- End Product Registration Modal JS -->
@@ -644,8 +626,8 @@
 <!-- Store Registration Form AJAX Submission -->
 <script>
 $(document).ready(function() {
-    // Real-time validation
-    $('#store_name, #store_type, #store_gstin').on('input', function() {
+    // Real-time validation for store registration
+    $('#store_name, #store_type, #store_gstin, #store_address').on('input change', function() {
         validateField($(this));
     });
 
@@ -689,15 +671,27 @@ $(document).ready(function() {
         switch(fieldId) {
             case 'store_name':
             case 'store_type':
-                if (!/^[A-Za-z\s]*$/.test(value)) {
+                if (!/^[A-Za-z\s]+$/.test(value)) { // Allow only alphabets and spaces
                     isValid = false;
-                    errorMessage = 'Should not contain numbers';
+                    errorMessage = 'Should contain only alphabets';
                 }
                 break;
             case 'store_gstin':
-                if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(value)) {
+                if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(value)) { // GSTIN format
                     isValid = false;
                     errorMessage = 'Invalid GSTIN format. Should be like: 22AAAAA0000A1Z5';
+                }
+                break;
+            case 'store_address':
+                if (value.trim() === '') { // Ensure address is not empty
+                    isValid = false;
+                    errorMessage = 'Store address is required.';
+                }
+                break;
+            case 'store_established_date':
+                if (value === '') { // Ensure date is selected
+                    isValid = false;
+                    errorMessage = 'Store established date is required.';
                 }
                 break;
         }
@@ -715,7 +709,7 @@ $(document).ready(function() {
 
     function validateForm() {
         var isValid = true;
-        $('#storeRegistrationForm input[required]').each(function() {
+        $('#storeRegistrationForm input[required], #storeRegistrationForm textarea[required], #storeRegistrationForm select[required]').each(function() {
             if (!validateField($(this))) {
                 isValid = false;
             }
@@ -832,177 +826,6 @@ $(document).ready(function() {
       </div>
     </div>
   </div>
-</div>
-
-<!-- Edit Profile Modal -->
-<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="editProfileForm">
-          <div class="mb-3">
-            <label for="editFirstName" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="editFirstName" name="first_name" required>
-            <div class="invalid-feedback" id="firstNameError"></div>
-          </div>
-          <div class="mb-3">
-            <label for="editLastName" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="editLastName" name="last_name" required>
-            <div class="invalid-feedback" id="lastNameError"></div>
-          </div>
-          <div class="mb-3">
-            <label for="editEmail" class="form-label">Email</label>
-            <input type="email" class="form-control" id="editEmail" name="email" required>
-            <div class="invalid-feedback" id="emailError"></div>
-          </div>
-          <div class="mb-3">
-            <label for="editPhone" class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" id="editPhone" name="phone" required>
-            <div class="invalid-feedback" id="phoneError"></div>
-          </div>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-$(document).ready(function() {
-  function validateName(name) {
-    return /^[A-Za-z]+$/.test(name);
-  }
-
-  function validateEmail(email) {
-    return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
-  }
-
-  function validatePhone(phone) {
-    return /^[0-9]{10}$/.test(phone);
-  }
-
-  function showError(inputId, message) {
-    $('#' + inputId).addClass('is-invalid');
-    $('#' + inputId + 'Error').text(message);
-  }
-
-  function clearError(inputId) {
-    $('#' + inputId).removeClass('is-invalid');
-    $('#' + inputId + 'Error').text('');
-  }
-
-  $('#editFirstName, #editLastName').on('input', function() {
-    const inputId = $(this).attr('id');
-    if (validateName($(this).val())) {
-      clearError(inputId);
-    } else {
-      showError(inputId, 'Name should contain only alphabets');
-    }
-  });
-
-  $('#editEmail').on('input', function() {
-    if (validateEmail($(this).val())) {
-      clearError('editEmail');
-    } else {
-      showError('editEmail', 'Please enter a valid Gmail address');
-    }
-  });
-
-  $('#editPhone').on('input', function() {
-    if (validatePhone($(this).val())) {
-      clearError('editPhone');
-    } else {
-      showError('editPhone', 'Phone number should be 10 digits');
-    }
-  });
-
-  $('#editProfileForm').on('submit', function(e) {
-    e.preventDefault();
-    
-    let isValid = true;
-
-    if (!validateName($('#editFirstName').val())) {
-      showError('editFirstName', 'First name should contain only alphabets');
-      isValid = false;
-    }
-
-    if (!validateName($('#editLastName').val())) {
-      showError('editLastName', 'Last name should contain only alphabets');
-      isValid = false;
-    }
-
-    if (!validateEmail($('#editEmail').val())) {
-      showError('editEmail', 'Please enter a valid Gmail address');
-      isValid = false;
-    }
-
-    if (!validatePhone($('#editPhone').val())) {
-      showError('editPhone', 'Phone number should be 10 digits');
-      isValid = false;
-    }
-
-    if (isValid) {
-      var formData = $(this).serialize();
-      $.ajax({
-        url: "{{ url_for('storeowner.update_profile') }}",
-        type: 'POST',
-        data: formData,
-        success: function(response) {
-          if (response.success) {
-            alert('Profile updated successfully');
-            $('#editProfileModal').modal('hide');
-            loadUserProfile();
-          } else {
-            alert('Error updating profile: ' + response.message);
-          }
-        },
-        error: function() {
-          alert('An error occurred while updating the profile. Please try again.');
-        }
-      });
-    }
-  });
-
-  function loadUserProfile() {
-    $.ajax({
-      url: "{{ url_for('storeowner.get_profile') }}",
-      type: 'GET',
-      success: function(response) {
-        if (response.success) {
-          $('#userFirstName').text(response.data.first_name);
-          $('#userEmail').text(response.data.email);
-          $('#userPhone').text(response.data.phone || 'Not available');
-          
-          // Populate edit form
-          $('#editFirstName').val(response.data.first_name);
-          $('#editEmail').val(response.data.email);
-          $('#editPhone').val(response.data.phone || '');
-        } else {
-          alert('Error fetching user profile. Please try again later.');
-        }
-      },
-      error: function() {
-        alert('An error occurred while fetching profile data. Please try again.');
-      }
-    });
-  }
-
-  $('#myProfileLink').on('click', function(e) {
-    e.preventDefault();
-    loadUserProfile();
-    $('#userProfileModal').modal('show');
-  });
-
-  $('#editProfileBtn').on('click', function() {
-    $('#userProfileModal').modal('hide');
-    $('#editProfileModal').modal('show');
-  });
-});
-</script>
 </div>
 
 <!-- Edit Profile Modal -->
