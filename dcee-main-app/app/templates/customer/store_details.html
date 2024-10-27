@@ -2,69 +2,74 @@
 <html data-theme="light">
 <head>
     <title>{{ store.store_name }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
-        function addToCart(productId, buyNow = false) {
-            axios.post(`/customer/add_to_cart/${productId}`, {
-                email: "{{ current_user.email }}"  // Assuming current_user is available in the template
-            })
-            .then(response => {
-                if (response.data.success) {
-                    updateCartInfo();
-                    if (buyNow) {
-                        window.location.href = "{{ url_for('customer.view_cart') }}";
-                    } else {
-                        alert(response.data.message);
-                    }
-                } else {
-                    alert('Failed to add product to cart');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while adding to cart');
-            });
-        }
-
-        function updateCartInfo() {
-            axios.get('/customer/get_cart_info')
-                .then(response => {
-                    document.getElementById('cartCount').textContent = response.data.count;
-                    document.getElementById('cartItemCount').textContent = response.data.count + ' Items';
-                    document.getElementById('cartSubtotal').textContent = 'Subtotal: ₹' + response.data.subtotal.toFixed(2);
-                })
-                .catch(error => {
-                    console.error('Error updating cart info:', error);
-                });
-        }
-
-        window.onload = updateCartInfo;
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+        .moving-bg {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
         .glass-effect {
-            background: rgba(255, 255, 255, 0.8); /* Adjusted for light theme */
+            background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px);
             border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
             padding: 20px;
+        }
+        .product-card {
+            transition: transform 0.3s ease-in-out;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        @keyframes moveVan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .btn-add-to-cart {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-add-to-cart::before {
+            content: '🚚';
+            position: absolute;
+            top: 50%;
+            left: -20px;
+            transform: translateY(-50%);
+            font-size: 20px;
+            animation: moveVan 2s linear infinite;
+        }
+
+        .btn-add-to-cart:hover::before {
+            animation-duration: 1s;
         }
     </style>
 </head>
-<body>
-    <div class="sticky top-0 z-30 navbar bg-gray-800 text-white shadow-lg"> <!-- Adjusted background color and text color -->
+<body class="moving-bg min-h-screen">
+    <div class="sticky top-0 z-30 navbar bg-base-100 text-base-content shadow-lg">
         <div class="flex-1">
-            <a href="{{ url_for('customer.stores') }}" class="btn btn-ghost text-white"> <!-- Adjusted text color -->
+            <a href="{{ url_for('customer.stores') }}" class="btn btn-ghost">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Go Back
             </a>
-            <a class="btn btn-ghost normal-case text-xl text-white">{{ store.store_name }}</a> <!-- Adjusted text color -->
+            <a class="btn btn-ghost normal-case text-xl">{{ store.store_name }}</a>
         </div>
         <div class="flex-none">
             <div class="dropdown dropdown-end">
-                <label tabindex="0" class="btn btn-ghost btn-circle text-white"> <!-- Adjusted text color -->
+                <label tabindex="0" class="btn btn-ghost btn-circle">
                     <div class="indicator">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                         <span class="badge badge-sm indicator-item" id="cartCount">0</span>
@@ -83,35 +88,35 @@
         </div>
     </div>
 
-    <div class="hero min-h-[50vh] bg-base-200">
+    <div class="hero min-h-[50vh]">
         <div class="hero-content text-center">
-            <div class="max-w-md glass-effect">
-                <h1 class="text-5xl font-bold mb-4">{{ store.store_name }}</h1>
-                <p class="py-1">Type: {{ store.store_type }}</p>
-                <p class="py-1">Address: {{ store.store_address }}</p>
-                <p class="py-1">GSTIN: {{ store.store_gstin }}</p>
+            <div class="max-w-md glass-effect animate__animated animate__fadeIn">
+                <h1 class="text-5xl font-bold mb-4 text-white">{{ store.store_name }}</h1>
+                <p class="py-1 text-white">Type: {{ store.store_type }}</p>
+                <p class="py-1 text-white">Address: {{ store.store_address }}</p>
+                <p class="py-1 text-white">GSTIN: {{ store.store_gstin }}</p>
             </div>
         </div>
     </div>
 
     <div class="container mx-auto px-4 py-8">
-        <h2 class="text-3xl font-bold mb-6">Our Products</h2>
-        <p>Number of products: {{ product_data|length }}</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <h2 class="text-3xl font-bold mb-6 text-white text-center">Our Products</h2>
+        <p class="text-white text-center mb-4">Number of products: {{ product_data|length }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for product in product_data %}
-            <div class="card w-96 bg-base-100 shadow-xl">
-                <figure>
-                    <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="w-full h-48 object-cover" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'"/>
+            <div class="card bg-base-100 shadow-xl product-card animate__animated animate__fadeInUp">
+                <figure class="px-10 pt-10">
+                    <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="rounded-xl w-full h-48 object-cover" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'"/>
                 </figure>
-                <div class="card-body">
+                <div class="card-body items-center text-center">
                     <h2 class="card-title">{{ product.product_name }}</h2>
                     <p class="text-primary font-bold">₹{{ product.product_price }}</p>
-                    <p>Status: {{ product.product_status }}</p>
+                    <div class="badge badge-secondary">{{ product.product_status }}</div>
                     <p>Quantity: {{ product.product_quantity }}</p>
-                    <div class="card-actions justify-end">
-                        <button class="btn btn-primary" onclick="addToCart('{{ product._id }}', true)">Buy Now</button>
-                        <button class="btn btn-ghost" onclick="addToCart('{{ product._id }}')">Add to Cart</button>
-                        <button class="btn btn-secondary" onclick="openProductModal('{{ product._id }}')">View Product</button>
+                    <div class="card-actions">
+                        <button class="btn btn-primary btn-add-to-cart" onclick="addToCart('{{ product._id }}')">Add to Cart</button>
+                        <button class="btn btn-ghost" onclick="addToCart('{{ product._id }}', true)">Buy Now</button>
+                        <button class="btn btn-secondary" onclick="openProductModal('{{ product._id }}')">View Details</button>
                     </div>
                 </div>
             </div>
@@ -121,20 +126,62 @@
 
     <!-- Product Modal -->
     <div id="product-modal" class="modal">
-        <div class="modal-box">
-            <h3 id="modal-product-name" class="font-bold text-lg"></h3>
-            <img id="modal-product-image" src="" alt="Product Image" class="w-full h-64 object-cover mb-4">
-            <p id="modal-product-description" class="py-4"></p>
-            <p id="modal-product-price" class="font-bold"></p>
-            <p id="modal-product-status"></p>
-            <p id="modal-product-quantity"></p>
-            <div class="modal-action">
-                <button class="btn" onclick="closeProductModal()">Close</button>
+        <div class="modal-box max-w-3xl">
+            <button onclick="closeProductModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/2 pr-4">
+                    <img id="modal-product-image" src="" alt="Product Image" class="w-full h-64 object-cover mb-4 rounded-lg shadow-lg">
+                </div>
+                <div class="md:w-1/2">
+                    <h3 id="modal-product-name" class="font-bold text-2xl mb-2"></h3>
+                    <p id="modal-product-description" class="py-2 text-gray-600"></p>
+                    <p id="modal-product-price" class="font-bold text-primary text-xl my-2"></p>
+                    <div id="modal-product-status" class="badge badge-secondary my-2"></div>
+                    <p id="modal-product-quantity" class="text-sm text-gray-500"></p>
+                    <div class="mt-4">
+                        <button class="btn btn-primary" onclick="addToCart(currentProductId)">Add to Cart</button>
+                        <button class="btn btn-secondary ml-2" onclick="addToCart(currentProductId, true)">Buy Now</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+    function addToCart(productId, buyNow = false) {
+        axios.post(`/customer/add_to_cart/${productId}`, {
+            email: "{{ current_user.email }}"
+        })
+        .then(response => {
+            if (response.data.success) {
+                updateCartInfo();
+                if (buyNow) {
+                    window.location.href = "{{ url_for('customer.view_cart') }}";
+                } else {
+                    alert(response.data.message);
+                }
+            } else {
+                alert('Failed to add product to cart');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while adding to cart');
+        });
+    }
+
+    function updateCartInfo() {
+        axios.get('/customer/get_cart_info')
+            .then(response => {
+                document.getElementById('cartCount').textContent = response.data.count;
+                document.getElementById('cartItemCount').textContent = response.data.count + ' Items';
+                document.getElementById('cartSubtotal').textContent = 'Subtotal: ₹' + response.data.subtotal.toFixed(2);
+            })
+            .catch(error => {
+                console.error('Error updating cart info:', error);
+            });
+    }
+
     function openProductModal(productId) {
         fetch(`/customer/get_product_details/${productId}`)
             .then(response => response.json())
@@ -142,8 +189,8 @@
                 document.getElementById('modal-product-name').textContent = data.product_name;
                 document.getElementById('modal-product-image').src = data.product_image;
                 document.getElementById('modal-product-description').textContent = data.product_description;
-                document.getElementById('modal-product-price').textContent = `Price: ₹${data.product_price}`;  // Changed to ₹
-                document.getElementById('modal-product-status').textContent = `Status: ${data.product_status}`;
+                document.getElementById('modal-product-price').textContent = `Price: ₹${data.product_price}`;
+                document.getElementById('modal-product-status').textContent = data.product_status;
                 document.getElementById('modal-product-quantity').textContent = `Stock Available: ${data.product_quantity}`;
                 
                 document.getElementById('product-modal').classList.add('modal-open');
@@ -153,6 +200,8 @@
     function closeProductModal() {
         document.getElementById('product-modal').classList.remove('modal-open');
     }
+
+    window.onload = updateCartInfo;
     </script>
 </body>
 </html>

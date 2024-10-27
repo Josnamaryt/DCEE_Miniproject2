@@ -54,17 +54,19 @@
                         const row = document.getElementById(`row-${productId}`);
                         row.remove();
 
-                        // Update cart total
-                        updateCartTotal();
-
-                        // If cart is empty, show empty cart message
+                        // Check if the cart is now empty
                         if (document.querySelectorAll('tbody tr').length === 0) {
-                            document.querySelector('.cart-container').innerHTML = `
-                                <div class="p-6 text-center">
+                            // Replace the entire table with the empty cart message
+                            const cartContainer = document.querySelector('.overflow-x-auto').parentNode;
+                            cartContainer.innerHTML = `
+                                <div class="cart-container p-6 text-center">
                                     <p class="text-gray-600">Your cart is empty.</p>
                                     <a href="{{ url_for('customer.stores') }}" class="btn btn-primary mt-4">Continue Shopping</a>
                                 </div>
                             `;
+                        } else {
+                            // Update cart total only if there are still items
+                            updateCartTotal();
                         }
                     } else {
                         alert('Failed to remove item from cart');
@@ -78,11 +80,18 @@
 
         function updateCartTotal() {
             const totalElements = document.querySelectorAll('[id^="total-"]');
+            if (totalElements.length === 0) {
+                // If no total elements are found, the cart is empty
+                return;
+            }
             let newTotal = 0;
             totalElements.forEach(el => {
                 newTotal += parseFloat(el.textContent.replace('₹', ''));
             });
-            document.getElementById('cart-total').textContent = `₹${newTotal.toFixed(2)}`;
+            const cartTotalElement = document.getElementById('cart-total');
+            if (cartTotalElement) {
+                cartTotalElement.textContent = `₹${newTotal.toFixed(2)}`;
+            }
         }
     </script>
     <style>
