@@ -140,16 +140,41 @@
 
         /* Card hover effects */
         .feature-card {
-            transition: all 0.3s ease;
-            transform-style: preserve-3d;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px) rotateX(5deg);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+        }
+
+        .list-disc li {
+            transition: all 0.2s ease;
+        }
+
+        .list-disc li:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* Update text colors for better contrast */
+        .text-gray-300 {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Glowing effect for headings */
+        h2.text-4xl {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
         .text-flicker-in-glow {
@@ -265,7 +290,6 @@
             color: #ffffff;
             opacity: 0;
             animation: fadeIn 2s ease-out 4s forwards;
-            margin-top: 2rem;
         }
 
         @keyframes fadeIn {
@@ -301,6 +325,122 @@
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
             50% { transform: translate(-50%, -50%) scale(1.2); }
         }
+
+        /* Add this to your existing <style> section */
+        .blur-out-expand-fwd {
+            -webkit-animation: blur-out-expand-fwd 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+            animation: blur-out-expand-fwd 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+        }
+
+        @-webkit-keyframes blur-out-expand-fwd {
+            0% {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+                -webkit-filter: blur(0.01);
+                filter: blur(0.01);
+            }
+            100% {
+                letter-spacing: 1em;
+                -webkit-transform: translateZ(300px);
+                transform: translateZ(300px);
+                -webkit-filter: blur(12px) opacity(0%);
+                filter: blur(12px) opacity(0%);
+            }
+        }
+
+        @keyframes blur-out-expand-fwd {
+            0% {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+                -webkit-filter: blur(0.01);
+                filter: blur(0.01);
+            }
+            100% {
+                letter-spacing: 1em;
+                -webkit-transform: translateZ(300px);
+                transform: translateZ(300px);
+                -webkit-filter: blur(12px) opacity(0%);
+                filter: blur(12px) opacity(0%);
+            }
+        }
+
+        /* Update the btn-slice styles */
+        .btn-slice {
+            padding: 0.8rem 1.8rem;
+            border: 2px solid #ffffff;
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.2rem;
+            position: relative;
+            text-decoration: none;
+            text-transform: uppercase;
+            display: inline-block;
+            background: rgba(67, 56, 202, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 300ms ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .btn-slice span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-slice:hover {
+            transform: translateY(-2px);
+            background: rgba(67, 56, 202, 0.2);
+            box-shadow: 0 0 15px rgba(67, 56, 202, 0.5);
+        }
+
+        .btn-slice:active {
+            transform: scale(0.95);
+        }
+
+        .btn-slice::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #4338ca 0%, #3b82f6 100%);
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+
+        .btn-slice:hover::before {
+            width: 100%;
+        }
+
+        /* Specific styles for navbar buttons */
+        .navbar-end .btn-slice {
+            padding: 0.6rem 1.4rem;
+            font-size: 0.8rem;
+        }
+
+        /* Specific styles for main CTA button */
+        .hero-content .btn-slice {
+            padding: 0.8rem 1.6rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: max-content;
+            flex-shrink: 0;
+        }
+
+        /* Add responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-content .flex {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .subtitle {
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -328,79 +468,85 @@
             </ul>
         </div>
         <div class="navbar-end">
-            <a href="{{ url_for('auth.login') }}" class="btn btn-primary mr-2 hover-grow">Login</a>
-            <a href="{{ url_for('auth.register') }}" class="btn btn-secondary hover-grow">Create Account</a>
+            <a href="{{ url_for('auth.login') }}" class="btn-slice mr-4">
+                <span>Login</span>
+            </a>
+            <a href="{{ url_for('auth.register') }}" class="btn-slice">
+                <span>Create Account</span>
+            </a>
         </div>
     </div>
 
     <div class="hero-section">
         <div class="hero-content">
-            <h1 class="text-flicker-in-glow">DCEE</h1>
-            <p class="subtitle">Empowering small and local Indian businesses to thrive in the digital age.</p>
-            <button class="btn btn-primary btn-lg animate__animated animate__fadeIn animate__delay-5s hover:animate__pulse mt-8">
-                Get Started
-            </button>
+            <h1 id="dceeTitle" class="text-flicker-in-glow">DCEE</h1>
+            <div class="flex items-center justify-center gap-8 mt-8">
+                <p class="subtitle m-0">Empowering small and local Indian businesses to thrive in the digital age.</p>
+                <a onclick="handleGetStarted()" class="btn-slice animate__animated animate__fadeIn animate__delay-5s whitespace-nowrap">
+                    <span>Get Started</span>
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="container mx-auto px-4 py-16 animate__animated animate__fadeIn">
-        <h2 class="text-4xl font-bold mb-12 text-center tracking-in-expand">
+        <h2 class="text-4xl font-bold mb-12 text-center tracking-in-expand text-white">
             Our Features
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__fadeInUp animate__delay-1s">
                 <div class="card-body">
-                    <h2 class="card-title text-2xl mb-4">Digital Presence</h2>
-                    <p>Enhance your online visibility and reach more customers.</p>
+                    <h2 class="card-title text-2xl mb-4 text-white">Digital Presence</h2>
+                    <p class="text-gray-300">Enhance your online visibility and reach more customers.</p>
                 </div>
             </div>
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__fadeInUp animate__delay-1s">
                 <div class="card-body">
-                    <h2 class="card-title text-2xl mb-4">Rural Payments</h2>
-                    <p>Facilitate easy and secure transactions in rural areas.</p>
+                    <h2 class="card-title text-2xl mb-4 text-white">Rural Payments</h2>
+                    <p class="text-gray-300">Facilitate easy and secure transactions in rural areas.</p>
                 </div>
             </div>
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__fadeInUp animate__delay-1s">
                 <div class="card-body">
-                    <h2 class="card-title text-2xl mb-4">Inventory Management</h2>
-                    <p>Optimize your stock and streamline your business operations.</p>
+                    <h2 class="card-title text-2xl mb-4 text-white">Inventory Management</h2>
+                    <p class="text-gray-300">Optimize your stock and streamline your business operations.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="container mx-auto px-4 py-16">
-        <h2 class="text-4xl font-bold mb-12 text-center animate__animated animate__fadeIn">
+        <h2 class="text-4xl font-bold mb-12 text-center animate__animated animate__fadeIn text-white">
             Who We Serve
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInLeft animate__delay-1s">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__fadeInLeft animate__delay-1s">
                 <div class="card-body">
-                    <h2 class="card-title">Digital Storefront Owners</h2>
-                    <ul class="list-disc list-inside">
-                        <li>Manage your profile</li>
-                        <li>Manage products</li>
-                        <li>View and manage customers</li>
+                    <h2 class="card-title text-white">Digital Storefront Owners</h2>
+                    <ul class="list-disc list-inside text-gray-300 mt-4">
+                        <li class="mb-2">Manage your profile</li>
+                        <li class="mb-2">Manage products</li>
+                        <li class="mb-2">View and manage customers</li>
                     </ul>
                 </div>
             </div>
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInLeft animate__delay-1s">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__fadeInLeft animate__delay-1s">
                 <div class="card-body">
-                    <h2 class="card-title">Customers</h2>
-                    <ul class="list-disc list-inside">
-                        <li>Register and manage profile</li>
-                        <li>Buy products</li>
-                        <li>Manage cart and transactions</li>
+                    <h2 class="card-title text-white">Customers</h2>
+                    <ul class="list-disc list-inside text-gray-300 mt-4">
+                        <li class="mb-2">Register and manage profile</li>
+                        <li class="mb-2">Buy products</li>
+                        <li class="mb-2">Manage cart and transactions</li>
                     </ul>
                 </div>
             </div>
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInLeft animate__delay-1s">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__fadeInLeft animate__delay-1s">
                 <div class="card-body">
-                    <h2 class="card-title">Admins</h2>
-                    <ul class="list-disc list-inside">
-                        <li>Manage user profiles</li>
-                        <li>Add and edit products</li>
-                        <li>Manage security and transactions</li>
+                    <h2 class="card-title text-white">Admins</h2>
+                    <ul class="list-disc list-inside text-gray-300 mt-4">
+                        <li class="mb-2">Manage user profiles</li>
+                        <li class="mb-2">Add and edit products</li>
+                        <li class="mb-2">Manage security and transactions</li>
                     </ul>
                 </div>
             </div>
@@ -408,71 +554,71 @@
     </div>
 
     <div class="container mx-auto px-4 py-16">
-        <h2 class="text-4xl font-bold mb-12 text-center animate__animated animate__fadeIn">
+        <h2 class="text-4xl font-bold mb-12 text-center animate__animated animate__fadeIn text-white">
             Key Modules
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__zoomIn">
                 <div class="card-body">
-                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('auth')">
+                    <h2 class="card-title cursor-pointer flex justify-between items-center text-white" onclick="toggleContent('auth')">
                         Auth
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </h2>
-                    <ul id="auth" class="list-disc list-inside hidden mt-2">
-                        <li>Registration and login</li>
-                        <li>Password management</li>
-                        <li>Email reset</li>
+                    <ul id="auth" class="list-disc list-inside hidden mt-4 text-gray-300">
+                        <li class="mb-2">Registration and login</li>
+                        <li class="mb-2">Password management</li>
+                        <li class="mb-2">Email reset</li>
                     </ul>
                 </div>
             </div>
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__zoomIn">
                 <div class="card-body">
-                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('platform')">
+                    <h2 class="card-title cursor-pointer flex justify-between items-center text-white" onclick="toggleContent('platform')">
                         Platform
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </h2>
-                    <ul id="platform" class="list-disc list-inside hidden mt-2">
-                        <li>Dashboard</li>
-                        <li>Profile management</li>
-                        <li>Storefront management</li>
+                    <ul id="platform" class="list-disc list-inside hidden mt-4 text-gray-300">
+                        <li class="mb-2">Dashboard</li>
+                        <li class="mb-2">Profile management</li>
+                        <li class="mb-2">Storefront management</li>
                     </ul>
                 </div>
             </div>
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__zoomIn">
                 <div class="card-body">
-                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('payment')">
+                    <h2 class="card-title cursor-pointer flex justify-between items-center text-white" onclick="toggleContent('payment')">
                         Payment Module
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </h2>
-                    <p id="payment" class="hidden mt-2">Secure and easy money transfers</p>
+                    <p id="payment" class="hidden mt-4 text-gray-300">Secure and easy money transfers</p>
                 </div>
             </div>
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__zoomIn">
                 <div class="card-body">
-                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('analytics')">
+                    <h2 class="card-title cursor-pointer flex justify-between items-center text-white" onclick="toggleContent('analytics')">
                         Analytics
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </h2>
-                    <p id="analytics" class="hidden mt-2">Insights on storefronts, customers, and products</p>
+                    <p id="analytics" class="hidden mt-4 text-gray-300">Insights on storefronts, customers, and products</p>
                 </div>
             </div>
-            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
+            <div class="feature-card p-6 rounded-lg animate__animated animate__zoomIn">
                 <div class="card-body">
-                    <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('chatbot')">
+                    <h2 class="card-title cursor-pointer flex justify-between items-center text-white" onclick="toggleContent('chatbot')">
                         Chatbot
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </h2>
-                    <p id="chatbot" class="hidden mt-2">AI-powered assistance for users</p>
+                    <p id="chatbot" class="hidden mt-4 text-gray-300">AI-powered assistance for users</p>
                 </div>
             </div>
         </div>
@@ -529,6 +675,19 @@
                 observer.observe(element);
             });
         });
+
+        function handleGetStarted() {
+            const title = document.getElementById('dceeTitle');
+            title.classList.add('blur-out-expand-fwd');
+            
+            // Add a subtle transform to the button when clicked
+            event.currentTarget.style.transform = 'scale(0.95)';
+            
+            // Wait for animation to complete before redirecting
+            setTimeout(() => {
+                window.location.href = "{{ url_for('auth.register') }}";
+            }, 1000);
+        }
     </script>
 </body>
 </html>
