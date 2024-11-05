@@ -203,7 +203,6 @@ This OTP is valid for 15 minutes.
 If you did not request a password reset, please ignore this email.
 '''
             mail.send(msg)
-            
             flash('An OTP has been sent to your email. Please check your inbox.', 'info')
             return redirect(url_for('auth.reset_password'))
         else:

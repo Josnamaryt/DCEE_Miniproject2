@@ -425,6 +425,8 @@ def load_dummy_data():
 def stock_management():
     # Load dummy data instead of fetching from the database
     dummy_data = load_dummy_data()
+    #  # Fetch products for the current store owner
+    # products = list(mongo.db.products.find({"store_owner_id": current_user.email}))
     
     # Group the data by product_id to create a list of products
     products = []
