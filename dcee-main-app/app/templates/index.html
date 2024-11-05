@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DCEE - Empowering Indian Small Businesses</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .glow {
@@ -42,10 +43,243 @@
             background-color: #4a5568; /* Medium blue-gray footer */
             color: #e2e8f0; /* Light gray text for footer */
         }
+
+        /* New animation styles */
+        .text-focus-in {
+            animation: text-focus-in 1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+        }
+
+        @keyframes text-focus-in {
+            0% {
+                filter: blur(12px);
+                opacity: 0;
+            }
+            100% {
+                filter: blur(0px);
+                opacity: 1;
+            }
+        }
+
+        .slide-in-blurred-top {
+            animation: slide-in-blurred-top 0.6s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+        }
+
+        @keyframes slide-in-blurred-top {
+            0% {
+                transform: translateY(-1000px) scaleY(2.5) scaleX(0.2);
+                transform-origin: 50% 0%;
+                filter: blur(40px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scaleY(1) scaleX(1);
+                transform-origin: 50% 50%;
+                filter: blur(0);
+                opacity: 1;
+            }
+        }
+
+        .tracking-in-expand {
+            animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+        }
+
+        @keyframes tracking-in-expand {
+            0% {
+                letter-spacing: -0.5em;
+                opacity: 0;
+            }
+            40% {
+                opacity: 0.6;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Hero section animation */
+        .hero-animated {
+            background: linear-gradient(-45deg, #4338ca, #3b82f6, #2563eb, #1d4ed8);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Card hover effects */
+        .feature-card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .text-flicker-in-glow {
+            -webkit-animation: text-flicker-in-glow 4s linear both;
+            animation: text-flicker-in-glow 4s linear both;
+            font-size: 12rem;
+            font-weight: bold;
+            letter-spacing: 0.2em;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        @-webkit-keyframes text-flicker-in-glow {
+            0% { opacity: 0; }
+            10% { opacity: 0; text-shadow: none; }
+            10.1% { opacity: 1; text-shadow: none; }
+            10.2% { opacity: 0; text-shadow: none; }
+            20% { opacity: 0; text-shadow: none; }
+            20.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.25); }
+            20.6% { opacity: 0; text-shadow: none; }
+            30% { opacity: 0; text-shadow: none; }
+            30.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            30.5% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            30.6% { opacity: 0; text-shadow: none; }
+            45% { opacity: 0; text-shadow: none; }
+            45.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            50% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            55% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            55.1% { opacity: 0; text-shadow: none; }
+            57% { opacity: 0; text-shadow: none; }
+            57.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.35); }
+            60% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.35); }
+            60.1% { opacity: 0; text-shadow: none; }
+            65% { opacity: 0; text-shadow: none; }
+            65.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.35), 0 0 100px rgba(255, 255, 255, 0.1); }
+            75% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.35), 0 0 100px rgba(255, 255, 255, 0.1); }
+            75.1% { opacity: 0; text-shadow: none; }
+            77% { opacity: 0; text-shadow: none; }
+            77.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.4), 0 0 110px rgba(255, 255, 255, 0.2), 0 0 100px rgba(255, 255, 255, 0.1); }
+            85% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.4), 0 0 110px rgba(255, 255, 255, 0.2), 0 0 100px rgba(255, 255, 255, 0.1); }
+            85.1% { opacity: 0; text-shadow: none; }
+            86% { opacity: 0; text-shadow: none; }
+            86.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.45), 0 0 110px rgba(255, 255, 255, 0.25), 0 0 100px rgba(255, 255, 255, 0.1); }
+            100% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.45), 0 0 110px rgba(255, 255, 255, 0.25), 0 0 100px rgba(255, 255, 255, 0.1); }
+        }
+
+        @keyframes text-flicker-in-glow {
+            0% { opacity: 0; }
+            10% { opacity: 0; text-shadow: none; }
+            10.1% { opacity: 1; text-shadow: none; }
+            10.2% { opacity: 0; text-shadow: none; }
+            20% { opacity: 0; text-shadow: none; }
+            20.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.25); }
+            20.6% { opacity: 0; text-shadow: none; }
+            30% { opacity: 0; text-shadow: none; }
+            30.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            30.5% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            30.6% { opacity: 0; text-shadow: none; }
+            45% { opacity: 0; text-shadow: none; }
+            45.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            50% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            55% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.25); }
+            55.1% { opacity: 0; text-shadow: none; }
+            57% { opacity: 0; text-shadow: none; }
+            57.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.35); }
+            60% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.35); }
+            60.1% { opacity: 0; text-shadow: none; }
+            65% { opacity: 0; text-shadow: none; }
+            65.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.35), 0 0 100px rgba(255, 255, 255, 0.1); }
+            75% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.35), 0 0 100px rgba(255, 255, 255, 0.1); }
+            75.1% { opacity: 0; text-shadow: none; }
+            77% { opacity: 0; text-shadow: none; }
+            77.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.4), 0 0 110px rgba(255, 255, 255, 0.2), 0 0 100px rgba(255, 255, 255, 0.1); }
+            85% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.55), 0 0 60px rgba(255, 255, 255, 0.4), 0 0 110px rgba(255, 255, 255, 0.2), 0 0 100px rgba(255, 255, 255, 0.1); }
+            85.1% { opacity: 0; text-shadow: none; }
+            86% { opacity: 0; text-shadow: none; }
+            86.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.45), 0 0 110px rgba(255, 255, 255, 0.25), 0 0 100px rgba(255, 255, 255, 0.1); }
+            100% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.45), 0 0 110px rgba(255, 255, 255, 0.25), 0 0 100px rgba(255, 255, 255, 0.1); }
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            background: #000000;  /* Dark background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at center, 
+                    rgba(67, 56, 202, 0.1) 0%,
+                    rgba(0, 0, 0, 0.5) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ffffff;
+            opacity: 0;
+            animation: fadeIn 2s ease-out 4s forwards;
+            margin-top: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Additional ambient background effect */
+        .ambient-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .ambient-background::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200vh;
+            height: 200vh;
+            background: radial-gradient(circle at center,
+                rgba(67, 56, 202, 0.1) 0%,
+                transparent 50%);
+            transform: translate(-50%, -50%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+        }
     </style>
 </head>
 <body class="text-gray-800">
-    <div class="navbar">
+    <div class="navbar animate__animated animate__fadeInDown">
         <div class="navbar-start">
             <div class="dropdown">
                 <label tabindex="0" class="btn btn-ghost lg:hidden">
@@ -74,34 +308,37 @@
         </div>
     </div>
 
-    <div class="hero min-h-screen bg-gray-200">
-        <div class="hero-content text-center">
-            <div class="max-w-md">
-                <h1 class="text-5xl font-bold mb-8 glow text-gray-900">DCEE</h1>
-                <p class="text-xl mb-8 text-gray-700">Empowering small and local Indian businesses to thrive in the digital age.</p>
-                <button class="btn btn-primary btn-lg hover-grow">Get Started</button>
-            </div>
+    <div class="hero-section">
+        <div class="ambient-background"></div>
+        <div class="hero-content">
+            <h1 class="text-flicker-in-glow">DCEE</h1>
+            <p class="subtitle">Empowering small and local Indian businesses to thrive in the digital age.</p>
+            <button class="btn btn-primary btn-lg animate__animated animate__fadeIn animate__delay-5s hover:animate__pulse mt-8">
+                Get Started
+            </button>
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-16">
-        <h2 class="text-3xl font-bold mb-8 text-center glow text-gray-900">Our Features</h2>
+    <div class="container mx-auto px-4 py-16 animate__animated animate__fadeIn">
+        <h2 class="text-4xl font-bold mb-12 text-center tracking-in-expand">
+            Our Features
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInUp animate__delay-1s">
                 <div class="card-body">
-                    <h2 class="card-title">Digital Presence</h2>
+                    <h2 class="card-title text-2xl mb-4">Digital Presence</h2>
                     <p>Enhance your online visibility and reach more customers.</p>
                 </div>
             </div>
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInUp animate__delay-1s">
                 <div class="card-body">
-                    <h2 class="card-title">Rural Payments</h2>
+                    <h2 class="card-title text-2xl mb-4">Rural Payments</h2>
                     <p>Facilitate easy and secure transactions in rural areas.</p>
                 </div>
             </div>
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInUp animate__delay-1s">
                 <div class="card-body">
-                    <h2 class="card-title">Inventory Management</h2>
+                    <h2 class="card-title text-2xl mb-4">Inventory Management</h2>
                     <p>Optimize your stock and streamline your business operations.</p>
                 </div>
             </div>
@@ -109,9 +346,11 @@
     </div>
 
     <div class="container mx-auto px-4 py-16">
-        <h2 class="text-3xl font-bold mb-8 text-center glow text-gray-900">Who We Serve</h2>
+        <h2 class="text-4xl font-bold mb-12 text-center animate__animated animate__fadeIn">
+            Who We Serve
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInLeft animate__delay-1s">
                 <div class="card-body">
                     <h2 class="card-title">Digital Storefront Owners</h2>
                     <ul class="list-disc list-inside">
@@ -121,7 +360,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInLeft animate__delay-1s">
                 <div class="card-body">
                     <h2 class="card-title">Customers</h2>
                     <ul class="list-disc list-inside">
@@ -131,7 +370,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__fadeInLeft animate__delay-1s">
                 <div class="card-body">
                     <h2 class="card-title">Admins</h2>
                     <ul class="list-disc list-inside">
@@ -145,9 +384,11 @@
     </div>
 
     <div class="container mx-auto px-4 py-16">
-        <h2 class="text-3xl font-bold mb-8 text-center glow text-gray-900">Key Modules</h2>
+        <h2 class="text-4xl font-bold mb-12 text-center animate__animated animate__fadeIn">
+            Key Modules
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
                 <div class="card-body">
                     <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('auth')">
                         Auth
@@ -162,7 +403,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
                 <div class="card-body">
                     <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('platform')">
                         Platform
@@ -177,7 +418,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
                 <div class="card-body">
                     <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('payment')">
                         Payment Module
@@ -188,7 +429,7 @@
                     <p id="payment" class="hidden mt-2">Secure and easy money transfers</p>
                 </div>
             </div>
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
                 <div class="card-body">
                     <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('analytics')">
                         Analytics
@@ -199,7 +440,7 @@
                     <p id="analytics" class="hidden mt-2">Insights on storefronts, customers, and products</p>
                 </div>
             </div>
-            <div class="card shadow-xl hover-grow">
+            <div class="feature-card p-6 rounded-lg shadow-xl bg-white animate__animated animate__zoomIn">
                 <div class="card-body">
                     <h2 class="card-title cursor-pointer flex justify-between items-center" onclick="toggleContent('chatbot')">
                         Chatbot
@@ -213,7 +454,7 @@
         </div>
     </div>
 
-    <footer class="footer footer-center p-10 rounded">
+    <footer class="footer footer-center p-10 rounded animate__animated animate__fadeIn">
         <div class="grid grid-flow-col gap-4">
             <a class="link link-hover">About us</a> 
             <a class="link link-hover">Contact</a> 
@@ -231,17 +472,39 @@
             <p>Copyright © 2023 - All right reserved by DCEE</p>
         </div>
     </footer>
+
+    <script>
+        function toggleContent(id) {
+            const content = document.getElementById(id);
+            const arrow = content.previousElementSibling.querySelector('svg');
+            
+            content.classList.toggle('hidden');
+            content.classList.toggle('animate__animated');
+            content.classList.toggle('animate__fadeIn');
+            
+            arrow.classList.toggle('rotate-180');
+            
+            const card = content.closest('.card');
+            card.classList.toggle('bg-blue-200');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.animate__animated');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.visibility = 'visible';
+                        entry.target.classList.add('animate__fadeIn');
+                    }
+                });
+            });
+
+            animatedElements.forEach(element => {
+                element.style.visibility = 'hidden';
+                observer.observe(element);
+            });
+        });
+    </script>
 </body>
 </html>
-
-<script>
-function toggleContent(id) {
-    const content = document.getElementById(id);
-    const arrow = content.previousElementSibling.querySelector('svg');
-    content.classList.toggle('hidden');
-    arrow.classList.toggle('rotate-180');
-    
-    const card = content.closest('.card');
-    card.classList.toggle('bg-blue-200');
-}
-</script>
