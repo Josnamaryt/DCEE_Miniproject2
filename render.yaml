@@ -6,4 +6,4 @@ services:
     startCommand: gunicorn --chdir=dcee-main-app run:app --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.8
+        value: 3.10.0
