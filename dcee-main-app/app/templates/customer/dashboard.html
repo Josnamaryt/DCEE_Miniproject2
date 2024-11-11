@@ -35,6 +35,9 @@
         <link id="color" rel="stylesheet" href="{{ url_for('static', filename='css/color-1.css') }}" media="screen">
         <!-- Responsive css-->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
+        <!-- 3D Icons -->
+        <link rel="stylesheet" href="https://3dicons.co/css/3dicons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <style>
           .product-box {
             border: 1px solid #e0e0e0;
@@ -59,6 +62,170 @@
           }
           .product-details h6 {
             margin-bottom: 5px;
+          }
+
+          /* Custom Dashboard Styles */
+          .dashboard-container {
+            background: linear-gradient(135deg, #f6f9fc 0%, #ffffff 100%);
+            padding: 24px;
+            min-height: 100vh;
+          }
+
+          /* Stats Cards */
+          .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+          }
+
+          .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+          }
+
+          .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,184,166,0.1) 0%, rgba(255,255,255,0) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+          }
+
+          .stat-card:hover {
+            transform: translateY(-5px);
+          }
+
+          .stat-card:hover::before {
+            opacity: 1;
+          }
+
+          .stat-icon {
+            font-size: 24px;
+            color: #00B8A6;
+            margin-bottom: 12px;
+          }
+
+          .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 4px;
+          }
+
+          .stat-label {
+            color: #94A3B8;
+            font-size: 14px;
+          }
+
+          /* Quick Actions */
+          .quick-actions {
+            margin-bottom: 40px;
+          }
+
+          .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+          }
+
+          .action-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #2C3E50;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+          }
+
+          .action-card:hover {
+            background: #00B8A6;
+            color: white;
+            transform: translateY(-3px);
+          }
+
+          .action-card i {
+            font-size: 24px;
+          }
+
+          /* Featured Stores */
+          .featured-stores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+          }
+
+          .store-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+          }
+
+          .store-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #00B8A6;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+          }
+
+          .store-card:hover {
+            transform: translateY(-5px);
+          }
+
+          .store-card:hover::after {
+            transform: scaleX(1);
+          }
+
+          .store-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 16px 0 8px;
+            color: #2C3E50;
+          }
+
+          .store-type {
+            color: #94A3B8;
+            margin-bottom: 16px;
+            font-size: 14px;
+          }
+
+          .view-store-btn {
+            background: #00B8A6;
+            color: white;
+            padding: 8px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+          }
+
+          .view-store-btn:hover {
+            background: #009688;
+            transform: translateY(-2px);
           }
         </style>
       </head>
@@ -144,10 +311,6 @@
                         <li>
                           <div class="media">
                             <div class="notification-img bg-light-primary"><img src="{{ url_for('static', filename='images/avtar/man.png') }}" alt=""></div>
-                            <div class="media-body">
-                              <h5> <a class="f-14 m-0" href="user-profile.html">Allie Grater</a></h5>
-                              <p>Lorem ipsum dolor sit amet...</p><span>10:
-                            </div>
                           </div>
                         </li>
                         <!-- More notification items -->
@@ -208,6 +371,7 @@
                           <svg class="stroke-icon">
                             <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-home') }}"></use>
                           </svg>
+                          <i class="fa fa-home"></i>
                           <svg class="fill-icon">
                             <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-home') }}"></use>
                           </svg>
@@ -222,6 +386,7 @@
                           <svg class="stroke-icon">
                             <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-store') }}"></use>
                           </svg>
+                          <i class="fa fa-store"></i>
                           <svg class="fill-icon">
                             <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-store') }}"></use>
                           </svg>
@@ -231,12 +396,6 @@
                           <li><a href="{{ url_for('customer.stores') }}"><i class="fa fa-store"></i> All Stores</a></li>
                           <li><a href="#"><i class="fa fa-heart"></i> My Favorites</a></li>
                         </ul>
-                      </li>
-                      <!-- New Orders Field Added Below Stores -->
-                      <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="{{ url_for('customer.orders') }}">
-                          <span>Orders</span>
-                        </a>
                       </li>
                     </ul>
                   </div>    
@@ -266,51 +425,59 @@
               </div>
               <!-- Container-fluid starts-->
               <div class="container-fluid">
-                <!-- Featured Products Section
-                <div class="row">
-                  <div class="col-sm-12">
-                    <div class="card">
-                      <div class="card-header">
-                        <h5>Featured Products</h5>
-                      </div>
-                      <div class="card-body">
-                        <div class="row">
-                          {% for product in featured_products %}
-                            <div class="col-md-4 col-sm-6 mb-4">
-                              <div class="product-box">
-                                <div class="product-img">
-                                  <img src="{{ url_for('static', filename='images/products/' + product.image) }}" alt="{{ product.name }}" class="img-fluid">
-                                </div>
-                                <div class="product-details">
-                                  <h6>{{ product.name }}</h6>
-                                  <p class="text-muted">{{ product.store_type }}</p>
-                                </div>
-                              </div>
-                            </div>
-                          {% endfor %}
-                        </div>
-                      </div>
-                    </div>
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                  <div class="stat-card">
+                    <i class="fas fa-store stat-icon"></i>
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Total Stores</div>
                   </div>
-                </div> -->
+                  
+                  <div class="stat-card">
+                    <i class="fas fa-shopping-cart stat-icon"></i>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Items in Cart</div>
+                  </div>
 
-                <!-- Stores Overview Section -->
-                <div class="row">
-                  <div class="col-sm-12">
-                    <div class="card">
-                      <div class="card-header">
-                        <h5>Stores Overview</h5>
-                      </div>
-                      <div class="card-body">
-                        <h6>Total Stores: {{ stores|length }}</h6>
-                        <ul class="list-unstyled mt-3">
-                          {% for store in stores %}
-                            <li>{{ store.name }}</li>
-                          {% endfor %}
-                        </ul>
-                      </div>
-                    </div>
+                  <div class="stat-card">
+                    <i class="fas fa-rupee-sign stat-icon"></i>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Total Savings</div>
                   </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                  <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+                  <div class="actions-grid">
+                    <a href="{{ url_for('customer.stores') }}" class="action-card">
+                      <i class="fas fa-store"></i>
+                      <span>Browse Stores</span>
+                    </a>
+                    <a href="{{ url_for('customer.view_cart') }}" class="action-card">
+                      <i class="fas fa-shopping-cart"></i>
+                      <span>View Cart</span>
+                    </a>
+                    <a href="#" class="action-card">
+                      <i class="fas fa-user"></i>
+                      <span>My Profile</span>
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Featured Stores -->
+                <h2><i class="fas fa-star"></i> Featured Stores</h2>
+                <div class="featured-stores">
+                  {% for store in stores[:4] %}
+                  <div class="store-card">
+                    <i class="fas fa-store fa-3x"></i>
+                    <h3 class="store-name">{{ store.name }}</h3>
+                    <div class="store-type">{{ store.store_type }}</div>
+                    <a href="{{ url_for('customer.store_details', store_owner_id=store.store_owner_id) }}" class="view-store-btn">
+                      View Store
+                    </a>
+                  </div>
+                  {% endfor %}
                 </div>
               </div>
               <!-- Container-fluid Ends-->
@@ -348,6 +515,7 @@
         <!-- Plugins JS Ends-->
         <!-- Theme js-->
         <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        
     
         <!-- login js-->
         <!-- Plugin used-->

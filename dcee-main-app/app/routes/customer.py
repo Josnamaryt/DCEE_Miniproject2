@@ -21,16 +21,19 @@ razorpay_client = razorpay.Client(auth=(os.environ.get('RAZORPAY_KEY_ID'), os.en
 @no_cache
 def dashboard():
     # Fetch all stores from the database
-    stores = list(mongo.db.stores.find({}, {'name': 1}))
-    featured_products = [
-        {"name": "Vanilla Ice Cream", "image": "ice_cream_vanilla.jpg", "store_type": "Ice Cream Parlour"},
-        {"name": "Chocolate Ice Cream", "image": "ice_cream_chocolate.jpg", "store_type": "Ice Cream Parlour"},
-        {"name": "Fresh Apples", "image": "apples.jpg", "store_type": "Grocery Store"},
-        {"name": "Whole Wheat Bread", "image": "bread.jpg", "store_type": "Grocery Store"},
-        {"name": "Latest Smartphone", "image": "smartphone.jpg", "store_type": "Mobile Shop"},
-        {"name": "Wireless Earbuds", "image": "earbuds.jpg", "store_type": "Mobile Shop"},
-    ]
-    return render_template('customer/dashboard.html', user=current_user, stores=stores, featured_products=featured_products)
+    stores = list(mongo.db.stores.find({}, {
+        'name': 1, 
+        'store_owner_id': 1,
+        'store_type': 1
+    }))
+    
+    # Add any additional data you want to display in the stats
+    
+    return render_template(
+        'customer/dashboard.html',
+        user=current_user,
+        stores=stores
+    )
 
 @customer_bp.route('/update_profile', methods=['POST'])
 @login_required
