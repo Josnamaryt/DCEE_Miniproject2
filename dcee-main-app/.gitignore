@@ -1,3 +1,8 @@
 TEMPLATE
 dcee-env
 .env
+TEMPLATE
+dcee-envdcee-main-app/__pycache__/
+dcee-main-app/app/__pycache__/
+dcee-main-app/app/routes/__pycache__/
+
