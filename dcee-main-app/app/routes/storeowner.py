@@ -18,6 +18,7 @@ from flask import jsonify
 import pandas as pd
 from prophet import Prophet
 import numpy as np
+from app.routes.auth import no_cache
 
 storeowner_bp = Blueprint('storeowner', __name__)
 
@@ -36,6 +37,7 @@ def allowed_file(filename):
 
 @storeowner_bp.route('/get_profile', methods=['GET'])
 @login_required
+@no_cache
 def get_profile():
     user = mongo.db.users.find_one({'email': current_user.email})
     if user:
@@ -50,6 +52,7 @@ def get_profile():
 
 @storeowner_bp.route('/dashboard')
 @login_required
+@no_cache
 def dashboard():
     user_email = current_user.email
     print("Current user email:", user_email)
@@ -69,6 +72,7 @@ def dashboard():
 
 @storeowner_bp.route('/register_store', methods=['POST'])
 @login_required
+@no_cache
 def register_store():
     store_name = request.form.get('store_name')
     store_type = request.form.get('store_type')
@@ -116,6 +120,7 @@ def register_store():
 # Store data
 @storeowner_bp.route('/fetch_stores', methods=['GET'])
 @login_required
+@no_cache
 def fetch_stores():
     user_email = current_user.email
     stores = list(mongo.db.stores.find({'store_owner_id': user_email}))
@@ -135,6 +140,7 @@ def fetch_stores():
 
 @storeowner_bp.route('/get_stores', methods=['GET'])
 @login_required
+@no_cache
 def get_stores():
     response = fetch_stores()
     stores = response.get_json().get('data', [])
@@ -148,6 +154,7 @@ def get_stores():
 
 @storeowner_bp.route('/register_product', methods=['POST'])
 @login_required
+@no_cache
 def register_product():
     print("flag1")
     product_name = request.form.get('product_name')
@@ -202,6 +209,7 @@ def register_product():
 
 # @storeowner_bp.route('/get_products', methods=['GET'])
 # @login_required
+@no_cache
 # def get_products():
 #     # Fetch products from the 'products' collection where store_owner_id matches the current user's email
 #     products = list(mongo.db.products.find({'store_owner_id': current_user.email}))
@@ -219,6 +227,7 @@ def register_product():
 
 @storeowner_bp.route('/fetch_products', methods=['GET'])
 @login_required
+@no_cache
 def fetch_products():
     user_email = current_user.email
     products = list(mongo.db.products.find({'store_owner_id': user_email}))
@@ -242,6 +251,7 @@ def fetch_products():
 
 @storeowner_bp.route('/get_products', methods=['GET'])
 @login_required
+@no_cache
 def get_products():
     response = fetch_products()
     products = response.get_json().get('data', [])
@@ -255,6 +265,7 @@ def get_products():
 
 @storeowner_bp.route('/delete_store/<store_id>', methods=['DELETE'])
 @login_required
+@no_cache
 def delete_store(store_id):
     try:
         result = mongo.db.stores.delete_one({'_id': ObjectId(store_id), 'store_owner_id': current_user.email})
@@ -268,6 +279,7 @@ def delete_store(store_id):
 
 @storeowner_bp.route('/delete_product/<product_id>', methods=['GET','DELETE'])
 @login_required
+@no_cache
 def delete_product(product_id):
     try:
         result = mongo.db.products.delete_one({'_id': ObjectId(product_id), 'store_owner_id': current_user.email})
@@ -283,6 +295,7 @@ def delete_product(product_id):
 
 @storeowner_bp.route('/get_store/<store_id>', methods=['GET'])
 @login_required
+@no_cache
 def get_store(store_id):
     try:
         store = mongo.db.stores.find_one({'_id': ObjectId(store_id), 'store_owner_id': current_user.email})
@@ -303,6 +316,7 @@ def get_store(store_id):
 
 @storeowner_bp.route('/update_store/<store_id>', methods=['PUT'])
 @login_required
+@no_cache
 def update_store(store_id):
     try:
         data = request.json
@@ -325,6 +339,7 @@ def update_store(store_id):
 
 @storeowner_bp.route('/get_product/<product_id>', methods=['GET'])
 @login_required
+@no_cache
 def get_product(product_id):
     try:
         product = mongo.db.products.find_one({'_id': ObjectId(product_id), 'store_owner_id': current_user.email})
@@ -345,6 +360,7 @@ def get_product(product_id):
 
 @storeowner_bp.route('/update_product/<product_id>', methods=['PUT'])
 @login_required
+@no_cache
 def update_product(product_id):
     try:
         data = request.json
@@ -367,6 +383,7 @@ def update_product(product_id):
 
 @storeowner_bp.route('/get_product_overview', methods=['GET'])
 @login_required
+@no_cache
 def get_product_overview():
     try:
         # Get the total number of products
@@ -394,6 +411,7 @@ def get_product_overview():
 
 @storeowner_bp.route('/update_profile', methods=['POST'])
 @login_required
+@no_cache
 def update_profile():
     first_name = request.form.get('first_name')
     email = request.form.get('email')
@@ -422,6 +440,7 @@ def load_dummy_data():
 
 @storeowner_bp.route('/stock_management')
 @login_required
+@no_cache
 def stock_management():
     # Load dummy data instead of fetching from the database
     dummy_data = load_dummy_data()
