@@ -7,6 +7,9 @@ import logging
 import os
 from dotenv import load_dotenv
 from datetime import datetime
+from functools import wraps
+from app.routes.auth import no_cache
+
 
 customer_bp = Blueprint('customer', __name__)
 
@@ -15,11 +18,10 @@ razorpay_client = razorpay.Client(auth=(os.environ.get('RAZORPAY_KEY_ID'), os.en
 
 @customer_bp.route('/dashboard')
 @login_required
+@no_cache
 def dashboard():
     # Fetch all stores from the database
     stores = list(mongo.db.stores.find({}, {'name': 1}))
-    
-    # Sample featured products for different store types
     featured_products = [
         {"name": "Vanilla Ice Cream", "image": "ice_cream_vanilla.jpg", "store_type": "Ice Cream Parlour"},
         {"name": "Chocolate Ice Cream", "image": "ice_cream_chocolate.jpg", "store_type": "Ice Cream Parlour"},
@@ -28,11 +30,11 @@ def dashboard():
         {"name": "Latest Smartphone", "image": "smartphone.jpg", "store_type": "Mobile Shop"},
         {"name": "Wireless Earbuds", "image": "earbuds.jpg", "store_type": "Mobile Shop"},
     ]
-    
     return render_template('customer/dashboard.html', user=current_user, stores=stores, featured_products=featured_products)
 
 @customer_bp.route('/update_profile', methods=['POST'])
 @login_required
+@no_cache
 def update_profile():
     data = request.json
     try:
@@ -53,6 +55,7 @@ def update_profile():
 
 @customer_bp.route('/get_profile', methods=['GET'])
 @login_required
+@no_cache
 def get_profile():
     user_data = mongo.db.users.find_one({"_id": ObjectId(current_user.id)})
     if user_data:
@@ -68,6 +71,7 @@ def get_profile():
 
 @customer_bp.route('/stores', methods=['GET', 'POST'])
 @login_required
+@no_cache
 def stores():
     if request.method == 'GET':
         user_data = mongo.db.users.find_one({"_id": ObjectId(current_user.id)})
@@ -86,6 +90,7 @@ def stores():
 
 @customer_bp.route('/store_details/<store_owner_id>', methods=['GET'])
 @login_required
+@no_cache
 def store_details(store_owner_id):
     print(f"Fetching store details for owner ID: {store_owner_id}")
     store_data = mongo.db.stores.find_one({"store_owner_id": store_owner_id})
@@ -120,6 +125,7 @@ def store_details(store_owner_id):
 
 @customer_bp.route('/add_to_cart/<product_id>', methods=['POST'])
 @login_required
+@no_cache
 def add_to_cart(product_id):
     try:
         data = request.json
@@ -160,6 +166,7 @@ def add_to_cart(product_id):
         
 @customer_bp.route('/view_cart')
 @login_required
+@no_cache
 def view_cart():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
@@ -188,6 +195,7 @@ def view_cart():
 
 @customer_bp.route('/update_cart/<product_id>', methods=['POST'])
 @login_required
+@no_cache
 def update_cart(product_id):
     try:
         data = request.json
@@ -221,6 +229,7 @@ def update_cart(product_id):
 
 @customer_bp.route('/remove_from_cart/<product_id>', methods=['POST'])
 @login_required
+@no_cache
 def remove_from_cart(product_id):
     email = current_user.email
     result = mongo.db.cart.delete_one({"email": email, "product_id": product_id})
@@ -232,6 +241,7 @@ def remove_from_cart(product_id):
 
 @customer_bp.route('/get_cart_count')
 @login_required
+@no_cache
 def get_cart_count():
     cart = session.get('cart', {})
     count = sum(cart.values())
@@ -239,6 +249,7 @@ def get_cart_count():
 
 @customer_bp.route('/get_cart_info')
 @login_required
+@no_cache
 def get_cart_info():
     email = current_user.email
     cart_data = mongo.db.cart.find({"email": email})
@@ -257,6 +268,7 @@ def debug_session():
 
 @customer_bp.route('/checkout')
 @login_required
+@no_cache
 def checkout():
     cart_items = []
     total = 0
@@ -278,6 +290,7 @@ def checkout():
 
 @customer_bp.route('/save_address', methods=['POST'])
 @login_required
+@no_cache
 def save_address():
     try:
         address_data = request.json
@@ -327,6 +340,7 @@ def save_address():
 
 @customer_bp.route('/create_order', methods=['POST'])
 @login_required
+@no_cache
 def create_order():
     try:
         amount = request.json.get('amount')
@@ -357,6 +371,7 @@ def create_order():
 
 @customer_bp.route('/payment_success', methods=['POST'])
 @login_required
+@no_cache
 def payment_success():
     # Verify the payment signature
     params_dict = {
@@ -395,6 +410,7 @@ def payment_success():
 
 @customer_bp.route('/order_confirmation')
 @login_required
+@no_cache
 def order_confirmation():
     # Retrieve the most recent order for the current user
     order = mongo.db.orders.find_one(
@@ -428,6 +444,7 @@ def order_confirmation():
 
 @customer_bp.route('/orders')
 @login_required
+@no_cache
 def orders():
     # Logic to fetch order details
     orders = get_orders_for_user(current_user.id)  # Example function to get orders
@@ -435,6 +452,7 @@ def orders():
 
 @customer_bp.route('/get_product_details/<product_id>')
 @login_required
+@no_cache
 def get_product_details(product_id):
     product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
     if product:
@@ -456,4 +474,3 @@ def get_product_details(product_id):
         })
     else:
         return jsonify({'error': 'Product not found'}), 404
-    

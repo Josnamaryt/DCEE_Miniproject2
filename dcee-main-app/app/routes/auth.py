@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, make_response
 from flask_login import login_user, logout_user, login_required, current_user
 from app import login_manager, mongo
 from app.models import User
@@ -10,6 +10,8 @@ import random
 import string
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from flask_mail import Mail, Message
+from functools import wraps
+
 
 auth_bp = Blueprint('auth', __name__)
 customers_bp = Blueprint('customers', __name__)
@@ -43,7 +45,7 @@ def login():
                 login_user(user)
                 session['user_id'] = str(user.id)  # Ensure user_id is in session
                 flash('Login successful!', 'success')
-                # Redirect based on user role
+                session['logged_in'] = True
                 if user_data['role'] == 'admin':
                     return redirect(url_for('admin.dashboard'))
                 elif user_data['role'] == 'customer':
@@ -162,10 +164,27 @@ def register():
 @auth_bp.route('/logout')
 @login_required
 def logout():
+    response = make_response(redirect(url_for('auth.login')))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    session.clear()
     logout_user()
-    session.clear()  # Clear the session
     flash('You have been logged out.', 'info')
-    return redirect(url_for('auth.login'))
+    return response
+
+def no_cache(view_func):
+    """
+    Decorator to prevent caching of a Flask route.
+    """
+    @wraps(view_func)
+    def no_cache_wrapper(*args, **kwargs):
+        response = make_response(view_func(*args, **kwargs))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    return no_cache_wrapper
 
 # Initialize Flask-Mail
 mail = Mail()
@@ -249,5 +268,4 @@ def reset_password():
             return redirect(url_for('auth.login'))
         else:
             flash('Invalid or expired OTP. Please try again.', 'danger')
-    
     return render_template('auth/forget_password.html')
