@@ -327,17 +327,6 @@
                           </div>
                           <!-- Container-fluid Ends-->
                         </div>
-                        <!-- footer start-->
-                        <footer class="footer">
-                          <div class="container-fluid">
-                            <div class="row">
-                              <div class="col-md-12 footer-copyright text-center">
-                                <p class="mb-0">Copyright 2024 © DCEE   </p>
-                              </div>
-                            </div>
-                          </div>
-                        </footer>
-                        </div>
                         </div>
                         <!-- latest jquery-->
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
@@ -381,7 +370,7 @@
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Updated At</th>
-                <th>Actions</th>
+                <
               </tr>
             </thead>
             <tbody>
@@ -418,7 +407,7 @@
                 <th>Last Name</th>
                 <th>GSTIN</th>
                 <th>Updated At</th>
-                <th>Actions</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -533,12 +522,7 @@ $(document).ready(function() {
           { "data": "first_name" },
           { "data": "last_name" },
           { "data": "updated_at" },
-          {
-            "data": null,
-            "render": function(data, type, row) {
-              return '<button class="btn btn-danger btn-sm deactivate-customer" data-id="' + row._id + '">Deactivate</button>';
-            }
-          }
+          
         ]
       });
     }
@@ -575,12 +559,7 @@ $(document).ready(function() {
           { "data": "last_name" },
           { "data": "gstin" },
           { "data": "updatedAt" },
-          {
-            "data": null,
-            "render": function(data, type, row) {
-              return '<button class="btn btn-danger btn-sm deactivate-storefront" data-id="' + row._id + '">Deactivate</button>';
-            }
-          }
+          
         ]
       });
     }
