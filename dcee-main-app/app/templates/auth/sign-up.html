@@ -79,11 +79,11 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-form-label">Role</label>
-                                <select class="form-control" name="role" id="role" required>
+                                <select class="form-control" name="role" id="role" required onchange="setRedirectUrl()">
                                     <option value="" disabled selected>Select your role</option>
                                     <option value="storefrontowner">Storefront Owner</option>
                                     <option value="customer">Customer</option>
-                                    <!-- <option value="instructor">Instructor</option> -->
+                                    <option value="instructor">Instructor</option>
                                 </select>
                             </div>
                             <div class="form-group" id="gstin-group" style="display: none;">
@@ -193,6 +193,12 @@
             }
         });
     });
+
+    function setRedirectUrl() {
+        const roleSelect = document.getElementById('role');
+        const form = document.querySelector('.theme-form');
+        form.action = roleSelect.value === 'instructor' ? "{{ url_for('instructor.dashboard') }}" : "{{ url_for('auth.register') }}";
+    }
 </script>
 </body>
 </html>
