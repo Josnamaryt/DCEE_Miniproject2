@@ -9,3 +9,9 @@ instructor_bp = Blueprint('instructor', __name__)
 def dashboard():
     user_name = f"{current_user.first_name} {current_user.last_name}"
     return render_template('instructor/dashboard.html', user_name=user_name)
+
+@instructor_bp.route('/courses')
+@login_required
+def courses():
+    all_courses = Course.query.all()  # Fetch all courses from the database
+    return render_template('instructor/courses.html', courses=all_courses)

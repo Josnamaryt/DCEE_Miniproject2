@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses</title>
+    <!-- Include your CSS and other head elements here -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Courses</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Level</th>
+                    <th>Enrolled</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr data-toggle="modal" data-target="#courseModal" data-title="{{ course.title }}" data-description="{{ course.description }}" data-enrolled="{{ course.enrolled }}">
+                    <td>{{ course.title }}</td>
+                    <td>{{ course.description }}</td>
+                    <td>{{ course.category }}</td>
+                    <td>{{ course.level }}</td>
+                    <td>{{ course.enrolled }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Course Modal -->
+    <div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="courseModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="courseModalLabel">Course Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="courseTitle"></h4>
+                    <p id="courseDescription"></p>
+                    <p><strong>Enrolled:</strong> <span id="courseEnrolled"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include your JavaScript files -->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#courseModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var title = button.data('title'); // Extract info from data-* attributes
+                var description = button.data('description');
+                var enrolled = button.data('enrolled');
+
+                // Update the modal's content
+                var modal = $(this);
+                modal.find('#courseTitle').text(title);
+                modal.find('#courseDescription').text(description);
+                modal.find('#courseEnrolled').text(enrolled);
+            });
+        });
+    </script>
+</body>
+</html>
