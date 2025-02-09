@@ -146,9 +146,14 @@
                 </li>
                 <li class="sidebar-list">
                     <i class="fa fa-thumb-tack"></i>
-                    <a class="sidebar-link sidebar-title" href="#" id="addedCoursesTab" data-toggle="modal" data-target="#addedCourseModal">
-                        <span>Added Courses</span>
+                    <a class="sidebar-link sidebar-title" href="#">
+                        <span>Course</span>
                     </a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" id="addedCoursesTab" data-toggle="modal" data-target="#addedCourseModal">Added Courses</a>
+                        </li>
+                    </ul>
                 </li>
               </ul>
               <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
@@ -326,10 +331,17 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Here you can display the list of added courses or any relevant information.</p>
-                    <ul id="addedCoursesList">
-                        <!-- Dynamically populate this list with added courses -->
-                    </ul>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="addedCoursesList">
+                            <!-- Dynamically populate this list with added courses -->
+                        </tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -340,7 +352,25 @@
     <script>
         $(document).ready(function() {
             $('#addedCoursesTab').on('click', function() {
-                $('#addedCoursesList').html('<li><strong>Static Course 1</strong>: Description for Static Course 1</li>');
+                // Here you can fetch the added courses data via AJAX or use static data
+                const addedCourses = [
+                    { name: 'Course 1', description: 'Description for Course 1' },
+                    { name: 'Course 2', description: 'Description for Course 2' },
+                    // Add more courses as needed
+                ];
+
+                // Clear the existing table rows
+                $('#addedCoursesList').empty();
+
+                // Populate the table with the added courses
+                addedCourses.forEach(course => {
+                    $('#addedCoursesList').append(`
+                        <tr>
+                            <td>${course.name}</td>
+                            <td>${course.description}</td>
+                        </tr>
+                    `);
+                });
             });
         });
     </script>
