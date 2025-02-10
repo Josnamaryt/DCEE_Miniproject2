@@ -100,17 +100,15 @@
                 </div>
               </li>
               <li class="profile-nav onhover-dropdown"> 
-                <div class="media profile-media"><img class="b-r-10"  alt="">
-                  <div class="media-body d-xxl-block d-none box-col-none">
-                    <!-- <div class="d-flex align-items-center gap-2"> <span>Alex Mora </span><i class="middle fa fa-angle-down"> </i></div> -->
-                    <p class="mb-0 font-roboto">Instructor</p>
-                  </div>
+                <div class="media profile-media">
+                    <img class="b-r-10" alt="">
+                    <div class="media-body d-xxl-block d-none box-col-none">
+                        <p class="mb-0 font-roboto">Instructor <i class="middle fa fa-angle-down"></i></p>
+                    </div>
                 </div>
                 <ul class="profile-dropdown onhover-show-div">
-                  <li><a href="user-profile.html"><i data-feather="user"></i><span>My Profile</span></a></li>
-                  <li><a href="letter-box.html"><i data-feather="mail"></i><span>Inbox</span></a></li>
-                  <li> <a href="edit-profile.html"> <i data-feather="settings"></i><span>Settings</span></a></li>
-                  <li><a class="btn btn-pill btn-outline-primary btn-sm" href="{{ url_for('auth.login') }}">Log Out</a></li>
+                    <li><a href="#" id="myProfileLink"><i data-feather="user"></i><span>My Profile</span></a></li>
+                    <li><a href="{{ url_for('auth.logout') }}"><i data-feather="log-out"></i><span>Log out</span></a></li>
                 </ul>
               </li>
             </ul>
@@ -184,51 +182,6 @@
           <!-- Container-fluid starts-->
           <div class="container-fluid"> 
             <div class="row">
-              <div class="col-lg-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4>Instructor Profile </h4>
-                    <p class="mt-1 f-m-light"></p>
-                  </div>
-                  <div class="card-body">
-                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#instructorModal">Add Instructor details </button>
-                    <div class="modal fade" id="instructorModal" tabindex="-1" role="dialog" aria-labelledby="instructorModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="instructorModalLabel">Instructor Profile</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            <form>
-                             
-                              <div class="mb-3">
-                                <label for="bio" class="form-label">Instructor Bio</label>
-                                <textarea class="form-control" id="bio" rows="3" placeholder="Enter bio"></textarea>
-                              </div>
-                              <div class="mb-3">
-                                <label for="specialization" class="form-label">Specialization</label>
-                                <input type="text" class="form-control" id="specialization" placeholder="Enter specialization">
-                              </div>
-                              <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
-                                <select class="form-select" id="status">
-                                  <option value="working">Currently Working</option>
-                                  <option value="notWorking">Not Currently Working</option>
-                                </select>
-                              </div>
-                            </form>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
               <div class="col-lg-12">
                 <div class="card">
                   <div class="card-header">
@@ -351,28 +304,134 @@
     </div>
     <script>
         $(document).ready(function() {
-            $('#addedCoursesTab').on('click', function() {
-                // Here you can fetch the added courses data via AJAX or use static data
-                const addedCourses = [
-                    { name: 'Course 1', description: 'Description for Course 1' },
-                    { name: 'Course 2', description: 'Description for Course 2' },
-                    // Add more courses as needed
-                ];
+            // Save course when clicking Save changes button
+            $('.btn-primary').on('click', function() {
+                // Get form values
+                const title = $('#courseTitle').val().trim();
+                const description = $('#courseDescription').val().trim();
+                const category = $('#courseCategory').val().trim();
+                const level = $('#courseLevel').val();
 
-                // Clear the existing table rows
-                $('#addedCoursesList').empty();
+                // Validate form data
+                if (!title || !description || !category || !level) {
+                    alert('Please fill in all fields');
+                    return;
+                }
 
-                // Populate the table with the added courses
-                addedCourses.forEach(course => {
-                    $('#addedCoursesList').append(`
-                        <tr>
-                            <td>${course.name}</td>
-                            <td>${course.description}</td>
-                        </tr>
-                    `);
+                const courseData = {
+                    title: title,
+                    description: description,
+                    category: category,
+                    level: level
+                };
+
+                $.ajax({
+                    url: "{{ url_for('instructor.add_course') }}",
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(courseData),
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Course added successfully');
+                            $('#addCourseModal').modal('hide');
+                            // Clear the form
+                            $('#courseTitle').val('');
+                            $('#courseDescription').val('');
+                            $('#courseCategory').val('');
+                            $('#courseLevel').val('beginner');
+                            // Refresh the courses list
+                            loadCourses();
+                        } else {
+                            alert('Failed to add course: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while adding the course');
+                    }
                 });
+            });
+
+            function loadCourses() {
+                $.ajax({
+                    url: "{{ url_for('instructor.get_courses') }}",
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            $('#addedCoursesList').empty();
+                            response.data.forEach(course => {
+                                $('#addedCoursesList').append(`
+                                    <tr>
+                                        <td>${course.title}</td>
+                                        <td>${course.description}</td>
+                                    </tr>
+                                `);
+                            });
+                        } else {
+                            alert('Failed to fetch courses: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while fetching courses');
+                    }
+                });
+            }
+
+            // Load courses when clicking Added Courses tab
+            $('#addedCoursesTab').on('click', function() {
+                loadCourses();
+            });
+
+            function loadProfileData() {
+                $.ajax({
+                    url: "{{ url_for('instructor.get_profile') }}",
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            $('#instructorName').val(response.data.name);
+                            $('#instructorEmail').val(response.data.email);
+                            $('#profileModal').modal('show');
+                        } else {
+                            alert('Failed to fetch profile data: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        alert('An error occurred while fetching profile data');
+                    }
+                });
+            }
+
+            $('#myProfileLink').on('click', function(e) {
+                e.preventDefault();
+                loadProfileData();
             });
         });
     </script>
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Instructor Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm">
+                        <div class="mb-3">
+                            <label for="instructorName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="instructorName" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="instructorEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="instructorEmail" readonly>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
   </body>
 </html>
