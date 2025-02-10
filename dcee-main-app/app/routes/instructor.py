@@ -34,10 +34,12 @@ def add_course():
     try:
         data = request.json
         course = {
-            'title': data['title'],
+            'name': data['name'],
             'description': data['description'],
-            'category': data['category'],
             'level': data['level'],
+            'duration': data['duration'],
+            'course_link': data['course_link'],
+            'status': data['status'],
             'instructor_id': str(current_user.id),
             'instructor_email': current_user.email,
             'created_at': datetime.utcnow(),
