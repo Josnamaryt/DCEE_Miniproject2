@@ -397,6 +397,21 @@
                           <li><a href="#"><i class="fa fa-heart"></i> My Favorites</a></li>
                         </ul>
                       </li>
+                      <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="#">
+                          <svg class="stroke-icon">
+                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-learning') }}"></use>
+                          </svg>
+                          <i class="fa fa-graduation-cap"></i>
+                          <svg class="fill-icon">
+                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-learning') }}"></use>
+                          </svg>
+                          <span>Courses</span> 
+                        </a>
+                        <ul class="sidebar-submenu">
+                          <li><a href="#" id="availableCoursesLink"><i class="fa fa-book"></i> Available Courses</a></li>
+                        </ul>
+                      </li>
                     </ul>
                   </div>    
                   <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
@@ -594,6 +609,40 @@
           </div>
         </div>
 
+        <!-- Available Courses Modal -->
+        <div class="modal fade" id="availableCoursesModal" tabindex="-1" aria-labelledby="availableCoursesModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="availableCoursesModalLabel">Available Courses</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Course Name</th>
+                                        <th>Description</th>
+                                        <th>Level</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="availableCoursesList">
+                                    <!-- Courses will be loaded here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
         $(document).ready(function() {
           function loadProfileData() {
@@ -693,6 +742,45 @@
                 });
               }
             }
+          });
+
+          function loadAvailableCourses() {
+              $.ajax({
+                  url: "{{ url_for('customer.get_available_courses') }}",
+                  type: 'GET',
+                  success: function(response) {
+                      if (response.success) {
+                          $('#availableCoursesList').empty();
+                          response.data.forEach(course => {
+                              $('#availableCoursesList').append(`
+                                  <tr>
+                                      <td>${course.name}</td>
+                                      <td>${course.description}</td>
+                                      <td>${course.level}</td>
+                                      <td>${course.duration}</td>
+                                      <td>${course.status}</td>
+                                      <td>
+                                          <a href="${course.course_link}" target="_blank" class="btn btn-primary btn-sm">
+                                              View Course
+                                          </a>
+                                      </td>
+                                  </tr>
+                              `);
+                          });
+                          $('#availableCoursesModal').modal('show');
+                      } else {
+                          alert('Failed to fetch courses: ' + response.message);
+                      }
+                  },
+                  error: function() {
+                      alert('An error occurred while fetching courses');
+                  }
+              });
+          }
+
+          $('#availableCoursesLink').on('click', function(e) {
+              e.preventDefault();
+              loadAvailableCourses();
           });
         });
         </script>

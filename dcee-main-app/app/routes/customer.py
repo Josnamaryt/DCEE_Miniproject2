@@ -477,3 +477,24 @@ def get_product_details(product_id):
         })
     else:
         return jsonify({'error': 'Product not found'}), 404
+
+@customer_bp.route('/get_available_courses')
+@login_required
+def get_available_courses():
+    try:
+        # Fetch all active courses from MongoDB
+        courses = list(mongo.db.courses.find({'status': 'active'}))
+        
+        # Convert ObjectId to string for JSON serialization
+        for course in courses:
+            course['_id'] = str(course['_id'])
+        
+        return jsonify({
+            'success': True,
+            'data': courses
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
