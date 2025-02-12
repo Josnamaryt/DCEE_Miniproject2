@@ -6,7 +6,7 @@ from datetime import datetime
 
 instructor_bp = Blueprint('instructor', __name__)
 
-@instructor_bp.route('/dashboard')
+@instructor_bp.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     user_name = f"{current_user.first_name} {current_user.last_name}"
@@ -18,7 +18,7 @@ def get_profile():
         return jsonify({
             'success': True,
             'data': {
-                'name': current_user.name,
+                'name': f"{current_user.first_name} {current_user.last_name}",
                 'email': current_user.email
             }
         })

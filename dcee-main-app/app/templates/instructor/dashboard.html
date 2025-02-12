@@ -317,8 +317,38 @@
     </div>
     <script>
         $(document).ready(function() {
+            function validateInput(input, regex, errorMsg) {
+                const value = input.val().trim();
+                const isValid = regex.test(value);
+                input.toggleClass('is-invalid', !isValid);
+                input.toggleClass('is-valid', isValid);
+                const feedbackDiv = input.siblings('.invalid-feedback');
+                if (feedbackDiv.length === 0) {
+                    input.after(`<div class="invalid-feedback">${errorMsg}</div>`);
+                } else {
+                    feedbackDiv.text(errorMsg);
+                }
+                return isValid;
+            }
+
+            // Add input event listeners for real-time validation
+            $('#courseName').on('input', function() {
+                validateInput($(this), /^[A-Za-z0-9\s]{3,50}$/, 'Course name should be 3-50 characters long and contain only letters, numbers and spaces');
+            });
+
+            $('#courseDescription').on('input', function() {
+                validateInput($(this), /^[\s\S]{10,500}$/, 'Description should be 10-500 characters long');
+            });
+
+            $('#courseDuration').on('input', function() {
+                validateInput($(this), /^[0-9]{1,3}\s*(hours|days|weeks|months)$/i, 'Duration should be a number followed by hours/days/weeks/months');
+            });
+
+            $('#courseLink').on('input', function() {
+                validateInput($(this), /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/, 'Please enter a valid URL');
+            });
+
             $('#saveCourse').on('click', function() {
-                // Get form values
                 const name = $('#courseName').val().trim();
                 const description = $('#courseDescription').val().trim();
                 const level = $('#courseLevel').val();
@@ -326,9 +356,15 @@
                 const course_link = $('#courseLink').val().trim();
                 const status = $('#courseStatus').val();
 
-                // Validate form data
-                if (!name || !description || !level || !duration || !course_link || !status) {
-                    alert('Please fill in all fields');
+                let isValid = true;
+
+                // Validate all fields
+                isValid &= validateInput($('#courseName'), /^[A-Za-z0-9\s]{3,50}$/, 'Course name should be 3-50 characters long');
+                isValid &= validateInput($('#courseDescription'), /^[\s\S]{10,500}$/, 'Description should be 10-500 characters long');
+                isValid &= validateInput($('#courseDuration'), /^[0-9]{1,3}\s*(hours|days|weeks|months)$/i, 'Duration should be a number followed by hours/days/weeks/months');
+                isValid &= validateInput($('#courseLink'), /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/, 'Please enter a valid URL');
+
+                if (!isValid) {
                     return;
                 }
 
@@ -350,13 +386,12 @@
                         if (response.success) {
                             alert('Course added successfully');
                             $('#addCourseModal').modal('hide');
-                            // Clear the form
-                            $('#courseName').val('');
-                            $('#courseDescription').val('');
+                            // Clear the form and validation classes
+                            $('#courseName, #courseDescription, #courseDuration, #courseLink').val('').removeClass('is-valid is-invalid');
                             $('#courseLevel').val('beginner');
-                            $('#courseDuration').val('');
-                            $('#courseLink').val('');
                             $('#courseStatus').val('active');
+                            // Remove feedback messages
+                            $('.invalid-feedback').remove();
                             // Refresh the courses list
                             loadCourses();
                         } else {
