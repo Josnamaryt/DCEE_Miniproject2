@@ -498,3 +498,26 @@ def get_available_courses():
             'success': False,
             'message': str(e)
         })
+
+@customer_bp.route('/get_available_quizzes')
+@login_required
+def get_available_quizzes():
+    try:
+        # Get all available quizzes
+        quizzes = list(mongo.db.quizzes.find({}).sort('created_at', -1))
+        
+        # Process quizzes for JSON response
+        for quiz in quizzes:
+            quiz['_id'] = str(quiz['_id'])
+            quiz['course_id'] = str(quiz['course_id'])
+            quiz['created_at'] = quiz['created_at'].isoformat()
+        
+        return jsonify({
+            'success': True,
+            'data': quizzes
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
