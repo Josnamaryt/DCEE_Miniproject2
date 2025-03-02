@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
+from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify, send_file
 from flask_login import login_user, logout_user, login_required, current_user
 # from app import login_manager
 from app import mongo
 from datetime import datetime
 from bson import ObjectId
+import pandas as pd
+from io import BytesIO
+from openpyxl import Workbook
 
 instructor_bp = Blueprint('instructor', __name__)
 
@@ -243,5 +246,158 @@ def delete_quiz(quiz_id):
         return jsonify({
             'success': False,
             'message': str(e)
+        })
+
+@instructor_bp.route('/download_template')
+@login_required
+def download_template():
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Quiz Questions"
+    
+    # Add headers
+    headers = ['Question', 'Option1', 'Option2', 'Option3', 'Option4', 'CorrectAnswer(1-4)']
+    ws.append(headers)
+    
+    # Add sample row
+    sample = ['What is Python?', 'A programming language', 'A snake', 'A movie', 'A book', '1']
+    ws.append(sample)
+    
+    # Save to BytesIO
+    excel_file = BytesIO()
+    wb.save(excel_file)
+    excel_file.seek(0)
+    
+    return send_file(
+        excel_file,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name='quiz_template.xlsx'
+    )
+
+@instructor_bp.route('/process_quiz_excel', methods=['POST'])
+@login_required
+def process_quiz_excel():
+    try:
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'message': 'No file uploaded'})
+            
+        file = request.files['file']
+        if not file.filename.endswith(('.xlsx', '.xls')):
+            return jsonify({'success': False, 'message': 'Invalid file format. Please upload an Excel file (.xlsx or .xls)'})
+        
+        # Read Excel file
+        df = pd.read_excel(file)
+        
+        # Print the columns for debugging
+        print("Columns in Excel:", df.columns.tolist())
+        
+        # Get the actual column names from the Excel file
+        excel_columns = df.columns.tolist()
+        
+        # Find question column - look for any column containing 'question'
+        question_col = None
+        for col in excel_columns:
+            if 'question' in str(col).lower().replace(" ", ""):
+                question_col = col
+                break
+        
+        if not question_col:
+            return jsonify({
+                'success': False,
+                'message': 'Could not find question column in Excel file'
+            })
+            
+        # Find option columns - look for columns containing 'option'
+        option_cols = []
+        for col in excel_columns:
+            col_lower = str(col).lower().replace(" ", "")
+            if 'option' in col_lower:
+                option_cols.append(col)
+        
+        # Find correct answer column
+        correct_answer_col = None
+        for col in excel_columns:
+            col_lower = str(col).lower().replace(" ", "")
+            if 'correcta' in col_lower or 'correct_a' in col_lower or 'correctanswer' in col_lower:
+                correct_answer_col = col
+                break
+        
+        if not correct_answer_col:
+            return jsonify({
+                'success': False,
+                'message': 'Could not find correct answer column in Excel file'
+            })
+            
+        if len(option_cols) < 2:
+            return jsonify({
+                'success': False,
+                'message': f'Could not find enough option columns in Excel file. Found columns: {option_cols}'
+            })
+            
+        questions = []
+        for index, row in df.iterrows():
+            try:
+                # Get options that are not empty
+                options = [str(row[col]).strip() for col in option_cols if pd.notna(row[col])]
+                
+                # Skip rows where question is empty
+                if pd.isna(row[question_col]) or not str(row[question_col]).strip():
+                    continue
+                    
+                # Get correct answer
+                correct_answer = str(row[correct_answer_col]).strip()
+                
+                # Try to find the correct answer index
+                try:
+                    # First try to convert to integer (1-based index)
+                    correct_index = int(correct_answer) - 1
+                except ValueError:
+                    # If not a number, try to find the matching option
+                    try:
+                        correct_index = options.index(correct_answer)
+                    except ValueError:
+                        return jsonify({
+                            'success': False,
+                            'message': f'Invalid correct answer in row {index + 2}: {correct_answer}'
+                        })
+                
+                if not 0 <= correct_index < len(options):
+                    return jsonify({
+                        'success': False,
+                        'message': f'Invalid correct answer index in row {index + 2}: {correct_answer}'
+                    })
+                
+                question = {
+                    'question': str(row[question_col]).strip(),
+                    'options': options,
+                    'correct_answer': correct_index
+                }
+                
+                questions.append(question)
+                
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'message': f'Error processing row {index + 2}: {str(e)}'
+                })
+        
+        if not questions:
+            return jsonify({
+                'success': False,
+                'message': 'No valid questions found in the Excel file'
+            })
+        
+        print(f"Successfully processed {len(questions)} questions")  # Debug print
+        return jsonify({
+            'success': True,
+            'data': questions
+        })
+        
+    except Exception as e:
+        print(f"Error processing Excel: {str(e)}")  # Debug print
+        return jsonify({
+            'success': False,
+            'message': f'Error processing Excel file: {str(e)}'
         })
 

@@ -38,7 +38,7 @@ narwhals==1.8.1
 networkx==3.3
 numpy==1.23.5
 packaging==24.1
-pandas==2.2.2
+pandas==2.1.4
 pillow==10.4.0
 prophet==1.1.5
 protobuf==5.28.2
@@ -76,3 +76,4 @@ urllib3==2.2.3
 watchdog==4.0.2
 Werkzeug==3.0.4
 gunicorn
+openpyxl==3.1.2
