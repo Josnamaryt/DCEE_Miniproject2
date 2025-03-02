@@ -405,32 +405,8 @@
                           <li><a href="#"><i class="fa fa-heart"></i> My Favorites</a></li>
                         </ul>
                       </li>
-                      <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="#">
-                          <svg class="stroke-icon">
-                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-learning') }}"></use>
-                          </svg>
-                          <i class="fa fa-graduation-cap"></i>
-                          <svg class="fill-icon">
-                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-learning') }}"></use>
-                          </svg>
-                          <span>Courses</span> 
-                        </a>
-                        <ul class="sidebar-submenu">
-                          <li><a href="#" id="availableCoursesLink"><i class="fa fa-book"></i> Available Courses</a></li>
-                        </ul>
-                      </li>
-                      <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="#">
-                          <svg class="stroke-icon">
-                            <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-task') }}"></use>
-                          </svg>
-                          <span>Quizzes</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                          <li><a href="#" id="viewQuizzesLink">View Quizzes</a></li>
-                        </ul>
-                      </li>
+                      
+                     
                     </ul>
                   </div>    
                   <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
@@ -514,30 +490,7 @@
                   {% endfor %}
                 </div>
 
-                <!-- Add this after the Courses section -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Available Quizzes</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Quiz Title</th>
-                                        <th>Course</th>
-                                        <th>Description</th>
-                                        <th>Questions</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="availableQuizzesList">
-                                    <!-- Quizzes will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+               
               </div>
               <!-- Container-fluid Ends-->
             </div>
@@ -712,36 +665,7 @@
             </div>
         </div>
 
-        <!-- Add this modal for viewing quizzes -->
-        <div class="modal fade" id="viewQuizzesModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Available Quizzes</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Quiz Title</th>
-                                        <th>Course</th>
-                                        <th>Description</th>
-                                        <th>Questions</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="availableQuizzesList">
-                                    <!-- Quizzes will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+       
         <script>
         $(document).ready(function() {
           function loadProfileData() {

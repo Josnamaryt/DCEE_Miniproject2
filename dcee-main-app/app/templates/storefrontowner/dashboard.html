@@ -190,6 +190,31 @@
                     <span>Product Details</span>
                   </a>
                 </li>
+                <li class="sidebar-list">
+                  <a class="sidebar-link sidebar-title" href="#">
+                    <svg class="stroke-icon">
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-learning') }}"></use>
+                    </svg>
+                    <svg class="fill-icon">
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#fill-learning') }}"></use>
+                    </svg>
+                    <span>Courses</span>
+                  </a>
+                  <ul class="sidebar-submenu">
+                    <li><a href="#" id="availableCoursesLink">Available Courses</a></li>
+                  </ul>
+                </li>
+                <li class="sidebar-list">
+                  <a class="sidebar-link sidebar-title" href="#">
+                    <svg class="stroke-icon">
+                      <use href="{{ url_for('static', filename='svg/icon-sprite.svg#stroke-task') }}"></use>
+                    </svg>
+                    <span>Quizzes</span>
+                  </a>
+                  <ul class="sidebar-submenu">
+                    <li><a href="#" id="viewQuizzesLink">View Quizzes</a></li>
+                  </ul>
+                </li>
                 <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
               </div>
             </nav>
@@ -1028,6 +1053,211 @@ $(document).ready(function() {
     e.preventDefault();
     $('#userProfileModal').modal('show');
   });
+});
+</script>
+
+<!-- View Quizzes Modal -->
+<div class="modal fade" id="viewQuizzesModal" tabindex="-1" aria-labelledby="viewQuizzesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewQuizzesModalLabel">Available Quizzes</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Quiz Title</th>
+                <th>Course</th>
+                <th>Description</th>
+                <th>Questions</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="availableQuizzesList">
+              <!-- Quizzes will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Load available quizzes
+    function loadAvailableQuizzes() {
+        $.ajax({
+            url: "{{ url_for('customer.get_available_quizzes') }}",
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    $('#availableQuizzesList').empty();
+                    if (response.data.length === 0) {
+                        $('#availableQuizzesList').append(`
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <p class="my-3">No quizzes available yet</p>
+                                </td>
+                            </tr>
+                        `);
+                    } else {
+                        response.data.forEach(quiz => {
+                            $('#availableQuizzesList').append(`
+                                <tr>
+                                    <td><strong>${quiz.title}</strong></td>
+                                    <td>${quiz.course_name}</td>
+                                    <td>${quiz.description}</td>
+                                    <td>
+                                        <span class="badge bg-primary">${quiz.questions ? quiz.questions.length : 0} Questions</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="startQuiz('${quiz._id}')">
+                                            <i class="fa fa-play"></i> Start Quiz
+                                        </button>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading quizzes:', error);
+                $('#availableQuizzesList').append(`
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">
+                            <p class="my-3">Error loading quizzes. Please try again later.</p>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+    }
+
+    // View quizzes click handler
+    $('#viewQuizzesLink').click(function(e) {
+        e.preventDefault();
+        loadAvailableQuizzes();
+        $('#viewQuizzesModal').modal('show');
+    });
+
+    // Start quiz function
+    window.startQuiz = function(quizId) {
+        alert('Quiz functionality coming soon!');
+    };
+});
+</script>
+
+<!-- Available Courses Modal -->
+<div class="modal fade" id="availableCoursesModal" tabindex="-1" aria-labelledby="availableCoursesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="availableCoursesModalLabel">Available Courses</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Description</th>
+                                <th>Level</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="availableCoursesList">
+                            <!-- Courses will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    function loadAvailableCourses() {
+        $.ajax({
+            url: "{{ url_for('storeowner.get_available_courses') }}",
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    $('#availableCoursesList').empty();
+                    if (response.data.length === 0) {
+                        $('#availableCoursesList').append(`
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <p class="my-3">No courses available yet</p>
+                                </td>
+                            </tr>
+                        `);
+                    } else {
+                        response.data.forEach(course => {
+                            $('#availableCoursesList').append(`
+                                <tr>
+                                    <td><strong>${course.name || 'N/A'}</strong></td>
+                                    <td>${course.description || 'No description'}</td>
+                                    <td>${course.level || 'N/A'}</td>
+                                    <td>${course.duration || 'N/A'}</td>
+                                    <td>
+                                        <span class="badge ${course.status === 'Active' ? 'bg-success' : 'bg-secondary'}">
+                                            ${course.status || 'N/A'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="${course.course_link || '#'}" target="_blank" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-eye"></i> View Course
+                                        </a>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    }
+                } else {
+                    console.error('Failed to load courses:', response.message);
+                    $('#availableCoursesList').append(`
+                        <tr>
+                            <td colspan="6" class="text-center text-danger">
+                                <p class="my-3">Error loading courses</p>
+                            </td>
+                        </tr>
+                    `);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Ajax error:', error);
+                $('#availableCoursesList').append(`
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            <p class="my-3">Failed to load courses</p>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+    }
+
+    // Handle click on Available Courses link
+    $('#availableCoursesLink').click(function(e) {
+        e.preventDefault();
+        loadAvailableCourses();
+        $('#availableCoursesModal').modal('show');
+    });
 });
 </script>
 

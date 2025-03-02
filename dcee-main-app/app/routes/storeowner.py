@@ -495,3 +495,59 @@ def generate_stock_predictions(stock_data):
             forecast = model.predict(future)
             predictions[product_id] = forecast.tail(30)[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
     return predictions
+
+@storeowner_bp.route('/get_available_quizzes')
+@login_required
+def get_available_quizzes():
+    try:
+        # Get all available quizzes
+        quizzes = list(mongo.db.quizzes.find({
+            'status': 'active'
+        }).sort('created_at', -1))
+        
+        # Process quiz data
+        for quiz in quizzes:
+            quiz['_id'] = str(quiz['_id'])
+            if 'course_id' in quiz:
+                quiz['course_id'] = str(quiz['course_id'])
+                # Get course name
+                course = mongo.db.courses.find_one({'_id': ObjectId(quiz['course_id'])})
+                quiz['course_name'] = course['name'] if course else 'Unknown Course'
+            else:
+                quiz['course_name'] = 'No Course Assigned'
+        
+        return jsonify({
+            'success': True,
+            'data': quizzes
+        })
+    except Exception as e:
+        print(f"Error in get_available_quizzes: {str(e)}")  # Debug print
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
+
+@storeowner_bp.route('/get_available_courses')
+@login_required
+@no_cache
+def get_available_courses():
+    try:
+        # Fetch all active courses from MongoDB
+        courses = list(mongo.db.courses.find({'status': 'active'}).sort('created_at', -1))
+        
+        # Process courses for JSON response
+        for course in courses:
+            course['_id'] = str(course['_id'])
+            if 'created_at' in course:
+                course['created_at'] = course['created_at'].isoformat()
+        
+        return jsonify({
+            'success': True,
+            'data': courses
+        })
+    except Exception as e:
+        print(f"Error in get_available_courses: {str(e)}")  # Debug print
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
