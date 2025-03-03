@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Performance Analytics</title>
+    <!-- Include all the CSS from dashboard.html -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendors/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Additional chart libraries -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Page Structure -->
+    <div class="page-wrapper compact-wrapper" id="pageWrapper">
+        <!-- Import header and sidebar from dashboard template -->
+        {% include 'storefrontowner/includes/header.html' %}
+        
+        <div class="page-body-wrapper">
+            {% include 'storefrontowner/includes/sidebar.html' %}
+            
+            <div class="page-body">
+                <div class="container-fluid">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-6">
+                                <h3>Sales Performance Analytics</h3>
+                            </div>
+                            <div class="col-6">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{ url_for('storeowner.dashboard') }}"><i data-feather="home"></i></a></li>
+                                    <li class="breadcrumb-item">Sales Analytics</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Insights Section -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>AI-Powered Insights</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>{{ insights.summary }}</p>
+                                    <div class="row mt-4">
+                                        <div class="col-md-6">
+                                            <div class="alert alert-primary">
+                                                <h6>Product Performance</h6>
+                                                <p>{{ insights.product_insights }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="alert alert-success">
+                                                <h6>Seasonal Trends</h6>
+                                                <p>{{ insights.seasonal_insights }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <div class="alert alert-warning">
+                                                <h6>Inventory Recommendations</h6>
+                                                <p>{{ insights.inventory_recommendations }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="alert alert-info">
+                                                <h6>Pricing Suggestions</h6>
+                                                <p>{{ insights.pricing_suggestions }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Overview Dashboard -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6 col-xl-3 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto">Total Sales</p>
+                                            <h4 class="f-w-500 mb-0 f-26">{{ analytics.overall_summary.total_sales }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xl-3 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto">Total Revenue</p>
+                                            <h4 class="f-w-500 mb-0 f-26">${{ "%.2f"|format(analytics.overall_summary.total_revenue) }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xl-3 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto">Daily Avg Revenue</p>
+                                            <h4 class="f-w-500 mb-0 f-26">${{ "%.2f"|format(analytics.overall_summary.avg_daily_revenue) }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xl-3 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto">Products Analyzed</p>
+                                            <h4 class="f-w-500 mb-0 f-26">{{ analytics.overall_summary.total_products }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Content Split -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Left Side - Product List -->
+                        <div class="col-xl-3 xl-40">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Products</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="product-list">
+                                        <ul class="list-group">
+                                            {% for product in products %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-center product-item" 
+                                                data-product-id="{{ product._id }}">
+                                                {{ product.product_name }}
+                                                <span class="badge badge-primary badge-pill">
+                                                    {% if product._id in analytics.product_performance %}
+                                                        {{ analytics.product_performance[product._id].total_sales }}
+                                                    {% else %}
+                                                        0
+                                                    {% endif %}
+                                                </span>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Side - Analytics Panels -->
+                        <div class="col-xl-9 xl-60">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5>Product Performance</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="product-performance-chart" style="height: 300px;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Sales by Day of Week</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="daily-sales-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Sales by Month</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="monthly-sales-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Product Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="product-details">
+                                        <p class="text-center">Select a product from the list to view detailed analytics</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Include all the JS from dashboard.html -->
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
+    
+    <script>
+        // Chart.js - Daily Sales
+        var dailyCtx = document.getElementById('daily-sales-chart').getContext('2d');
+        var dailyData = {
+            labels: Object.keys({{ analytics.seasonal_analysis.daily|tojson }}),
+            datasets: [{
+                label: 'Sales by Day of Week',
+                data: Object.values({{ analytics.seasonal_analysis.daily|tojson }}),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(199, 199, 199, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(199, 199, 199, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+        var dailyChart = new Chart(dailyCtx, {
+            type: 'bar',
+            data: dailyData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Chart.js - Monthly Sales
+        var monthlyCtx = document.getElementById('monthly-sales-chart').getContext('2d');
+        var monthlyData = {
+            labels: Object.keys({{ analytics.seasonal_analysis.monthly|tojson }}),
+            datasets: [{
+                label: 'Sales by Month',
+                data: Object.values({{ analytics.seasonal_analysis.monthly|tojson }}),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+        var monthlyChart = new Chart(monthlyCtx, {
+            type: 'line',
+            data: monthlyData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Initialize Plotly chart for product performance
+        function initializeProductPerformanceChart() {
+            var data = [{
+                type: 'bar',
+                x: Object.keys({{ analytics.overall_summary.top_products|tojson }}),
+                y: Object.values({{ analytics.overall_summary.top_products|tojson }}),
+                marker: {
+                    color: 'rgba(55, 128, 191, 0.7)',
+                    line: {
+                        color: 'rgba(55, 128, 191, 1.0)',
+                        width: 2
+                    }
+                }
+            }];
+            
+            var layout = {
+                title: 'Top Performing Products',
+                xaxis: {
+                    title: 'Product'
+                },
+                yaxis: {
+                    title: 'Total Sales'
+                }
+            };
+            
+            Plotly.newPlot('product-performance-chart', data, layout);
+        }
+        
+        // Handle product selection
+        document.querySelectorAll('.product-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Clear active class from all items
+                document.querySelectorAll('.product-item').forEach(i => i.classList.remove('active'));
+                // Add active class to selected item
+                this.classList.add('active');
+                
+                // Get product ID
+                const productId = this.getAttribute('data-product-id');
+                
+                // Get product performance data
+                const performanceData = {{ analytics.product_performance|tojson }}[productId];
+                
+                if (performanceData) {
+                    // Update product details section
+                    document.getElementById('product-details').innerHTML = `
+                        <h3>${performanceData.name}</h3>
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6>Total Sales</h6>
+                                        <h3>${performanceData.total_sales}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6>Total Revenue</h6>
+                                        <h3>$${performanceData.total_revenue.toFixed(2)}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6>Avg Daily Sales</h6>
+                                        <h3>${performanceData.avg_daily_sales.toFixed(2)}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h5>Sales Trend</h5>
+                            <div id="product-trend-chart" style="height: 250px;"></div>
+                        </div>
+                    `;
+                    
+                    // Create trend chart
+                    var trendData = [{
+                        x: performanceData.trend_dates,
+                        y: performanceData.sales_trend,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        line: {
+                            color: 'rgb(55, 128, 191)',
+                            width: 2
+                        },
+                        marker: {
+                            color: 'rgb(55, 128, 191)',
+                            size: 6
+                        }
+                    }];
+                    
+                    var trendLayout = {
+                        title: 'Weekly Sales Trend',
+                        xaxis: {
+                            title: 'Date'
+                        },
+                        yaxis: {
+                            title: 'Units Sold'
+                        }
+                    };
+                    
+                    Plotly.newPlot('product-trend-chart', trendData, trendLayout);
+                } else {
+                    document.getElementById('product-details').innerHTML = `
+                        <p class="text-center">No sales data available for this product.</p>
+                    `;
+                }
+            });
+        });
+        
+        // Initialize the product performance chart when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeProductPerformanceChart();
+        });
+    </script>
+</body>
+</html> 

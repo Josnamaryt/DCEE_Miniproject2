@@ -551,3 +551,119 @@ def get_available_courses():
             'success': False,
             'message': str(e)
         })
+
+@storeowner_bp.route('/sales_analytics')
+@login_required
+@no_cache
+def sales_analytics():
+    # Fetch products for the current store owner
+    products = list(mongo.db.products.find({"store_owner_id": current_user.email}))
+    
+    # Fetch sales data (this would need to be implemented based on your data model)
+    # For demonstration, we'll use a structure similar to stock_management
+    sales_data = fetch_sales_data(current_user.email)
+    
+    # Generate analytics
+    analytics = generate_sales_analytics(products, sales_data)
+    
+    # Use Gemini API for summarization and insights
+    insights = generate_gemini_insights(analytics)
+    
+    return render_template('storefrontowner/sales_analytics.html', 
+                          products=products, 
+                          analytics=analytics,
+                          insights=insights)
+
+def fetch_sales_data(store_owner_id):
+    # This would fetch actual sales data from your database
+    # For now, let's create dummy data similar to the stock management feature
+    sales_data = []
+    
+    # Fetch products for the store owner
+    products = list(mongo.db.products.find({"store_owner_id": store_owner_id}))
+    
+    # Create dummy sales data for each product
+    for product in products:
+        # Generate sales for the last 90 days
+        for i in range(90, 0, -1):
+            date = datetime.now() - timedelta(days=i)
+            # Random sales quantity between 0 and 20
+            quantity = random.randint(0, 20)
+            # Random revenue based on quantity and product price
+            revenue = quantity * float(product.get('product_price', 10))
+            
+            sales_data.append({
+                'product_id': str(product['_id']),
+                'product_name': product['product_name'],
+                'date': date,
+                'quantity': quantity,
+                'revenue': revenue
+            })
+    
+    return sales_data
+
+def generate_sales_analytics(products, sales_data):
+    # Initialize analytics object
+    analytics = {
+        'product_performance': {},
+        'seasonal_analysis': {},
+        'customer_patterns': {},
+        'overall_summary': {}
+    }
+    
+    # Process sales data to generate analytics
+    df = pd.DataFrame(sales_data)
+    
+    # 1. Product Performance Tracking
+    for product in products:
+        product_id = str(product['_id'])
+        product_sales = df[df['product_id'] == product_id]
+        
+        if not product_sales.empty:
+            analytics['product_performance'][product_id] = {
+                'name': product['product_name'],
+                'total_sales': int(product_sales['quantity'].sum()),
+                'total_revenue': float(product_sales['revenue'].sum()),
+                'avg_daily_sales': float(product_sales['quantity'].mean()),
+                'sales_trend': product_sales.groupby(pd.Grouper(key='date', freq='W'))['quantity'].sum().tolist(),
+                'trend_dates': [d.strftime('%Y-%m-%d') for d in product_sales.groupby(pd.Grouper(key='date', freq='W'))['quantity'].sum().index]
+            }
+    
+    # 2. Seasonal and Time-Based Analysis
+    df['date'] = pd.to_datetime(df['date'])
+    df['day_of_week'] = df['date'].dt.day_name()
+    df['month'] = df['date'].dt.month_name()
+    
+    # Sales by day of week
+    day_sales = df.groupby('day_of_week')['quantity'].sum().to_dict()
+    # Sales by month
+    month_sales = df.groupby('month')['quantity'].sum().to_dict()
+    
+    analytics['seasonal_analysis'] = {
+        'daily': day_sales,
+        'monthly': month_sales
+    }
+    
+    # 3. Overall Summary
+    analytics['overall_summary'] = {
+        'total_products': len(products),
+        'total_sales': int(df['quantity'].sum()),
+        'total_revenue': float(df['revenue'].sum()),
+        'avg_daily_revenue': float(df.groupby(pd.Grouper(key='date', freq='D'))['revenue'].sum().mean()),
+        'top_products': df.groupby('product_name')['quantity'].sum().nlargest(5).to_dict()
+    }
+    
+    return analytics
+
+def generate_gemini_insights(analytics):
+    # In a real implementation, this would call the Gemini API
+    # For now, we'll return placeholder insights
+    insights = {
+        'summary': "Based on your sales data, we've identified several key insights to help optimize your business performance.",
+        'product_insights': "Your top-performing product is generating 45% of your total revenue. Consider expanding inventory for this item.",
+        'seasonal_insights': "Sales peak on weekends and during the end of each month. Consider running promotions during weekday slumps.",
+        'inventory_recommendations': "Based on sales patterns, we recommend increasing stock levels for your top 3 products by 15% for the upcoming month.",
+        'pricing_suggestions': "Products in similar categories show price elasticity. Consider testing a 5-10% price increase on your premium products."
+    }
+    
+    return insights
