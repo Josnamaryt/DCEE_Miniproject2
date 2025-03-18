@@ -222,6 +222,15 @@
     <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
     
+    <!-- Data initialization script - safely handles Jinja template variables -->
+    <script type="text/javascript">
+        // Initialize data from server as global variables
+        window.dailyAnalytics = JSON.parse('{{ analytics.seasonal_analysis.daily|tojson|default("{}") }}');
+        window.monthlyAnalytics = JSON.parse('{{ analytics.seasonal_analysis.monthly|tojson|default("{}") }}');
+        window.topProductsData = JSON.parse('{{ analytics.overall_summary.top_products|tojson|default("{}") }}');
+        window.productPerformanceData = JSON.parse('{{ analytics.product_performance|tojson|default("{}") }}');
+    </script>
+    
     <script>
         // Single source of truth for chart initialization
         document.addEventListener('DOMContentLoaded', function() {
@@ -248,80 +257,80 @@
         // Chart initialization
         function initializeCharts() {
             // Check if we have data to display
-            if (!{{ analytics.seasonal_analysis.daily|tojson|default('{}') }} || 
-                !{{ analytics.seasonal_analysis.monthly|tojson|default('{}') }} ||
-                !{{ analytics.overall_summary.top_products|tojson|default('{}') }}) {
+            if (Object.keys(window.dailyAnalytics).length === 0 || 
+                Object.keys(window.monthlyAnalytics).length === 0 ||
+                Object.keys(window.topProductsData).length === 0) {
                 showErrorMessage('No analytics data available. Please check if you have sales data.');
                 return;
             }
             
             // Daily Sales Chart
-        var dailyCtx = document.getElementById('daily-sales-chart').getContext('2d');
-        var dailyData = {
-            labels: Object.keys({{ analytics.seasonal_analysis.daily|tojson }}),
-            datasets: [{
-                label: 'Sales by Day of Week',
-                data: Object.values({{ analytics.seasonal_analysis.daily|tojson }}),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(199, 199, 199, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)',
-                    'rgba(199, 199, 199, 1)'
-                ],
-                borderWidth: 1
-            }]
-        };
+            var dailyCtx = document.getElementById('daily-sales-chart').getContext('2d');
+            var dailyData = {
+                labels: Object.keys(window.dailyAnalytics),
+                datasets: [{
+                    label: 'Sales by Day of Week',
+                    data: Object.values(window.dailyAnalytics),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(199, 199, 199, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(199, 199, 199, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
             
             window.dailyChart = new Chart(dailyCtx, {
-            type: 'bar',
-            data: dailyData,
-            options: {
+                type: 'bar',
+                data: dailyData,
+                options: {
                     responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
         
             // Monthly Sales Chart
-        var monthlyCtx = document.getElementById('monthly-sales-chart').getContext('2d');
-        var monthlyData = {
-            labels: Object.keys({{ analytics.seasonal_analysis.monthly|tojson }}),
-            datasets: [{
-                label: 'Sales by Month',
-                data: Object.values({{ analytics.seasonal_analysis.monthly|tojson }}),
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        };
+            var monthlyCtx = document.getElementById('monthly-sales-chart').getContext('2d');
+            var monthlyData = {
+                labels: Object.keys(window.monthlyAnalytics),
+                datasets: [{
+                    label: 'Sales by Month',
+                    data: Object.values(window.monthlyAnalytics),
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
             
             window.monthlyChart = new Chart(monthlyCtx, {
-            type: 'line',
-            data: monthlyData,
-            options: {
+                type: 'line',
+                data: monthlyData,
+                options: {
                     responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
         
             // Product Performance Chart (Plotly)
             initializeProductPerformanceChart();
@@ -331,34 +340,32 @@
         function initializeProductPerformanceChart() {
             console.log('Initializing product performance chart');
             try {
-                var productData = {{ analytics.overall_summary.top_products|tojson }};
-                
-                if (!productData || Object.keys(productData).length === 0) {
+                if (Object.keys(window.topProductsData).length === 0) {
                     document.getElementById('product-performance-chart').innerHTML = 
                         '<div class="alert alert-warning">No product performance data available.</div>';
                     return;
                 }
                 
-            var data = [{
-                type: 'bar',
-                    x: Object.keys(productData),
-                    y: Object.values(productData),
-                marker: {
-                    color: 'rgba(55, 128, 191, 0.7)',
-                    line: {
-                        color: 'rgba(55, 128, 191, 1.0)',
-                        width: 2
+                var data = [{
+                    type: 'bar',
+                    x: Object.keys(window.topProductsData),
+                    y: Object.values(window.topProductsData),
+                    marker: {
+                        color: 'rgba(55, 128, 191, 0.7)',
+                        line: {
+                            color: 'rgba(55, 128, 191, 1.0)',
+                            width: 2
+                        }
                     }
-                }
-            }];
-            
-            var layout = {
-                title: 'Top Performing Products',
-                xaxis: {
-                    title: 'Product'
-                },
-                yaxis: {
-                    title: 'Total Sales'
+                }];
+                
+                var layout = {
+                    title: 'Top Performing Products',
+                    xaxis: {
+                        title: 'Product'
+                    },
+                    yaxis: {
+                        title: 'Total Sales'
                     },
                     margin: {
                         l: 50,
@@ -395,21 +402,21 @@
             }
             
             productItems.forEach(item => {
-            item.addEventListener('click', function() {
+                item.addEventListener('click', function() {
                     console.log('Product clicked:', this.getAttribute('data-product-id'));
                     
-                // Clear active class from all items
+                    // Clear active class from all items
                     productItems.forEach(i => i.classList.remove('active'));
                     
-                // Add active class to selected item
-                this.classList.add('active');
-                
-                // Get product ID
-                const productId = this.getAttribute('data-product-id');
-                
-                // Get product performance data
-                const performanceData = {{ analytics.product_performance|tojson }}[productId];
-                
+                    // Add active class to selected item
+                    this.classList.add('active');
+                    
+                    // Get product ID
+                    const productId = this.getAttribute('data-product-id');
+                    
+                    // Get product performance data
+                    const performanceData = window.productPerformanceData[productId];
+                    
                     updateProductDetails(productId, performanceData);
                 });
             });
@@ -433,40 +440,40 @@
                 return;
             }
             
-                    // Update product details section
+            // Update product details section
             detailsContainer.innerHTML = `
-                        <h3>${performanceData.name}</h3>
-                        <div class="row mt-4">
-                            <div class="col-md-4">
-                                <div class="card bg-light">
-                                    <div class="card-body text-center">
-                                        <h6>Total Sales</h6>
-                                        <h3>${performanceData.total_sales}</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card bg-light">
-                                    <div class="card-body text-center">
-                                        <h6>Total Revenue</h6>
-                                        <h3>$${performanceData.total_revenue.toFixed(2)}</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card bg-light">
-                                    <div class="card-body text-center">
-                                        <h6>Avg Daily Sales</h6>
-                                        <h3>${performanceData.avg_daily_sales.toFixed(2)}</h3>
-                                    </div>
-                                </div>
+                <h3>${performanceData.name}</h3>
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>Total Sales</h6>
+                                <h3>${performanceData.total_sales}</h3>
                             </div>
                         </div>
-                        <div class="mt-4">
-                            <h5>Sales Trend</h5>
-                            <div id="product-trend-chart" style="height: 250px;"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>Total Revenue</h6>
+                                <h3>$${performanceData.total_revenue.toFixed(2)}</h3>
+                            </div>
                         </div>
-                    `;
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>Avg Daily Sales</h6>
+                                <h3>${performanceData.avg_daily_sales.toFixed(2)}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h5>Sales Trend</h5>
+                    <div id="product-trend-chart" style="height: 250px;"></div>
+                </div>
+            `;
                     
             // Create trend chart if we have trend data
             if (performanceData.sales_trend && performanceData.sales_trend.length > 0) {

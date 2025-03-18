@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from app import login_manager, mongo
-from app.models import User
+from app.models import User, Sale
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
 from datetime import datetime, timedelta
@@ -10,11 +10,9 @@ import random
 import string
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from flask_mail import Mail, Message
-from flask import request
 from werkzeug.utils import secure_filename
 import os
 from bson.errors import InvalidId
-from flask import jsonify
 import pandas as pd
 from prophet import Prophet
 import numpy as np
@@ -595,8 +593,8 @@ def sales_analytics():
         # Generate analytics
         analytics = generate_sales_analytics(products, sales_data)
         
-        # Use Gemini API for summarization and insights
-        insights = generate_gemini_insights(analytics)
+        # Use placeholder insights for now
+        insights = generate_insights(analytics)
         
         # Debug output
         print(f"Rendering sales_analytics template with {len(products)} products and {len(sales_data) if sales_data else 0} sales records")
@@ -618,6 +616,12 @@ def fetch_sales_data(store_owner_id):
     
     # If we have actual sales data, use it
     if actual_sales:
+        # Convert date objects to string for JSON serialization
+        for sale in actual_sales:
+            if 'sale_date' in sale and isinstance(sale['sale_date'], datetime):
+                sale['date'] = sale['sale_date']  # Create a 'date' field for consistency
+            if '_id' in sale:
+                sale['_id'] = str(sale['_id'])
         return actual_sales
     
     # Otherwise, generate dummy data for demonstration
@@ -636,13 +640,37 @@ def fetch_sales_data(store_owner_id):
             # Random revenue based on quantity and product price
             revenue = quantity * float(product.get('product_price', 10))
             
-            sales_data.append({
-                'product_id': str(product['_id']),
-                'product_name': product['product_name'],
-                'date': date,
-                'quantity': quantity,
-                'revenue': revenue
-            })
+            # Create a Sale object using the model
+            sale = Sale(
+                product_id=str(product['_id']),
+                product_name=product['product_name'],
+                store_owner_id=store_owner_id,
+                quantity=quantity,
+                revenue=revenue,
+                sale_date=date,
+                customer_id=None  # Not using customer data for demo
+            )
+            
+            # Convert to dictionary for database storage
+            sale_data = sale.to_dict()
+            sale_data['date'] = date  # Add a date field for analytics
+            
+            # Save the dummy data to the sales collection for future use
+            try:
+                # Only insert if not already in database
+                mongo.db.sales.update_one(
+                    {
+                        'product_id': sale_data['product_id'],
+                        'store_owner_id': sale_data['store_owner_id'],
+                        'sale_date': sale_data['sale_date']
+                    },
+                    {'$setOnInsert': sale_data},
+                    upsert=True
+                )
+            except Exception as e:
+                print(f"Error saving dummy sales data: {str(e)}")
+            
+            sales_data.append(sale_data)
     
     return sales_data
 
@@ -737,40 +765,9 @@ def generate_sales_analytics(products, sales_data):
         # Return basic analytics structure in case of error
         return analytics
 
-def generate_gemini_insights(analytics):
-    # This would be the Gemini API integration in production
-    # For now, we'll return placeholder insights
+def generate_insights(analytics):
+    """Generate insights from sales analytics data"""
     try:
-        # Import Google Generative AI library (assuming it's installed)
-        # from google.generativeai import GenerativeModel
-        
-        # Create a prompt for the model
-        prompt = f"""
-        Analyze this sales data and provide retail business insights:
-        
-        Total Products: {analytics['overall_summary'].get('total_products', 0)}
-        Total Sales: {analytics['overall_summary'].get('total_sales', 0)} units
-        Total Revenue: ${analytics['overall_summary'].get('total_revenue', 0):.2f}
-        Average Daily Revenue: ${analytics['overall_summary'].get('avg_daily_revenue', 0):.2f}
-        
-        Top Products by Sales: {analytics['overall_summary'].get('top_products', {})}
-        
-        Daily Sales Pattern: {analytics['seasonal_analysis'].get('daily', {})}
-        Monthly Sales Pattern: {analytics['seasonal_analysis'].get('monthly', {})}
-        
-        Provide:
-        1. A brief summary of overall performance
-        2. Product performance insights
-        3. Seasonal trends analysis
-        4. Inventory recommendations
-        5. Pricing suggestions
-        """
-        
-        # In production, you would call the Gemini API here
-        # model = GenerativeModel("gemini-pro")
-        # response = model.generate_content(prompt)
-        # Parse the response...
-        
         # For now, return placeholder insights
         insights = {
             'summary': "Based on your sales data, we've identified key insights to optimize your business performance. Your store shows a healthy sales pattern with opportunities for growth.",
