@@ -172,7 +172,7 @@
                                 <div class="card-header">
                                     <h5>Product Performance</h5>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body chart-container">
                                     <div id="product-performance-chart" style="height: 300px;"></div>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@
                                         <div class="card-header">
                                             <h5>Sales by Day of Week</h5>
                                         </div>
-                                        <div class="card-body">
+                                        <div class="card-body chart-container">
                                             <canvas id="daily-sales-chart" height="250"></canvas>
                                         </div>
                                     </div>
@@ -193,7 +193,7 @@
                                         <div class="card-header">
                                             <h5>Sales by Month</h5>
                                         </div>
-                                        <div class="card-body">
+                                        <div class="card-body chart-container">
                                             <canvas id="monthly-sales-chart" height="250"></canvas>
                                         </div>
                                     </div>
@@ -223,7 +223,39 @@
     <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
     
     <script>
-        // Chart.js - Daily Sales
+        // Single source of truth for chart initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Initialize charts
+                initializeCharts();
+                
+                // Handle product selection
+                setupProductSelection();
+                
+                // Add export and print functionality
+                setupExportAndPrint();
+                
+                // Initialize feather icons
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                showErrorMessage('An error occurred while initializing the page. Please refresh and try again.');
+            }
+        });
+
+        // Chart initialization
+        function initializeCharts() {
+            // Check if we have data to display
+            if (!{{ analytics.seasonal_analysis.daily|tojson|default('{}') }} || 
+                !{{ analytics.seasonal_analysis.monthly|tojson|default('{}') }} ||
+                !{{ analytics.overall_summary.top_products|tojson|default('{}') }}) {
+                showErrorMessage('No analytics data available. Please check if you have sales data.');
+                return;
+            }
+            
+            // Daily Sales Chart
         var dailyCtx = document.getElementById('daily-sales-chart').getContext('2d');
         var dailyData = {
             labels: Object.keys({{ analytics.seasonal_analysis.daily|tojson }}),
@@ -251,10 +283,12 @@
                 borderWidth: 1
             }]
         };
-        var dailyChart = new Chart(dailyCtx, {
+            
+            window.dailyChart = new Chart(dailyCtx, {
             type: 'bar',
             data: dailyData,
             options: {
+                    responsive: true,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -263,7 +297,7 @@
             }
         });
         
-        // Chart.js - Monthly Sales
+            // Monthly Sales Chart
         var monthlyCtx = document.getElementById('monthly-sales-chart').getContext('2d');
         var monthlyData = {
             labels: Object.keys({{ analytics.seasonal_analysis.monthly|tojson }}),
@@ -275,10 +309,12 @@
                 borderWidth: 1
             }]
         };
-        var monthlyChart = new Chart(monthlyCtx, {
+            
+            window.monthlyChart = new Chart(monthlyCtx, {
             type: 'line',
             data: monthlyData,
             options: {
+                    responsive: true,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -287,12 +323,26 @@
             }
         });
         
-        // Initialize Plotly chart for product performance
+            // Product Performance Chart (Plotly)
+            initializeProductPerformanceChart();
+        }
+        
+        // Product Performance Chart
         function initializeProductPerformanceChart() {
+            console.log('Initializing product performance chart');
+            try {
+                var productData = {{ analytics.overall_summary.top_products|tojson }};
+                
+                if (!productData || Object.keys(productData).length === 0) {
+                    document.getElementById('product-performance-chart').innerHTML = 
+                        '<div class="alert alert-warning">No product performance data available.</div>';
+                    return;
+                }
+                
             var data = [{
                 type: 'bar',
-                x: Object.keys({{ analytics.overall_summary.top_products|tojson }}),
-                y: Object.values({{ analytics.overall_summary.top_products|tojson }}),
+                    x: Object.keys(productData),
+                    y: Object.values(productData),
                 marker: {
                     color: 'rgba(55, 128, 191, 0.7)',
                     line: {
@@ -309,17 +359,48 @@
                 },
                 yaxis: {
                     title: 'Total Sales'
-                }
-            };
-            
-            Plotly.newPlot('product-performance-chart', data, layout);
+                    },
+                    margin: {
+                        l: 50,
+                        r: 50,
+                        b: 100,
+                        t: 50,
+                        pad: 4
+                    },
+                    autosize: true
+                };
+                
+                var config = {
+                    responsive: true,
+                    displayModeBar: true
+                };
+                
+                Plotly.newPlot('product-performance-chart', data, layout, config);
+                console.log('Product performance chart initialized');
+            } catch (error) {
+                console.error('Error initializing product performance chart:', error);
+                document.getElementById('product-performance-chart').innerHTML = 
+                    '<div class="alert alert-danger">Error loading chart. Please refresh the page.</div>';
+            }
         }
         
-        // Handle product selection
-        document.querySelectorAll('.product-item').forEach(item => {
+        // Setup product selection
+        function setupProductSelection() {
+            const productItems = document.querySelectorAll('.product-item');
+            
+            if (productItems.length === 0) {
+                document.querySelector('.product-list').innerHTML = 
+                    '<div class="alert alert-warning">No products available for analysis.</div>';
+                return;
+            }
+            
+            productItems.forEach(item => {
             item.addEventListener('click', function() {
+                    console.log('Product clicked:', this.getAttribute('data-product-id'));
+                    
                 // Clear active class from all items
-                document.querySelectorAll('.product-item').forEach(i => i.classList.remove('active'));
+                    productItems.forEach(i => i.classList.remove('active'));
+                    
                 // Add active class to selected item
                 this.classList.add('active');
                 
@@ -329,9 +410,31 @@
                 // Get product performance data
                 const performanceData = {{ analytics.product_performance|tojson }}[productId];
                 
-                if (performanceData) {
+                    updateProductDetails(productId, performanceData);
+                });
+            });
+            
+            // Select the first product by default
+            if (productItems.length > 0) {
+                productItems[0].click();
+            }
+        }
+        
+        // Update product details section
+        function updateProductDetails(productId, performanceData) {
+            const detailsContainer = document.getElementById('product-details');
+            
+            if (!performanceData) {
+                detailsContainer.innerHTML = `
+                    <div class="alert alert-warning">
+                        <p class="text-center">No sales data available for this product.</p>
+                    </div>
+                `;
+                return;
+            }
+            
                     // Update product details section
-                    document.getElementById('product-details').innerHTML = `
+            detailsContainer.innerHTML = `
                         <h3>${performanceData.name}</h3>
                         <div class="row mt-4">
                             <div class="col-md-4">
@@ -365,7 +468,9 @@
                         </div>
                     `;
                     
-                    // Create trend chart
+            // Create trend chart if we have trend data
+            if (performanceData.sales_trend && performanceData.sales_trend.length > 0) {
+                try {
                     var trendData = [{
                         x: performanceData.trend_dates,
                         y: performanceData.sales_trend,
@@ -388,22 +493,140 @@
                         },
                         yaxis: {
                             title: 'Units Sold'
-                        }
+                        },
+                        margin: {
+                            l: 50,
+                            r: 50,
+                            b: 50,
+                            t: 50,
+                            pad: 4
+                        },
+                        autosize: true
                     };
                     
-                    Plotly.newPlot('product-trend-chart', trendData, trendLayout);
-                } else {
-                    document.getElementById('product-details').innerHTML = `
-                        <p class="text-center">No sales data available for this product.</p>
-                    `;
+                    var config = {
+                        responsive: true
+                    };
+                    
+                    Plotly.newPlot('product-trend-chart', trendData, trendLayout, config);
+                } catch (error) {
+                    console.error('Error creating trend chart:', error);
+                    document.getElementById('product-trend-chart').innerHTML = 
+                        '<div class="alert alert-danger">Error loading trend chart.</div>';
                 }
-            });
-        });
+            } else {
+                document.getElementById('product-trend-chart').innerHTML = 
+                    '<div class="alert alert-warning">No trend data available for this product.</div>';
+            }
+        }
         
-        // Initialize the product performance chart when the page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeProductPerformanceChart();
+        // Setup export and print functionality
+        function setupExportAndPrint() {
+            // Add export button
+            const exportButton = document.createElement('a');
+            exportButton.className = 'btn btn-success mt-2 me-2';
+            exportButton.href = "{{ url_for('storeowner.export_sales_data') }}";
+            exportButton.innerHTML = '<i data-feather="download"></i> Export Data';
+            
+            // Add print button
+            const printButton = document.createElement('button');
+            printButton.className = 'btn btn-secondary mt-2';
+            printButton.innerHTML = '<i data-feather="printer"></i> Print Report';
+            printButton.onclick = function() { window.print(); };
+            
+            // Add buttons to the page title
+            const titleContainer = document.querySelector('.page-title .row .col-6:first-child');
+            titleContainer.appendChild(exportButton);
+            titleContainer.appendChild(printButton);
+        }
+        
+        // Show error message
+        function showErrorMessage(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger mt-3';
+            errorDiv.innerHTML = message;
+            
+            // Insert after page title
+            const pageTitle = document.querySelector('.page-title');
+            pageTitle.parentNode.insertBefore(errorDiv, pageTitle.nextSibling);
+        }
+
+        // Add responsive window resize handling
+        window.addEventListener('resize', function() {
+            if (window.dailyChart) {
+                window.dailyChart.resize();
+            }
+            if (window.monthlyChart) {
+                window.monthlyChart.resize();
+            }
+            if (document.getElementById('product-performance-chart')) {
+                Plotly.relayout('product-performance-chart', {
+                    'width': document.getElementById('product-performance-chart').offsetWidth
+                });
+            }
+            if (document.getElementById('product-trend-chart')) {
+                Plotly.relayout('product-trend-chart', {
+                    'width': document.getElementById('product-trend-chart').offsetWidth
+                });
+            }
         });
     </script>
+    
+    <!-- Add this style to improve the UI and fix layout issues -->
+    <style>
+        /* Fix for product list selection */
+        .product-item {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .product-item.active {
+            background-color: rgba(55, 128, 191, 0.2);
+            border-left: 4px solid rgba(55, 128, 191, 1.0);
+        }
+        
+        .product-item:hover {
+            background-color: rgba(55, 128, 191, 0.1);
+        }
+        
+        /* Chart container styling */
+        .chart-container {
+            position: relative;
+            min-height: 250px;
+        }
+        
+        /* Print layout fixes */
+        @media print {
+            .sidebar-wrapper, header, .breadcrumb, button, a.btn {
+                display: none !important;
+            }
+            
+            .page-body {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+            
+            .card {
+                break-inside: avoid;
+            }
+        }
+        
+        /* Mobile responsiveness improvements */
+        @media (max-width: 768px) {
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            #product-performance-chart,
+            #product-trend-chart {
+                height: 250px !important;
+            }
+            
+            .product-list {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+        }
+    </style>
 </body>
 </html> 

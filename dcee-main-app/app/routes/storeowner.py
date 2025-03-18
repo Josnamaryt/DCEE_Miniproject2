@@ -556,27 +556,71 @@ def get_available_courses():
 @login_required
 @no_cache
 def sales_analytics():
-    # Fetch products for the current store owner
-    products = list(mongo.db.products.find({"store_owner_id": current_user.email}))
-    
-    # Fetch sales data (this would need to be implemented based on your data model)
-    # For demonstration, we'll use a structure similar to stock_management
-    sales_data = fetch_sales_data(current_user.email)
-    
-    # Generate analytics
-    analytics = generate_sales_analytics(products, sales_data)
-    
-    # Use Gemini API for summarization and insights
-    insights = generate_gemini_insights(analytics)
-    
-    return render_template('storefrontowner/sales_analytics.html', 
-                          products=products, 
-                          analytics=analytics,
-                          insights=insights)
+    try:
+        # Fetch products for the current store owner
+        products = list(mongo.db.products.find({"store_owner_id": current_user.email}))
+        
+        # Convert ObjectId to string for JSON serialization
+        for product in products:
+            product['_id'] = str(product['_id'])
+        
+        # Check if we have products
+        if not products:
+            flash("You don't have any products. Please add products first to view sales analytics.", "warning")
+            return render_template('storefrontowner/sales_analytics.html', 
+                                products=[], 
+                                analytics={
+                                    'product_performance': {},
+                                    'seasonal_analysis': {'daily': {}, 'monthly': {}},
+                                    'customer_patterns': {},
+                                    'overall_summary': {
+                                        'total_products': 0,
+                                        'total_sales': 0,
+                                        'total_revenue': 0,
+                                        'avg_daily_revenue': 0,
+                                        'top_products': {}
+                                    }
+                                },
+                                insights={
+                                    'summary': "No products found. Please add products to view sales analytics.",
+                                    'product_insights': "",
+                                    'seasonal_insights': "",
+                                    'inventory_recommendations': "",
+                                    'pricing_suggestions': ""
+                                })
+        
+        # Fetch sales data (this would connect to actual sales data in production)
+        sales_data = fetch_sales_data(current_user.email)
+        
+        # Generate analytics
+        analytics = generate_sales_analytics(products, sales_data)
+        
+        # Use Gemini API for summarization and insights
+        insights = generate_gemini_insights(analytics)
+        
+        # Debug output
+        print(f"Rendering sales_analytics template with {len(products)} products and {len(sales_data) if sales_data else 0} sales records")
+        
+        return render_template('storefrontowner/sales_analytics.html', 
+                             products=products, 
+                             analytics=analytics,
+                             insights=insights)
+    except Exception as e:
+        # Log the error
+        print(f"Error in sales_analytics route: {str(e)}")
+        flash(f"An error occurred: {str(e)}", "error")
+        return redirect(url_for('storeowner.dashboard'))
 
 def fetch_sales_data(store_owner_id):
-    # This would fetch actual sales data from your database
-    # For now, let's create dummy data similar to the stock management feature
+    # Check if there's actual sales data in the database
+    sales_collection = mongo.db.sales
+    actual_sales = list(sales_collection.find({"store_owner_id": store_owner_id}))
+    
+    # If we have actual sales data, use it
+    if actual_sales:
+        return actual_sales
+    
+    # Otherwise, generate dummy data for demonstration
     sales_data = []
     
     # Fetch products for the store owner
@@ -603,67 +647,180 @@ def fetch_sales_data(store_owner_id):
     return sales_data
 
 def generate_sales_analytics(products, sales_data):
-    # Initialize analytics object
+    # Initialize analytics object with default empty structures
     analytics = {
         'product_performance': {},
-        'seasonal_analysis': {},
-        'customer_patterns': {},
-        'overall_summary': {}
+        'seasonal_analysis': {
+            'daily': {},
+            'monthly': {}
+        },
+        'customer_patterns': {},  # This will be empty for now
+        'overall_summary': {
+            'total_products': len(products),
+            'total_sales': 0,
+            'total_revenue': 0.0,
+            'avg_daily_revenue': 0.0,
+            'top_products': {}
+        }
     }
     
-    # Process sales data to generate analytics
-    df = pd.DataFrame(sales_data)
+    # If no sales data, return empty analytics
+    if not sales_data or len(sales_data) == 0:
+        print("No sales data available for analytics")
+        return analytics
     
-    # 1. Product Performance Tracking
-    for product in products:
-        product_id = str(product['_id'])
-        product_sales = df[df['product_id'] == product_id]
+    try:
+        # Process sales data to generate analytics
+        df = pd.DataFrame(sales_data)
         
-        if not product_sales.empty:
-            analytics['product_performance'][product_id] = {
-                'name': product['product_name'],
-                'total_sales': int(product_sales['quantity'].sum()),
-                'total_revenue': float(product_sales['revenue'].sum()),
-                'avg_daily_sales': float(product_sales['quantity'].mean()),
-                'sales_trend': product_sales.groupby(pd.Grouper(key='date', freq='W'))['quantity'].sum().tolist(),
-                'trend_dates': [d.strftime('%Y-%m-%d') for d in product_sales.groupby(pd.Grouper(key='date', freq='W'))['quantity'].sum().index]
+        # Convert date strings to datetime objects if needed
+        if 'date' in df.columns and not pd.api.types.is_datetime64_any_dtype(df['date']):
+            df['date'] = pd.to_datetime(df['date'])
+        
+        # 1. Product Performance Tracking
+        for product in products:
+            product_id = str(product['_id'])
+            product_sales = df[df['product_id'] == product_id]
+            
+            if not product_sales.empty:
+                # Calculate weekly sales for trend
+                weekly_sales = product_sales.groupby(pd.Grouper(key='date', freq='W'))['quantity'].sum()
+                
+                analytics['product_performance'][product_id] = {
+                    'name': product['product_name'],
+                    'total_sales': int(product_sales['quantity'].sum()),
+                    'total_revenue': float(product_sales['revenue'].sum()),
+                    'avg_daily_sales': float(product_sales['quantity'].mean()),
+                    'sales_trend': weekly_sales.tolist(),
+                    'trend_dates': [d.strftime('%Y-%m-%d') for d in weekly_sales.index]
+                }
+                
+                # Debug output to verify data structure
+                print(f"Product {product['product_name']} performance data generated")
+        
+        # 2. Seasonal and Time-Based Analysis
+        if not df.empty and 'date' in df.columns:
+            df['day_of_week'] = df['date'].dt.day_name()
+            df['month'] = df['date'].dt.month_name()
+            
+            # Sort days of week in correct order
+            day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            day_sales = df.groupby('day_of_week')['quantity'].sum().reindex(day_order).fillna(0).to_dict()
+            
+            # Sort months in correct order
+            month_order = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December']
+            month_sales = df.groupby('month')['quantity'].sum().reindex(month_order).fillna(0).to_dict()
+            
+            analytics['seasonal_analysis'] = {
+                'daily': day_sales,
+                'monthly': month_sales
             }
+        
+        # 3. Overall Summary
+        if not df.empty:
+            analytics['overall_summary'] = {
+                'total_products': len(products),
+                'total_sales': int(df['quantity'].sum()),
+                'total_revenue': float(df['revenue'].sum()),
+                'avg_daily_revenue': float(df.groupby(pd.Grouper(key='date', freq='D'))['revenue'].sum().mean()),
+                'top_products': df.groupby('product_name')['quantity'].sum().nlargest(5).to_dict()
+            }
+            
+            # Debug output
+            print(f"Generated overall summary with {len(analytics['overall_summary']['top_products'])} top products")
+        
+        return analytics
     
-    # 2. Seasonal and Time-Based Analysis
-    df['date'] = pd.to_datetime(df['date'])
-    df['day_of_week'] = df['date'].dt.day_name()
-    df['month'] = df['date'].dt.month_name()
-    
-    # Sales by day of week
-    day_sales = df.groupby('day_of_week')['quantity'].sum().to_dict()
-    # Sales by month
-    month_sales = df.groupby('month')['quantity'].sum().to_dict()
-    
-    analytics['seasonal_analysis'] = {
-        'daily': day_sales,
-        'monthly': month_sales
-    }
-    
-    # 3. Overall Summary
-    analytics['overall_summary'] = {
-        'total_products': len(products),
-        'total_sales': int(df['quantity'].sum()),
-        'total_revenue': float(df['revenue'].sum()),
-        'avg_daily_revenue': float(df.groupby(pd.Grouper(key='date', freq='D'))['revenue'].sum().mean()),
-        'top_products': df.groupby('product_name')['quantity'].sum().nlargest(5).to_dict()
-    }
-    
-    return analytics
+    except Exception as e:
+        print(f"Error generating sales analytics: {str(e)}")
+        # Return basic analytics structure in case of error
+        return analytics
 
 def generate_gemini_insights(analytics):
-    # In a real implementation, this would call the Gemini API
+    # This would be the Gemini API integration in production
     # For now, we'll return placeholder insights
-    insights = {
-        'summary': "Based on your sales data, we've identified several key insights to help optimize your business performance.",
-        'product_insights': "Your top-performing product is generating 45% of your total revenue. Consider expanding inventory for this item.",
-        'seasonal_insights': "Sales peak on weekends and during the end of each month. Consider running promotions during weekday slumps.",
-        'inventory_recommendations': "Based on sales patterns, we recommend increasing stock levels for your top 3 products by 15% for the upcoming month.",
-        'pricing_suggestions': "Products in similar categories show price elasticity. Consider testing a 5-10% price increase on your premium products."
-    }
-    
-    return insights
+    try:
+        # Import Google Generative AI library (assuming it's installed)
+        # from google.generativeai import GenerativeModel
+        
+        # Create a prompt for the model
+        prompt = f"""
+        Analyze this sales data and provide retail business insights:
+        
+        Total Products: {analytics['overall_summary'].get('total_products', 0)}
+        Total Sales: {analytics['overall_summary'].get('total_sales', 0)} units
+        Total Revenue: ${analytics['overall_summary'].get('total_revenue', 0):.2f}
+        Average Daily Revenue: ${analytics['overall_summary'].get('avg_daily_revenue', 0):.2f}
+        
+        Top Products by Sales: {analytics['overall_summary'].get('top_products', {})}
+        
+        Daily Sales Pattern: {analytics['seasonal_analysis'].get('daily', {})}
+        Monthly Sales Pattern: {analytics['seasonal_analysis'].get('monthly', {})}
+        
+        Provide:
+        1. A brief summary of overall performance
+        2. Product performance insights
+        3. Seasonal trends analysis
+        4. Inventory recommendations
+        5. Pricing suggestions
+        """
+        
+        # In production, you would call the Gemini API here
+        # model = GenerativeModel("gemini-pro")
+        # response = model.generate_content(prompt)
+        # Parse the response...
+        
+        # For now, return placeholder insights
+        insights = {
+            'summary': "Based on your sales data, we've identified key insights to optimize your business performance. Your store shows a healthy sales pattern with opportunities for growth.",
+            'product_insights': "Your top-performing product is generating approximately 45% of your total revenue. Consider expanding inventory for this item and creating bundled offers with lower-performing products to boost their sales.",
+            'seasonal_insights': "Sales peak on weekends and at month-end. Consider running targeted promotions during weekday slumps to even out your sales distribution and improve overall revenue.",
+            'inventory_recommendations': "Based on your sales patterns, we recommend increasing stock levels for your top 3 products by 15-20% for the upcoming month, while reducing inventory of slower-moving items to optimize your working capital.",
+            'pricing_suggestions': "Products in similar categories show price elasticity. Consider testing a 5-10% price increase on your premium products, which shouldn't significantly impact demand based on current purchase patterns."
+        }
+        
+        return insights
+        
+    except Exception as e:
+        print(f"Error generating insights: {str(e)}")
+        # Fallback insights if API call fails
+        return {
+            'summary': "Your store shows stable sales performance. Analyze the data to identify growth opportunities.",
+            'product_insights': "Some products are performing better than others. Focus on your top-sellers while improving visibility of other items.",
+            'seasonal_insights': "Sales patterns vary throughout the week and month. Consider this when planning promotions.",
+            'inventory_recommendations': "Maintain adequate stock of popular items to avoid lost sales opportunities.",
+            'pricing_suggestions': "Review your pricing strategy regularly to maximize profitability."
+        }
+
+@storeowner_bp.route('/export_sales_data', methods=['GET'])
+@login_required
+@no_cache
+def export_sales_data():
+    try:
+        # Fetch sales data
+        sales_data = fetch_sales_data(current_user.email)
+        
+        # Convert to DataFrame
+        df = pd.DataFrame(sales_data)
+        
+        # Create a CSV in memory
+        from io import StringIO
+        csv_buffer = StringIO()
+        df.to_csv(csv_buffer, index=False)
+        
+        # Create response with CSV data
+        from flask import Response
+        response = Response(
+            csv_buffer.getvalue(),
+            mimetype='text/csv',
+            headers={
+                'Content-Disposition': 'attachment; filename=sales_data.csv',
+                'Content-Type': 'text/csv'
+            }
+        )
+        
+        return response
+    except Exception as e:
+        flash(f"Error exporting data: {str(e)}", "error")
+        return redirect(url_for('storeowner.sales_analytics'))
