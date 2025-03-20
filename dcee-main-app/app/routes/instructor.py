@@ -401,3 +401,110 @@ def process_quiz_excel():
             'message': f'Error processing Excel file: {str(e)}'
         })
 
+@instructor_bp.route('/quiz/<quiz_id>/attempts')
+@login_required
+def get_quiz_attempts(quiz_id):
+    try:
+        # First verify that the quiz belongs to the current instructor
+        quiz = mongo.db.quizzes.find_one({
+            '_id': ObjectId(quiz_id),
+            'instructor_id': current_user.id
+        })
+        
+        if not quiz:
+            return jsonify({
+                'success': False,
+                'message': 'Quiz not found or unauthorized'
+            })
+
+        # Get all attempts for this quiz
+        attempts = list(mongo.db.quiz_attempts.find({
+            'quiz_id': ObjectId(quiz_id)
+        }).sort('submitted_at', -1))
+
+        # Process the attempts
+        for attempt in attempts:
+            attempt['_id'] = str(attempt['_id'])
+            attempt['quiz_id'] = str(attempt['quiz_id'])
+            if 'submitted_at' in attempt:
+                attempt['submitted_at'] = attempt['submitted_at'].isoformat()
+            
+            # Calculate score percentage if not already calculated
+            if 'score' not in attempt:
+                correct = attempt.get('correct_answers', 0)
+                total = attempt.get('total_questions', len(quiz['questions']))
+                attempt['score'] = round((correct / total) * 100) if total > 0 else 0
+
+        return jsonify({
+            'success': True,
+            'data': attempts
+        })
+
+    except Exception as e:
+        print(f"Error in get_quiz_attempts: {str(e)}")  # Debug print
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
+
+@instructor_bp.route('/attempt/<attempt_id>')
+@login_required
+def get_attempt_details(attempt_id):
+    try:
+        # Get the attempt details
+        attempt = mongo.db.quiz_attempts.find_one({'_id': ObjectId(attempt_id)})
+        
+        if not attempt:
+            return jsonify({
+                'success': False,
+                'message': 'Attempt not found'
+            })
+
+        # Get the quiz to verify ownership and get questions
+        quiz = mongo.db.quizzes.find_one({
+            '_id': attempt['quiz_id'],
+            'instructor_id': current_user.id
+        })
+
+        if not quiz:
+            return jsonify({
+                'success': False,
+                'message': 'Unauthorized to view this attempt'
+            })
+
+        # Process the attempt data
+        attempt['_id'] = str(attempt['_id'])
+        attempt['quiz_id'] = str(attempt['quiz_id'])
+        if 'submitted_at' in attempt:
+            attempt['submitted_at'] = attempt['submitted_at'].isoformat()
+
+        # Add quiz questions and student answers
+        attempt['questions'] = []
+        student_answers = attempt.get('answers', [])
+        
+        for idx, question in enumerate(quiz['questions']):
+            student_answer = student_answers[idx] if idx < len(student_answers) else None
+            question_data = {
+                'question': question['question'],
+                'options': question['options'],
+                'correct_answer': question['correct_answer'],
+                'student_answer': student_answer
+            }
+            attempt['questions'].append(question_data)
+
+        # Remove the raw answers array
+        if 'answers' in attempt:
+            del attempt['answers']
+
+        return jsonify({
+            'success': True,
+            'data': attempt
+        })
+
+    except Exception as e:
+        print(f"Error in get_attempt_details: {str(e)}")  # Debug print
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
+

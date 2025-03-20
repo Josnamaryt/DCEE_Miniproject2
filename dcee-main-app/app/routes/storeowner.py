@@ -551,3 +551,127 @@ def get_available_courses():
             'success': False,
             'message': str(e)
         })
+
+@storeowner_bp.route('/quiz/<quiz_id>', methods=['GET'])
+@login_required
+def get_quiz(quiz_id):
+    try:
+        quiz = mongo.db.quizzes.find_one({'_id': ObjectId(quiz_id)})
+        if not quiz:
+            return jsonify({
+                'success': False,
+                'message': 'Quiz not found'
+            })
+        
+        # Convert ObjectId to string for JSON serialization
+        quiz['_id'] = str(quiz['_id'])
+        if 'course_id' in quiz:
+            quiz['course_id'] = str(quiz['course_id'])
+        
+        return jsonify({
+            'success': True,
+            'data': quiz
+        })
+    except Exception as e:
+        print(f"Error in get_quiz: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
+
+@storeowner_bp.route('/quiz/<quiz_id>/submit', methods=['POST'])
+@login_required
+def submit_quiz(quiz_id):
+    try:
+        # Check if user has already attempted this quiz
+        existing_attempts = mongo.db.quiz_attempts.count_documents({
+            'quiz_id': ObjectId(quiz_id),
+            'user_id': str(current_user.id)
+        })
+        
+        if existing_attempts >= 2:
+            return jsonify({
+                'success': False,
+                'message': 'You have already used your maximum attempts for this quiz.'
+            })
+
+        data = request.json
+        answers = data.get('answers', [])
+        time_taken = data.get('time_taken', 0)
+        total_questions = data.get('total_questions', 0)
+        questions_attempted = data.get('questions_attempted', 0)
+        correct_answers = data.get('correct_answers', 0)
+        quiz_title = data.get('quiz_title', '')
+        course_name = data.get('course_name', '')
+        
+        # Get quiz for verification
+        quiz = mongo.db.quizzes.find_one({'_id': ObjectId(quiz_id)})
+        if not quiz:
+            return jsonify({
+                'success': False,
+                'message': 'Quiz not found'
+            })
+        
+        # Calculate score percentage out of 100
+        score_percentage = round((correct_answers / total_questions) * 100) if total_questions > 0 else 0
+        
+        # Create attempt record
+        attempt = {
+            'quiz_id': ObjectId(quiz_id),
+            'quiz_title': quiz_title,
+            'course_name': course_name,
+            'user_id': str(current_user.id),
+            'user_name': f"{current_user.first_name} {current_user.last_name}",
+            'user_email': current_user.email,
+            'answers': answers,
+            'correct_answers': correct_answers,
+            'questions_attempted': questions_attempted,
+            'total_questions': total_questions,
+            'score_percentage': score_percentage,
+            'time_taken': time_taken,
+            'submitted_at': datetime.utcnow(),
+            'status': 'pass' if score_percentage >= 70 else 'fail'
+        }
+        
+        # Insert into quiz_attempts collection
+        result = mongo.db.quiz_attempts.insert_one(attempt)
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'attempt_id': str(result.inserted_id),
+                'score_percentage': score_percentage,
+                'correct_answers': correct_answers,
+                'total_questions': total_questions,
+                'questions_attempted': questions_attempted,
+                'time_taken': time_taken,
+                'status': 'pass' if score_percentage >= 70 else 'fail'
+            }
+        })
+    except Exception as e:
+        print(f"Error in submit_quiz: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
+
+@storeowner_bp.route('/quiz/<quiz_id>/attempts', methods=['GET'])
+@login_required
+def check_quiz_attempts(quiz_id):
+    try:
+        # Count attempts for this quiz by the current user
+        attempts = mongo.db.quiz_attempts.count_documents({
+            'quiz_id': ObjectId(quiz_id),
+            'user_id': str(current_user.id)
+        })
+        
+        return jsonify({
+            'success': True,
+            'attempts': attempts
+        })
+    except Exception as e:
+        print(f"Error checking quiz attempts: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': 'Error checking quiz attempts'
+        })

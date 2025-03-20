@@ -1150,8 +1150,446 @@ $(document).ready(function() {
 
     // Start quiz function
     window.startQuiz = function(quizId) {
-        alert('Quiz functionality coming soon!');
+        $.ajax({
+            url: `/storeowner/quiz/${quizId}/attempts`,
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    if (response.attempts >= 2) {
+                        alert('You have already used your maximum attempts (2) for this quiz.');
+                        return;
+                    }
+                    // Proceed with loading the quiz
+                    $.ajax({
+                        url: `/storeowner/quiz/${quizId}`,
+                        type: 'GET',
+                        success: function(response) {
+                            if (response.success) {
+                                currentQuiz = response.data;
+                                setupQuiz();
+                                $('#viewQuizzesModal').modal('hide');
+                                $('#quizAttemptModal').modal('show');
+                            } else {
+                                alert('Failed to load quiz: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error loading quiz:', error);
+                            alert('Error loading quiz. Please try again.');
+                        }
+                    });
+                } else {
+                    console.error('Error checking attempts:', response.message);
+                    alert('Error checking quiz attempts. Please try again.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error checking attempts:', error);
+                alert('Error checking quiz attempts. Please try again.');
+            }
+        });
     };
+
+    function submitQuiz() {
+        clearInterval(quizTimer);
+        
+        if (!confirm('Are you sure you want to submit this quiz?')) {
+            // Restart the timer if user cancels submission
+            quizTimer = setInterval(updateTimer, 1000);
+            return;
+        }
+        
+        const answers = [];
+        let totalAnswered = 0;
+        let correctAnswers = 0;
+        
+        currentQuiz.questions.forEach((question, index) => {
+            const selected = $(`input[name="q${index}"]:checked`).val();
+            if (selected !== undefined) {
+                totalAnswered++;
+                if (parseInt(selected) === question.correct_answer) {
+                    correctAnswers++;
+                }
+            }
+            answers.push(selected !== undefined ? parseInt(selected) : null);
+        });
+
+        // Calculate time taken
+        const numQuestions = currentQuiz.questions.length;
+        let originalTime;
+        if (numQuestions <= 3) {
+            originalTime = 30;
+        } else if (numQuestions <= 5) {
+            originalTime = 60;
+        } else if (numQuestions <= 7) {
+            originalTime = 90;
+        } else {
+            originalTime = 120;
+        }
+        const timeTaken = originalTime - timeLeft;
+        
+        const submitData = {
+            answers: answers,
+            time_taken: timeTaken,
+            total_questions: currentQuiz.questions.length,
+            questions_attempted: totalAnswered,
+            correct_answers: correctAnswers,
+            quiz_title: currentQuiz.title,
+            course_name: currentQuiz.course_name || 'No Course'
+        };
+
+        // Disable submit button to prevent double submission
+        $('#submitQuiz').prop('disabled', true);
+        
+        $.ajax({
+            url: `/storeowner/quiz/${currentQuiz._id}/submit`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(submitData),
+            success: function(response) {
+                console.log('Quiz submission response:', response);
+                if (response.success) {
+                    showResults(response.data);
+                } else {
+                    if (response.message.includes('maximum attempts')) {
+                        alert('You have already used your maximum attempts for this quiz.');
+                        $('#quizAttemptModal').modal('hide');
+                    } else {
+                        alert('Failed to submit quiz: ' + response.message);
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Submit error details:', xhr.responseText);
+                alert('Error submitting quiz. Please try again.');
+            },
+            complete: function() {
+                // Re-enable submit button after request completes
+                $('#submitQuiz').prop('disabled', false);
+            }
+        });
+    }
+
+    function showResults(results) {
+        $('#quizAttemptModal').modal('hide');
+        
+        const score = results.score_percentage;
+        const passed = score >= 70;
+        
+        $('#resultScore').html(`
+            <div class="display-4 ${passed ? 'text-success' : 'text-danger'}">
+                ${score}%
+            </div>
+        `);
+        
+        $('#resultMessage').html(`
+            <div class="alert ${passed ? 'alert-success' : 'alert-danger'}">
+                ${passed ? 'Congratulations! You passed the quiz!' : 'Keep practicing! You can do better next time.'}
+            </div>
+        `);
+        
+        $('#resultDetails').html(`
+            <div class="text-center">
+                <p><strong>Questions Attempted:</strong> ${results.questions_attempted}/${results.total_questions}</p>
+                <p><strong>Correct Answers:</strong> ${results.correct_answers}/${results.total_questions}</p>
+                <p><strong>Time Taken:</strong> ${results.time_taken} seconds</p>
+                <p><strong>Status:</strong> <span class="badge ${passed ? 'bg-success' : 'bg-danger'}">${passed ? 'Pass' : 'Fail'}</span></p>
+            </div>
+        `);
+        
+        $('#quizResultModal').modal('show');
+    }
+});
+</script>
+
+<!-- Quiz Attempt Modal -->
+<div class="modal fade" id="quizAttemptModal" tabindex="-1" aria-labelledby="quizAttemptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quizAttemptModalLabel">Quiz</h5>
+                <div class="ms-auto">
+                    <span class="badge bg-primary" id="quizTimer">Time Left: --:--</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="quiz-info mb-4">
+                    <h4 id="quizTitle"></h4>
+                    <p id="quizDescription" class="text-muted"></p>
+                </div>
+                <div id="questionContainer">
+                    <!-- Questions will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitQuiz" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quiz Result Modal -->
+<div class="modal fade" id="quizResultModal" tabindex="-1" aria-labelledby="quizResultModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quizResultModalLabel">Quiz Results</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h4 id="resultScore"></h4>
+                    <div id="resultMessage"></div>
+                </div>
+                <div id="resultDetails">
+                    <!-- Result details will be shown here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.question-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.option-label {
+    display: block;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.option-label:hover {
+    background-color: #f8f9fa;
+}
+
+.option-input:checked + .option-label {
+    background-color: #e3f2fd;
+    border-color: #90caf9;
+}
+
+#quizTimer {
+    font-size: 1.1em;
+    padding: 8px 15px;
+}
+
+.correct-answer {
+    background-color: #d4edda !important;
+    border-color: #c3e6cb !important;
+}
+
+.wrong-answer {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+}
+
+.selected-answer {
+    border: 2px solid #007bff !important;
+}
+</style>
+
+<script>
+let currentQuiz = null;
+let quizTimer = null;
+let timeLeft = 0;
+
+function setupQuiz() {
+    // Set quiz info
+    $('#quizTitle').text(currentQuiz.title);
+    $('#quizDescription').text(currentQuiz.description);
+    
+    // Setup timer based on number of questions
+    const numQuestions = currentQuiz.questions.length;
+    if (numQuestions <= 3) {
+        timeLeft = 30; // 30 seconds for 3 or fewer questions
+    } else if (numQuestions <= 5) {
+        timeLeft = 60; // 1 minute for 4-5 questions
+    } else if (numQuestions <= 7) {
+        timeLeft = 90; // 1.5 minutes for 6-7 questions
+    } else {
+        timeLeft = 120; // 2 minutes for 8-10 questions
+    }
+    
+    updateTimer();
+    if (quizTimer) clearInterval(quizTimer);
+    quizTimer = setInterval(updateTimer, 1000);
+    
+    // Load questions
+    $('#questionContainer').empty();
+    currentQuiz.questions.forEach((question, index) => {
+        const questionHtml = `
+            <div class="question-card" id="question${index}">
+                <h5>Question ${index + 1}</h5>
+                <p class="mb-3">${question.question}</p>
+                <div class="options">
+                    ${question.options.map((option, optIndex) => `
+                        <div class="option">
+                            <input type="radio" name="q${index}" value="${optIndex}" 
+                                   id="q${index}opt${optIndex}" class="option-input d-none">
+                            <label for="q${index}opt${optIndex}" class="option-label">
+                                ${option}
+                            </label>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        $('#questionContainer').append(questionHtml);
+    });
+    
+    $('#submitQuiz').show().click(submitQuiz);
+}
+
+function updateTimer() {
+    if (timeLeft <= 0) {
+        clearInterval(quizTimer);
+        submitQuiz();
+        return;
+    }
+    
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    $('#quizTimer').text(`Time Left: ${minutes}:${seconds.toString().padStart(2, '0')}`);
+    timeLeft--;
+}
+
+function submitQuiz() {
+    clearInterval(quizTimer);
+    
+    if (!confirm('Are you sure you want to submit this quiz?')) {
+        // Restart the timer if user cancels submission
+        quizTimer = setInterval(updateTimer, 1000);
+        return;
+    }
+    
+    const answers = [];
+    let totalAnswered = 0;
+    let correctAnswers = 0;
+    
+    currentQuiz.questions.forEach((question, index) => {
+        const selected = $(`input[name="q${index}"]:checked`).val();
+        if (selected !== undefined) {
+            totalAnswered++;
+            if (parseInt(selected) === question.correct_answer) {
+                correctAnswers++;
+            }
+        }
+        answers.push(selected !== undefined ? parseInt(selected) : null);
+    });
+
+    // Calculate time taken
+    const numQuestions = currentQuiz.questions.length;
+    let originalTime;
+    if (numQuestions <= 3) {
+        originalTime = 30;
+    } else if (numQuestions <= 5) {
+        originalTime = 60;
+    } else if (numQuestions <= 7) {
+        originalTime = 90;
+    } else {
+        originalTime = 120;
+    }
+    const timeTaken = originalTime - timeLeft;
+    
+    const submitData = {
+        answers: answers,
+        time_taken: timeTaken,
+        total_questions: currentQuiz.questions.length,
+        questions_attempted: totalAnswered,
+        correct_answers: correctAnswers,
+        quiz_title: currentQuiz.title,
+        course_name: currentQuiz.course_name || 'No Course'
+    };
+
+    // Disable submit button to prevent double submission
+    $('#submitQuiz').prop('disabled', true);
+    
+    $.ajax({
+        url: `/storeowner/quiz/${currentQuiz._id}/submit`,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(submitData),
+        success: function(response) {
+            console.log('Quiz submission response:', response);
+            if (response.success) {
+                showResults(response.data);
+            } else {
+                if (response.message.includes('maximum attempts')) {
+                    alert('You have already used your maximum attempts for this quiz.');
+                    $('#quizAttemptModal').modal('hide');
+                } else {
+                    alert('Failed to submit quiz: ' + response.message);
+                }
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Submit error details:', xhr.responseText);
+            alert('Error submitting quiz. Please try again.');
+        },
+        complete: function() {
+            // Re-enable submit button after request completes
+            $('#submitQuiz').prop('disabled', false);
+        }
+    });
+}
+
+function showResults(results) {
+    $('#quizAttemptModal').modal('hide');
+    
+    const score = results.score_percentage;
+    const passed = score >= 70;
+    
+    $('#resultScore').html(`
+        <div class="display-4 ${passed ? 'text-success' : 'text-danger'}">
+            ${score}%
+        </div>
+    `);
+    
+    $('#resultMessage').html(`
+        <div class="alert ${passed ? 'alert-success' : 'alert-danger'}">
+            ${passed ? 'Congratulations! You passed the quiz!' : 'Keep practicing! You can do better next time.'}
+        </div>
+    `);
+    
+    $('#resultDetails').html(`
+        <div class="text-center">
+            <p><strong>Questions Attempted:</strong> ${results.questions_attempted}/${results.total_questions}</p>
+            <p><strong>Correct Answers:</strong> ${results.correct_answers}/${results.total_questions}</p>
+            <p><strong>Time Taken:</strong> ${results.time_taken} seconds</p>
+            <p><strong>Status:</strong> <span class="badge ${passed ? 'bg-success' : 'bg-danger'}">${passed ? 'Pass' : 'Fail'}</span></p>
+        </div>
+    `);
+    
+    $('#quizResultModal').modal('show');
+}
+
+// Clean up when quiz modal is closed
+$('#quizAttemptModal').on('hidden.bs.modal', function() {
+    clearInterval(quizTimer);
+    currentQuiz = null;
+    $('#submitQuiz').hide();
+});
+
+// Prevent closing quiz modal if quiz is in progress
+$('#quizAttemptModal').on('hide.bs.modal', function(e) {
+    if (currentQuiz && timeLeft > 0) {
+        if (!confirm('Are you sure you want to exit? Your progress will be lost.')) {
+            e.preventDefault();
+        }
+    }
 });
 </script>
 
