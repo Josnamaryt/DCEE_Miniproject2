@@ -197,24 +197,32 @@ def add_quiz():
 @login_required
 def get_quizzes():
     try:
+        print(f"Getting quizzes for instructor: {current_user.id}")  # Debug print
+        
         # Get all quizzes for the current instructor
         quizzes = list(mongo.db.quizzes.find({
             'instructor_id': current_user.id
         }).sort('created_at', -1))
         
-        # Debug print
-        print(f"Found {len(quizzes)} quizzes for instructor {current_user.id}")
+        print(f"Found {len(quizzes)} quizzes")  # Debug print
         
         # Process each quiz
+        processed_quizzes = []
         for quiz in quizzes:
-            quiz['_id'] = str(quiz['_id'])
-            quiz['course_id'] = str(quiz['course_id'])
-            quiz['created_at'] = quiz['created_at'].isoformat()
-            quiz['question_count'] = len(quiz['questions'])
+            processed_quiz = {
+                '_id': str(quiz['_id']),
+                'title': quiz.get('title', 'Untitled Quiz'),
+                'description': quiz.get('description', 'No description'),
+                'course_name': quiz.get('course_name', 'No course'),
+                'questions': quiz.get('questions', []),
+                'created_at': quiz['created_at'].isoformat() if 'created_at' in quiz else None
+            }
+            processed_quizzes.append(processed_quiz)
+            print(f"Processed quiz: {processed_quiz['title']}")  # Debug print
         
         return jsonify({
             'success': True,
-            'data': quizzes
+            'data': processed_quizzes
         })
     except Exception as e:
         print(f"Error in get_quizzes: {str(e)}")  # Debug print

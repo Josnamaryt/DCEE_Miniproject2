@@ -44,6 +44,27 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .btn-certificate {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-certificate:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .certificate-icon {
+            margin-right: 8px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   </head>
   <body> 
     <!-- loader starts-->
@@ -215,6 +236,7 @@
                     <li><a href="#" id="viewQuizzesLink">View Quizzes</a></li>
                   </ul>
                 </li>
+                
                 <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
               </div>
             </nav>
@@ -1280,6 +1302,7 @@ $(document).ready(function() {
         
         const score = results.score_percentage;
         const passed = score >= 70;
+        const attemptId = results.attempt_id;
         
         $('#resultScore').html(`
             <div class="display-4 ${passed ? 'text-success' : 'text-danger'}">
@@ -1299,10 +1322,29 @@ $(document).ready(function() {
                 <p><strong>Correct Answers:</strong> ${results.correct_answers}/${results.total_questions}</p>
                 <p><strong>Time Taken:</strong> ${results.time_taken} seconds</p>
                 <p><strong>Status:</strong> <span class="badge ${passed ? 'bg-success' : 'bg-danger'}">${passed ? 'Pass' : 'Fail'}</span></p>
+                ${passed ? `
+                    <div class="mt-4">
+                        <a href="/storeowner/certificate/${attemptId}" 
+                           class="btn btn-success btn-lg" 
+                           target="_blank">
+                            <i class="fa fa-certificate me-2"></i>Download Certificate
+                        </a>
+                    </div>
+                ` : ''}
             </div>
         `);
         
         $('#quizResultModal').modal('show');
+    }
+
+    function downloadCertificate(attemptId) {
+        // Create a temporary form and submit it to trigger the file download
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = `/storeowner/certificate/${attemptId}`;
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
     }
 });
 </script>
@@ -1337,20 +1379,16 @@ $(document).ready(function() {
 
 <!-- Quiz Result Modal -->
 <div class="modal fade" id="quizResultModal" tabindex="-1" aria-labelledby="quizResultModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="quizResultModalLabel">Quiz Results</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="text-center mb-4">
-                    <h4 id="resultScore"></h4>
-                    <div id="resultMessage"></div>
-                </div>
-                <div id="resultDetails">
-                    <!-- Result details will be shown here -->
-                </div>
+            <div class="modal-body text-center">
+                <div id="resultScore" class="mb-3"></div>
+                <div id="resultMessage" class="mb-4"></div>
+                <div id="resultDetails"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -1556,6 +1594,7 @@ function showResults(results) {
     
     const score = results.score_percentage;
     const passed = score >= 70;
+    const attemptId = results.attempt_id;
     
     $('#resultScore').html(`
         <div class="display-4 ${passed ? 'text-success' : 'text-danger'}">
@@ -1575,10 +1614,29 @@ function showResults(results) {
             <p><strong>Correct Answers:</strong> ${results.correct_answers}/${results.total_questions}</p>
             <p><strong>Time Taken:</strong> ${results.time_taken} seconds</p>
             <p><strong>Status:</strong> <span class="badge ${passed ? 'bg-success' : 'bg-danger'}">${passed ? 'Pass' : 'Fail'}</span></p>
+            ${passed ? `
+                <div class="mt-4">
+                    <a href="/storeowner/certificate/${attemptId}" 
+                       class="btn btn-success btn-lg" 
+                       target="_blank">
+                        <i class="fa fa-certificate me-2"></i>Download Certificate
+                    </a>
+                </div>
+            ` : ''}
         </div>
     `);
     
     $('#quizResultModal').modal('show');
+}
+
+function downloadCertificate(attemptId) {
+    // Create a temporary form and submit it to trigger the file download
+    const form = document.createElement('form');
+    form.method = 'GET';
+    form.action = `/storeowner/certificate/${attemptId}`;
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
 }
 
 // Clean up when quiz modal is closed
@@ -1703,6 +1761,15 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<!-- Certificates Modal -->
+<div class="modal fade" id="certificatesModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Content will be dynamically inserted here -->
+        </div>
+    </div>
+</div>
 
     </body>
   </html>

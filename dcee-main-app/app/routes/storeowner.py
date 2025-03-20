@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify, send_file
 from flask_login import login_user, logout_user, login_required, current_user
 from app import login_manager, mongo
 from app.models import User, Sale
@@ -17,6 +17,12 @@ import pandas as pd
 from prophet import Prophet
 import numpy as np
 from app.routes.auth import no_cache
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from io import BytesIO
 
 storeowner_bp = Blueprint('storeowner', __name__)
 
@@ -550,7 +556,7 @@ def get_available_courses():
             'message': str(e)
         })
 
-<<<<<<< HEAD
+
 @storeowner_bp.route('/quiz/<quiz_id>', methods=['GET'])
 @login_required
 def get_quiz(quiz_id):
@@ -674,7 +680,7 @@ def check_quiz_attempts(quiz_id):
             'success': False,
             'message': 'Error checking quiz attempts'
         })
-=======
+
 @storeowner_bp.route('/sales_analytics')
 @login_required
 @no_cache
@@ -946,4 +952,166 @@ def export_sales_data():
     except Exception as e:
         flash(f"Error exporting data: {str(e)}", "error")
         return redirect(url_for('storeowner.sales_analytics'))
->>>>>>> ab135442d8ba1923bc22e56813de622fc3236a5c
+
+@storeowner_bp.route('/certificate/<attempt_id>')
+@login_required
+def generate_certificate(attempt_id):
+    try:
+        # Get the quiz attempt details
+        attempt = mongo.db.quiz_attempts.find_one({'_id': ObjectId(attempt_id)})
+        if not attempt:
+            return jsonify({'success': False, 'message': 'Quiz attempt not found'}), 404
+            
+        # Verify this is the user's attempt
+        if attempt['user_id'] != str(current_user.id):
+            return jsonify({'success': False, 'message': 'Unauthorized access'}), 403
+
+        # Create PDF certificate
+        buffer = BytesIO()
+        c = canvas.Canvas(buffer, pagesize=landscape(letter))
+        width, height = landscape(letter)
+        
+        try:
+            # Set up background color
+            c.setFillColorRGB(0.98, 0.98, 0.98)  # Light gray background
+            c.rect(0, 0, width, height, fill=True)
+            
+            # Try to add DCEE logo if it exists
+            try:
+                logo_path = os.path.join('app', 'static', 'images', 'dcee_logo.png')
+                if os.path.exists(logo_path):
+                    c.drawImage(logo_path, width/2 - inch, height-2*inch, width=2*inch, height=1*inch)
+            except Exception as logo_error:
+                print(f"Warning: Could not add logo: {str(logo_error)}")
+            
+            # Add outer decorative border
+            c.setStrokeColorRGB(0.2, 0.4, 0.6)  # Navy blue color
+            c.setLineWidth(4)
+            c.roundRect(0.75*inch, 0.75*inch, width - 1.5*inch, height - 1.5*inch, 20)
+            
+            # Add inner decorative border
+            c.setStrokeColorRGB(0.8, 0.8, 0.8)
+            c.setLineWidth(1)
+            c.roundRect(1.25*inch, 1.25*inch, width - 2.5*inch, height - 2.5*inch, 10)
+            
+            # Title
+            c.setFillColorRGB(0.2, 0.4, 0.6)  # Navy blue color
+            c.setFont("Helvetica-Bold", 36)
+            c.drawCentredString(width/2, height - 3*inch, "Certificate of Completion")
+            
+            # Certificate text
+            c.setFillColorRGB(0.2, 0.2, 0.2)  # Dark gray
+            c.setFont("Helvetica", 20)
+            c.drawCentredString(width/2, height - 4*inch, "This is to certify that")
+            
+            # Recipient name
+            c.setFont("Helvetica-Bold", 28)
+            name = f"{current_user.first_name} {current_user.last_name}"
+            c.drawCentredString(width/2, height - 4.8*inch, name)
+            
+            # Underline for name
+            name_width = c.stringWidth(name, "Helvetica-Bold", 28)
+            c.setLineWidth(1)
+            c.line(width/2 - name_width/2, height - 4.9*inch, width/2 + name_width/2, height - 4.9*inch)
+            
+            # Course completion text
+            c.setFont("Helvetica", 20)
+            c.drawCentredString(width/2, height - 5.6*inch, 
+                "has successfully completed the course quiz for")
+                
+            # Course name
+            c.setFont("Helvetica-Bold", 24)
+            course_name = attempt.get('course_name', 'Course Name Not Available')
+            c.drawCentredString(width/2, height - 6.2*inch, course_name)
+            
+            # Score
+            c.setFont("Helvetica-Bold", 22)
+            score = attempt.get('score_percentage', 0)
+            c.setFillColorRGB(0.2, 0.6, 0.2) if score >= 70 else c.setFillColorRGB(0.8, 0.2, 0.2)  # Green for pass, red for fail
+            c.drawCentredString(width/2, height - 6.8*inch, f"Score: {score}%")
+            
+            # Date and Certificate ID
+            c.setFillColorRGB(0.2, 0.2, 0.2)  # Back to dark gray
+            c.setFont("Helvetica", 14)
+            date_str = datetime.now().strftime("%B %d, %Y")
+            
+            # Left side: Date
+            c.drawString(1.5*inch, 2*inch, f"Date: {date_str}")
+            
+            # Right side: Certificate ID
+            cert_id = f"Certificate ID: {str(attempt['_id'])}"
+            cert_id_width = c.stringWidth(cert_id, "Helvetica", 14)
+            c.drawString(width - 1.5*inch - cert_id_width, 2*inch, cert_id)
+            
+            # Add DCEE footer text
+            c.setFont("Helvetica-Bold", 16)
+            c.drawCentredString(width/2, 1.5*inch, "Digital Commerce Entrepreneurship Ecosystem")
+            
+            # Save and close the PDF
+            c.showPage()
+            c.save()
+            buffer.seek(0)
+            
+            # Send the PDF file
+            return send_file(
+                buffer,
+                as_attachment=True,
+                download_name=f"certificate_{attempt.get('course_name', 'course').replace(' ', '_')}.pdf",
+                mimetype='application/pdf'
+            )
+            
+        except Exception as pdf_error:
+            print(f"Error generating PDF: {str(pdf_error)}")
+            buffer.close()
+            return jsonify({'success': False, 'message': f'Error generating certificate PDF: {str(pdf_error)}'}), 500
+
+    except Exception as e:
+        print(f"Error in certificate generation: {str(e)}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@storeowner_bp.route('/my-certificates')
+@login_required
+def get_my_certificates():
+    try:
+        # Get all passed quiz attempts for the user
+        certificates = list(mongo.db.quiz_attempts.find({
+            'user_id': str(current_user.id),
+            'status': 'pass'
+        }).sort('submitted_at', -1))
+        
+        # Format the certificates
+        for cert in certificates:
+            cert['_id'] = str(cert['_id'])
+            cert['submitted_at'] = cert['submitted_at'].strftime('%Y-%m-%d %H:%M:%S')
+        
+        return jsonify({
+            'success': True,
+            'data': certificates
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
+
+@storeowner_bp.route('/view-certificates')
+@login_required
+def view_certificates():
+    try:
+        # Get all passed quiz attempts for the user
+        certificates = list(mongo.db.quiz_attempts.find({
+            'user_id': str(current_user.id),
+            'status': 'pass'
+        }).sort('submitted_at', -1))
+        
+        # Format the certificates
+        for cert in certificates:
+            cert['_id'] = str(cert['_id'])
+            if isinstance(cert.get('submitted_at'), datetime):
+                cert['submitted_at'] = cert['submitted_at'].strftime('%Y-%m-%d %H:%M')
+            
+        return render_template('storefrontowner/certificates.html', certificates=certificates)
+    except Exception as e:
+        flash(f"Error loading certificates: {str(e)}", "error")
+        return redirect(url_for('storeowner.dashboard'))
+
