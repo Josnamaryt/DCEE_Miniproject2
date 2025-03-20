@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Performance Analytics</title>
+    <!-- Include all the CSS from dashboard.html -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendors/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Additional chart libraries -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Page Structure -->
+    <div class="page-wrapper compact-wrapper" id="pageWrapper">
+        <!-- Import header and sidebar from dashboard template -->
+        {% include 'storefrontowner/includes/header.html' %}
+        
+        <div class="page-body-wrapper">
+            {% include 'storefrontowner/includes/sidebar.html' %}
+            
+            <div class="page-body">
+                <div class="container-fluid">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-6">
+                                <h3>Sales Performance Analytics</h3>
+                            </div>
+                            <div class="col-6">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{ url_for('storeowner.dashboard') }}"><i data-feather="home"></i></a></li>
+                                    <li class="breadcrumb-item">Sales Analytics</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Insights Section -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>AI-Powered Insights</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>{{ insights.summary }}</p>
+                                    <div class="row mt-4">
+                                        <div class="col-md-6">
+                                            <div class="alert alert-primary">
+                                                <h6>Product Performance</h6>
+                                                <p>{{ insights.product_insights }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="alert alert-success">
+                                                <h6>Seasonal Trends</h6>
+                                                <p>{{ insights.seasonal_insights }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <div class="alert alert-warning">
+                                                <h6>Inventory Recommendations</h6>
+                                                <p>{{ insights.inventory_recommendations }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="alert alert-info">
+                                                <h6>Pricing Suggestions</h6>
+                                                <p>{{ insights.pricing_suggestions }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Overview Dashboard -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6 col-xl-3 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto">Total Sales</p>
+                                            <h4 class="f-w-500 mb-0 f-26">{{ analytics.overall_summary.total_sales }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xl-3 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto">Total Revenue</p>
+                                            <h4 class="f-w-500 mb-0 f-26">${{ "%.2f"|format(analytics.overall_summary.total_revenue) }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xl-3 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto">Daily Avg Revenue</p>
+                                            <h4 class="f-w-500 mb-0 f-26">${{ "%.2f"|format(analytics.overall_summary.avg_daily_revenue) }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xl-3 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto">Products Analyzed</p>
+                                            <h4 class="f-w-500 mb-0 f-26">{{ analytics.overall_summary.total_products }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Content Split -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Left Side - Product List -->
+                        <div class="col-xl-3 xl-40">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Products</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="product-list">
+                                        <ul class="list-group">
+                                            {% for product in products %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-center product-item" 
+                                                data-product-id="{{ product._id }}">
+                                                {{ product.product_name }}
+                                                <span class="badge badge-primary badge-pill">
+                                                    {% if product._id in analytics.product_performance %}
+                                                        {{ analytics.product_performance[product._id].total_sales }}
+                                                    {% else %}
+                                                        0
+                                                    {% endif %}
+                                                </span>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Side - Analytics Panels -->
+                        <div class="col-xl-9 xl-60">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5>Product Performance</h5>
+                                </div>
+                                <div class="card-body chart-container">
+                                    <div id="product-performance-chart" style="height: 300px;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Sales by Day of Week</h5>
+                                        </div>
+                                        <div class="card-body chart-container">
+                                            <canvas id="daily-sales-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Sales by Month</h5>
+                                        </div>
+                                        <div class="card-body chart-container">
+                                            <canvas id="monthly-sales-chart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Product Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="product-details">
+                                        <p class="text-center">Select a product from the list to view detailed analytics</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Include all the JS from dashboard.html -->
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/icons/feather-icon/feather.min.js') }}"></script>
+    
+    <!-- Data initialization script - safely handles Jinja template variables -->
+    <script type="text/javascript">
+        // Initialize data from server as global variables
+        window.dailyAnalytics = JSON.parse('{{ analytics.seasonal_analysis.daily|tojson|default("{}") }}');
+        window.monthlyAnalytics = JSON.parse('{{ analytics.seasonal_analysis.monthly|tojson|default("{}") }}');
+        window.topProductsData = JSON.parse('{{ analytics.overall_summary.top_products|tojson|default("{}") }}');
+        window.productPerformanceData = JSON.parse('{{ analytics.product_performance|tojson|default("{}") }}');
+    </script>
+    
+    <script>
+        // Single source of truth for chart initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Initialize charts
+                initializeCharts();
+                
+                // Handle product selection
+                setupProductSelection();
+                
+                // Add export and print functionality
+                setupExportAndPrint();
+                
+                // Initialize feather icons
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                showErrorMessage('An error occurred while initializing the page. Please refresh and try again.');
+            }
+        });
+
+        // Chart initialization
+        function initializeCharts() {
+            // Check if we have data to display
+            if (Object.keys(window.dailyAnalytics).length === 0 || 
+                Object.keys(window.monthlyAnalytics).length === 0 ||
+                Object.keys(window.topProductsData).length === 0) {
+                showErrorMessage('No analytics data available. Please check if you have sales data.');
+                return;
+            }
+            
+            // Daily Sales Chart
+            var dailyCtx = document.getElementById('daily-sales-chart').getContext('2d');
+            var dailyData = {
+                labels: Object.keys(window.dailyAnalytics),
+                datasets: [{
+                    label: 'Sales by Day of Week',
+                    data: Object.values(window.dailyAnalytics),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(199, 199, 199, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(199, 199, 199, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            
+            window.dailyChart = new Chart(dailyCtx, {
+                type: 'bar',
+                data: dailyData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        
+            // Monthly Sales Chart
+            var monthlyCtx = document.getElementById('monthly-sales-chart').getContext('2d');
+            var monthlyData = {
+                labels: Object.keys(window.monthlyAnalytics),
+                datasets: [{
+                    label: 'Sales by Month',
+                    data: Object.values(window.monthlyAnalytics),
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
+            
+            window.monthlyChart = new Chart(monthlyCtx, {
+                type: 'line',
+                data: monthlyData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        
+            // Product Performance Chart (Plotly)
+            initializeProductPerformanceChart();
+        }
+        
+        // Product Performance Chart
+        function initializeProductPerformanceChart() {
+            console.log('Initializing product performance chart');
+            try {
+                if (Object.keys(window.topProductsData).length === 0) {
+                    document.getElementById('product-performance-chart').innerHTML = 
+                        '<div class="alert alert-warning">No product performance data available.</div>';
+                    return;
+                }
+                
+                var data = [{
+                    type: 'bar',
+                    x: Object.keys(window.topProductsData),
+                    y: Object.values(window.topProductsData),
+                    marker: {
+                        color: 'rgba(55, 128, 191, 0.7)',
+                        line: {
+                            color: 'rgba(55, 128, 191, 1.0)',
+                            width: 2
+                        }
+                    }
+                }];
+                
+                var layout = {
+                    title: 'Top Performing Products',
+                    xaxis: {
+                        title: 'Product'
+                    },
+                    yaxis: {
+                        title: 'Total Sales'
+                    },
+                    margin: {
+                        l: 50,
+                        r: 50,
+                        b: 100,
+                        t: 50,
+                        pad: 4
+                    },
+                    autosize: true
+                };
+                
+                var config = {
+                    responsive: true,
+                    displayModeBar: true
+                };
+                
+                Plotly.newPlot('product-performance-chart', data, layout, config);
+                console.log('Product performance chart initialized');
+            } catch (error) {
+                console.error('Error initializing product performance chart:', error);
+                document.getElementById('product-performance-chart').innerHTML = 
+                    '<div class="alert alert-danger">Error loading chart. Please refresh the page.</div>';
+            }
+        }
+        
+        // Setup product selection
+        function setupProductSelection() {
+            const productItems = document.querySelectorAll('.product-item');
+            
+            if (productItems.length === 0) {
+                document.querySelector('.product-list').innerHTML = 
+                    '<div class="alert alert-warning">No products available for analysis.</div>';
+                return;
+            }
+            
+            productItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    console.log('Product clicked:', this.getAttribute('data-product-id'));
+                    
+                    // Clear active class from all items
+                    productItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Add active class to selected item
+                    this.classList.add('active');
+                    
+                    // Get product ID
+                    const productId = this.getAttribute('data-product-id');
+                    
+                    // Get product performance data
+                    const performanceData = window.productPerformanceData[productId];
+                    
+                    updateProductDetails(productId, performanceData);
+                });
+            });
+            
+            // Select the first product by default
+            if (productItems.length > 0) {
+                productItems[0].click();
+            }
+        }
+        
+        // Update product details section
+        function updateProductDetails(productId, performanceData) {
+            const detailsContainer = document.getElementById('product-details');
+            
+            if (!performanceData) {
+                detailsContainer.innerHTML = `
+                    <div class="alert alert-warning">
+                        <p class="text-center">No sales data available for this product.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Update product details section
+            detailsContainer.innerHTML = `
+                <h3>${performanceData.name}</h3>
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>Total Sales</h6>
+                                <h3>${performanceData.total_sales}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>Total Revenue</h6>
+                                <h3>$${performanceData.total_revenue.toFixed(2)}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>Avg Daily Sales</h6>
+                                <h3>${performanceData.avg_daily_sales.toFixed(2)}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h5>Sales Trend</h5>
+                    <div id="product-trend-chart" style="height: 250px;"></div>
+                </div>
+            `;
+                    
+            // Create trend chart if we have trend data
+            if (performanceData.sales_trend && performanceData.sales_trend.length > 0) {
+                try {
+                    var trendData = [{
+                        x: performanceData.trend_dates,
+                        y: performanceData.sales_trend,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        line: {
+                            color: 'rgb(55, 128, 191)',
+                            width: 2
+                        },
+                        marker: {
+                            color: 'rgb(55, 128, 191)',
+                            size: 6
+                        }
+                    }];
+                    
+                    var trendLayout = {
+                        title: 'Weekly Sales Trend',
+                        xaxis: {
+                            title: 'Date'
+                        },
+                        yaxis: {
+                            title: 'Units Sold'
+                        },
+                        margin: {
+                            l: 50,
+                            r: 50,
+                            b: 50,
+                            t: 50,
+                            pad: 4
+                        },
+                        autosize: true
+                    };
+                    
+                    var config = {
+                        responsive: true
+                    };
+                    
+                    Plotly.newPlot('product-trend-chart', trendData, trendLayout, config);
+                } catch (error) {
+                    console.error('Error creating trend chart:', error);
+                    document.getElementById('product-trend-chart').innerHTML = 
+                        '<div class="alert alert-danger">Error loading trend chart.</div>';
+                }
+            } else {
+                document.getElementById('product-trend-chart').innerHTML = 
+                    '<div class="alert alert-warning">No trend data available for this product.</div>';
+            }
+        }
+        
+        // Setup export and print functionality
+        function setupExportAndPrint() {
+            // Add export button
+            const exportButton = document.createElement('a');
+            exportButton.className = 'btn btn-success mt-2 me-2';
+            exportButton.href = "{{ url_for('storeowner.export_sales_data') }}";
+            exportButton.innerHTML = '<i data-feather="download"></i> Export Data';
+            
+            // Add print button
+            const printButton = document.createElement('button');
+            printButton.className = 'btn btn-secondary mt-2';
+            printButton.innerHTML = '<i data-feather="printer"></i> Print Report';
+            printButton.onclick = function() { window.print(); };
+            
+            // Add buttons to the page title
+            const titleContainer = document.querySelector('.page-title .row .col-6:first-child');
+            titleContainer.appendChild(exportButton);
+            titleContainer.appendChild(printButton);
+        }
+        
+        // Show error message
+        function showErrorMessage(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger mt-3';
+            errorDiv.innerHTML = message;
+            
+            // Insert after page title
+            const pageTitle = document.querySelector('.page-title');
+            pageTitle.parentNode.insertBefore(errorDiv, pageTitle.nextSibling);
+        }
+
+        // Add responsive window resize handling
+        window.addEventListener('resize', function() {
+            if (window.dailyChart) {
+                window.dailyChart.resize();
+            }
+            if (window.monthlyChart) {
+                window.monthlyChart.resize();
+            }
+            if (document.getElementById('product-performance-chart')) {
+                Plotly.relayout('product-performance-chart', {
+                    'width': document.getElementById('product-performance-chart').offsetWidth
+                });
+            }
+            if (document.getElementById('product-trend-chart')) {
+                Plotly.relayout('product-trend-chart', {
+                    'width': document.getElementById('product-trend-chart').offsetWidth
+                });
+            }
+        });
+    </script>
+    
+    <!-- Add this style to improve the UI and fix layout issues -->
+    <style>
+        /* Fix for product list selection */
+        .product-item {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .product-item.active {
+            background-color: rgba(55, 128, 191, 0.2);
+            border-left: 4px solid rgba(55, 128, 191, 1.0);
+        }
+        
+        .product-item:hover {
+            background-color: rgba(55, 128, 191, 0.1);
+        }
+        
+        /* Chart container styling */
+        .chart-container {
+            position: relative;
+            min-height: 250px;
+        }
+        
+        /* Print layout fixes */
+        @media print {
+            .sidebar-wrapper, header, .breadcrumb, button, a.btn {
+                display: none !important;
+            }
+            
+            .page-body {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+            
+            .card {
+                break-inside: avoid;
+            }
+        }
+        
+        /* Mobile responsiveness improvements */
+        @media (max-width: 768px) {
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            #product-performance-chart,
+            #product-trend-chart {
+                height: 250px !important;
+            }
+            
+            .product-list {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+        }
+    </style>
+</body>
+</html> 
