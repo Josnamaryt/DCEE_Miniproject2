@@ -725,7 +725,8 @@ def sales_analytics():
         analytics = generate_sales_analytics(products, sales_data)
         
         # Use placeholder insights for now
-        insights = generate_insights(analytics)
+        insights = generate_ai_insights(analytics)
+        
         
         # Debug output
         print(f"Rendering sales_analytics template with {len(products)} products and {len(sales_data) if sales_data else 0} sales records")
@@ -952,6 +953,136 @@ def export_sales_data():
     except Exception as e:
         flash(f"Error exporting data: {str(e)}", "error")
         return redirect(url_for('storeowner.sales_analytics'))
+
+def generate_ai_insights(analytics):
+    """Generate AI-powered insights from sales analytics data using Google's Gemini API"""
+    import os
+    import json
+    import google.generativeai as genai
+    
+    print("Starting generate_ai_insights function")
+    
+    try:
+        # Initialize the Gemini API client with the API key from environment variables
+        api_key = os.environ.get('GEMINI_API_KEY')
+        print(f"API key found: {bool(api_key)}")
+        
+        if not api_key:
+            print("GEMINI_API_KEY not found in environment variables")
+            return generate_insights(analytics)  # Fallback to static insights
+        
+        print("Configuring Gemini API")    
+        genai.configure(api_key=api_key)
+        
+        print("Creating Gemini model instance")
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        # Prepare analytics data for the prompt
+        print("Preparing analytics data for prompt")
+        analytics_json = json.dumps(analytics, indent=2)
+        
+        # Construct a detailed prompt for Gemini with explicit instructions for JSON format
+        print("Constructing prompt")
+        prompt = """
+        You are a retail business analytics expert. Analyze the following sales data and provide actionable insights.
+        
+        Based on this data, please provide insights in these categories:
+        1. Overall Summary
+        2. Product Insights 
+        3. Seasonal Insights
+        4. Inventory Recommendations
+        5. Pricing Suggestions
+        
+        Format your response as a valid JSON object with these keys: summary, product_insights, seasonal_insights, inventory_recommendations, pricing_suggestions.
+        
+        Here is the sales analytics data:
+        """ + analytics_json
+        
+        # Generate structured output with Gemini
+        generation_config = {
+            "response_mime_type": "application/json",
+            "temperature": 0.2,
+        }
+        
+        # Call the Gemini API
+        print("Calling Gemini API")
+        try:
+            response = model.generate_content(
+                prompt,
+                generation_config=generation_config
+            )
+            print("Received response from Gemini API")
+            
+            if not response.text:
+                print("Empty response from API")
+                return generate_insights(analytics)
+                
+            print(f"Response text: {response.text[:100]}...")  # Print first 100 chars for debugging
+            
+        except Exception as api_error:
+            print(f"Error calling Gemini API: {str(api_error)}")
+            return generate_insights(analytics)  # Fallback to static insights
+        
+        # Parse the response
+        print("Parsing API response")
+        try:
+            # Try to find JSON content in the response
+            import re
+            json_pattern = r'({[\s\S]*})'
+            json_match = re.search(json_pattern, response.text)
+            
+            if json_match:
+                json_str = json_match.group(1)
+                insights = json.loads(json_str)
+                print("Successfully parsed JSON response")
+            else:
+                # Create structured insights from text response
+                insights = {
+                    'summary': "Based on your sales data analysis, your business shows potential for growth with some strategic adjustments.",
+                    'product_insights': extract_key_points(response.text, ["product", "top seller", "performance"]),
+                    'seasonal_insights': extract_key_points(response.text, ["seasonal", "weekly", "monthly", "pattern"]),
+                    'inventory_recommendations': extract_key_points(response.text, ["inventory", "stock", "reorder"]),
+                    'pricing_suggestions': extract_key_points(response.text, ["price", "pricing", "discount"])
+                }
+                print("Created structured insights from text response")
+            
+            # Ensure all required keys are present
+            required_keys = ['summary', 'product_insights', 'seasonal_insights', 
+                            'inventory_recommendations', 'pricing_suggestions']
+            
+            for key in required_keys:
+                if key not in insights or not insights[key]:
+                    insights[key] = f"No specific {key.replace('_', ' ')} could be generated from the available data."
+            
+            return insights
+                
+        except Exception as parsing_error:
+            print(f"Error parsing response: {str(parsing_error)}")
+            # Fallback to static insights in case of parsing error
+            return generate_insights(analytics)
+        
+    except Exception as e:
+        print(f"Error generating AI insights: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        # Fallback to static insights in case of any error
+        return generate_insights(analytics)
+
+def extract_key_points(text, keywords):
+    """Extract sentences containing keywords from text"""
+    import re
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    relevant_sentences = []
+    
+    for sentence in sentences:
+        if any(keyword.lower() in sentence.lower() for keyword in keywords):
+            relevant_sentences.append(sentence)
+    
+    if relevant_sentences:
+        return " ".join(relevant_sentences)
+    else:
+        return "No specific insights could be extracted from the available data."
+
 
 @storeowner_bp.route('/certificate/<attempt_id>')
 @login_required
