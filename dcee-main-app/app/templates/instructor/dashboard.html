@@ -85,7 +85,7 @@
                       <svg>
                         <use href="{{ url_for('static', filename='svg/icon-sprite.svg#search-header') }}"></use>
                       </svg>
-                      <input class="w-100" type="search" placeholder="Search"></span></div>
+                      <!-- <input class="w-100" type="search" placeholder="Search"></span></div> -->
                 </div>
               </li>
               <li class="d-md-none d-block"> 
@@ -162,7 +162,7 @@
                     </a>
                     <ul class="sidebar-submenu">
                         <li><a href="#" id="createQuizLink">Create Quiz</a></li>
-                        <li><a href="#" id="viewQuizzesLink">View Quizzes</a></li>
+                        <!-- <li><a href="#" id="viewQuizzesLink">View Quizzes</a></li> -->
                     </ul>
                 </li>
                 <li class="sidebar-list">
@@ -226,9 +226,8 @@
                                 <label for="courseName" class="form-label">Course Name</label>
                                 <input type="text" class="form-control" id="courseName" required 
                                        placeholder="Enter course name" minlength="3" maxlength="50">
-                                <div class="invalid-feedback">
-                                    Course name must be between 3 and 50 characters
-                                </div>
+                                <div id="courseNameFeedback" class="feedback"></div>
+                                <div class="invalid-feedback">Please enter a valid course name</div>
                               </div>
                               <div class="mb-3">
                                 <label for="courseDescription" class="form-label">Course Description</label>
@@ -290,55 +289,7 @@
                 </div>
               </div>
             </div>
-            <div class="row">
-                <div class="col-xl-3 col-md-6">
-                    <div class="card stat-card">
-                        <div class="card-body">
-                            <h5>Total Courses</h5>
-                            <h2 id="totalCourses">0</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="card stat-card">
-                        <div class="card-body">
-                            <h5>Active Courses</h5>
-                            <h2 id="activeCourses">0</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="card stat-card">
-                        <div class="card-body">
-                            <h5>Total Students</h5>
-                            <h2 id="totalStudents">0</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header">
-                    <h4>Student Progress</h4>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Student Name</th>
-                                    <th>Course</th>
-                                    <th>Progress</th>
-                                    <th>Last Active</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="studentProgressList">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>Course Announcements</h4>
@@ -457,48 +408,8 @@
             // Handle View Results click from sidebar
             $('#viewQuizResultsLink').on('click', function(e) {
                 e.preventDefault();
-                // Load quizzes into the selector
-                $.ajax({
-                    url: "{{ url_for('instructor.get_quizzes') }}",
-                    type: 'GET',
-                    success: function(response) {
-                        if (response.success) {
-                            $('#quizSelector').empty();
-                            $('#quizSelector').append('<option value="">Select Quiz</option>');
-                            
-                            // Filter quizzes to only show those created by current instructor
-                            const currentInstructorId = "{{ current_user.id }}";
-                            const instructorQuizzes = response.data.filter(quiz => quiz.instructor_id === currentInstructorId);
-                            
-                            instructorQuizzes.forEach(quiz => {
-                                $('#quizSelector').append(
-                                    `<option value="${quiz._id}">${quiz.title} (${quiz.course_name})</option>`
-                                );
-                            });
-
-                            // Clear previous results
-                            $('#quizResultsBody').empty();
-                            $('#quizResultsBody').append(`
-                                <tr>
-                                    <td colspan="8" class="text-center">
-                                        <div class="alert alert-info mb-0">
-                                            <i class="fa fa-info-circle"></i> Please select a quiz to view results
-                                        </div>
-                                    </td>
-                                </tr>
-                            `);
-
-                            // Show the modal
-                            quizResultsModal.show();
-                        } else {
-                            alert('Failed to load quizzes: ' + response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Ajax error:', error);
-                        alert('An error occurred while loading quizzes');
-                    }
-                });
+                loadQuizTitles(); // Load quiz titles when the modal opens
+                $('#quizResultsModal').modal('show');
             });
 
             // Predefined valid course categories/keywords
@@ -553,7 +464,67 @@
                 );
             });
 
-            // Form submission validation
+            // Add a debounce function to limit API calls
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            // Function to check course name
+            const checkCourseName = debounce(function(courseName) {
+                if (!courseName) {
+                    $('#courseNameFeedback').html('').removeClass('valid-feedback invalid-feedback');
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ url_for('instructor.check_course_name') }}",
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ name: courseName }),
+                    success: function(response) {
+                        if (response.success) {
+                            if (response.exists) {
+                                $('#courseName').removeClass('is-valid').addClass('is-invalid');
+                                $('#courseNameFeedback')
+                                    .html('This course name already exists')
+                                    .removeClass('valid-feedback')
+                                    .addClass('invalid-feedback')
+                                    .show();
+                            } else {
+                                $('#courseName').removeClass('is-invalid').addClass('is-valid');
+                                $('#courseNameFeedback')
+                                    .html('Course name is available')
+                                    .removeClass('invalid-feedback')
+                                    .addClass('valid-feedback')
+                                    .show();
+                            }
+                        }
+                    },
+                    error: function() {
+                        $('#courseNameFeedback')
+                            .html('Error checking course name')
+                            .removeClass('valid-feedback')
+                            .addClass('invalid-feedback')
+                            .show();
+                    }
+                });
+            }, 500); // 500ms delay
+
+            // Update the course name input event handler
+            $('#courseName').on('input', function() {
+                const courseName = $(this).val().trim();
+                checkCourseName(courseName);
+            });
+
+            // Update the save course button click handler
             $('#saveCourse').on('click', function() {
                 const form = $('#addCourseForm')[0];
                 form.classList.add('was-validated');
@@ -566,27 +537,15 @@
                 const status = $('#courseStatus').val();
 
                 // Validate all fields
-                let isValid = true;
-                isValid &= validateInput($('#courseName'), 
-                    isValidCourseName,
-                    'Invalid course name'
-                );
-                isValid &= validateInput($('#courseDescription'), 
-                    isValidDescription,
-                    'Invalid description'
-                );
-                isValid &= validateInput($('#courseDuration'), 
-                    value => /^[0-9]+\s*(hours?|days?|weeks?|months?)$/i.test(value), 
-                    'Invalid duration'
-                );
-                isValid &= validateInput($('#courseLink'), 
-                    value => /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/.test(value), 
-                    'Invalid URL'
-                );
-                isValid &= !!level;
-                isValid &= !!status;
+                if (!name || !description || !level || !duration || !course_link || !status) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
 
-                if (!isValid) {
+                // Check if course name is invalid or already exists
+                if ($('#courseName').hasClass('is-invalid')) {
+                    const feedback = $('#courseNameFeedback').text();
+                    alert(feedback || 'Please choose a different course name');
                     return;
                 }
 
@@ -1085,9 +1044,199 @@
 
             // View quiz results function
             window.viewQuizResults = function(quizId) {
-                $('#quizSelector').val(quizId).trigger('change');
+                loadQuizTitles(); // Load all quiz titles first
+                setTimeout(() => {
+                    $('#quizSelector').val(quizId); // Select the specific quiz
+                    $('#quizSelector').trigger('change'); // Trigger the change event to load results
+                }, 500);
                 $('#viewQuizzesModal').modal('hide');
                 $('#quizResultsModal').modal('show');
+            };
+
+            // Add this function to load quiz titles into the selector
+            function loadQuizTitles() {
+                // Show loading state in the selector
+                $('#quizSelector').html('<option value="">Loading quizzes...</option>');
+                
+                $.ajax({
+                    url: "{{ url_for('instructor.get_quizzes') }}",
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            $('#quizSelector').empty();
+                            $('#quizSelector').append('<option value="">Select Quiz</option>');
+                            
+                            response.data.forEach(quiz => {
+                                $('#quizSelector').append(`
+                                    <option value="${quiz._id}">
+                                        ${quiz.title} - ${quiz.course_name}
+                                    </option>
+                                `);
+                            });
+                        } else {
+                            $('#quizSelector').html(`
+                                <option value="">No quizzes available</option>
+                            `);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading quizzes:', error);
+                        $('#quizSelector').html(`
+                            <option value="">Error loading quizzes</option>
+                        `);
+                    }
+                });
+            }
+
+            // Update the quiz selector change handler to use the correct field names
+            $('#quizSelector').on('change', function() {
+                const quizId = $(this).val();
+                if (!quizId) {
+                    $('#quizResultsBody').html(`
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle"></i> Please select a quiz to view results
+                                </div>
+                            </td>
+                        </tr>
+                    `);
+                    return;
+                }
+
+                // Show loading state
+                $('#quizResultsBody').html(`
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading results...</span>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+
+                // Fetch quiz attempts with updated field names
+                $.ajax({
+                    url: `/instructor/quiz/${quizId}/attempts`,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            $('#quizResultsBody').empty();
+                            
+                            if (response.data.length === 0) {
+                                $('#quizResultsBody').html(`
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle"></i> No attempts found for this quiz
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `);
+                                return;
+                            }
+
+                            response.data.forEach(attempt => {
+                                const submittedDate = new Date(attempt.submitted_at).toLocaleString();
+                                $('#quizResultsBody').append(`
+                                    <tr>
+                                        <td>${attempt.user_name || 'N/A'}</td>
+                                        <td>${attempt.user_email || 'N/A'}</td>
+                                        <td>${attempt.score}%</td>
+                                        <td>${attempt.total_questions}</td>
+                                        <td>${submittedDate}</td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" onclick="viewAttemptDetails('${attempt._id}')">
+                                                <i class="fa fa-eye"></i> View Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `);
+                            });
+                        } else {
+                            $('#quizResultsBody').html(`
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="alert alert-danger">
+                                            <i class="fa fa-exclamation-circle"></i> Error loading results: ${response.message}
+                                        </div>
+                                    </td>
+                                </tr>
+                            `);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#quizResultsBody').html(`
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div class="alert alert-danger">
+                                        <i class="fa fa-exclamation-circle"></i> Error loading results: ${error}
+                                    </div>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                });
+            });
+
+            // Update the view attempt details function to use the correct field names
+            window.viewAttemptDetails = function(attemptId) {
+                $.ajax({
+                    url: `/instructor/attempt/${attemptId}`,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            const attempt = response.data;
+                            
+                            // Update student info with correct field names
+                            $('#detailStudentName').text(attempt.user_name || 'N/A');
+                            $('#detailStudentEmail').text(attempt.user_email || 'N/A');
+                            $('#detailScore').text(`${attempt.score}%`);
+                            
+                            // Clear previous question details
+                            $('#questionDetails').empty();
+                            
+                            // Add each question and its details
+                            attempt.questions.forEach((question, index) => {
+                                const studentAnswer = question.student_answer;
+                                const correctAnswer = question.correct_answer;
+                                
+                                let optionsHtml = '';
+                                question.options.forEach((option, optionIndex) => {
+                                    const isCorrect = optionIndex === correctAnswer;
+                                    const isStudentAnswer = optionIndex === studentAnswer;
+                                    const optionClass = isCorrect ? 'correct-answer' : (isStudentAnswer ? 'student-answer' : '');
+                                    
+                                    optionsHtml += `
+                                        <div class="option ${optionClass}">
+                                            ${option}
+                                            ${isCorrect ? '<span class="text-success ms-2">(Correct Answer)</span>' : ''}
+                                            ${isStudentAnswer ? '<span class="text-primary ms-2">(Student\'s Answer)</span>' : ''}
+                                        </div>
+                                    `;
+                                });
+                                
+                                $('#questionDetails').append(`
+                                    <div class="question-detail mb-4">
+                                        <h6 class="mb-3">Question ${index + 1}</h6>
+                                        <p class="mb-3">${question.question}</p>
+                                        <div class="options-list">
+                                            ${optionsHtml}
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                            
+                            // Show the modal
+                            $('#attemptDetailModal').modal('show');
+                        } else {
+                            alert('Error loading attempt details: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error loading attempt details: ' + error);
+                    }
+                });
             };
         });
     </script>
@@ -1283,19 +1432,22 @@
         </div>
     </div>
     <!-- Quiz Results Modal -->
-    <div class="modal fade" id="quizResultsModal" tabindex="-1" aria-labelledby="quizResultsModalLabel" aria-hidden="true">
+    <div class="modal fade" id="quizResultsModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="quizResultsModalLabel">Quiz Results</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Quiz Results</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row mb-4">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="quizSelector" class="form-label">Select Quiz</label>
                             <select class="form-select" id="quizSelector">
                                 <option value="">Select Quiz</option>
                             </select>
+                            </div>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -1311,7 +1463,13 @@
                                 </tr>
                             </thead>
                             <tbody id="quizResultsBody">
-                                <!-- Results will be loaded here -->
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="alert alert-info">
+                                            <i class="fa fa-info-circle"></i> Please select a quiz to view results
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -1466,330 +1624,31 @@
         .question-detail:last-child {
             border-bottom: none;
         }
+
+    .feedback {
+        display: none;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+    }
+
+    .form-control.is-loading {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z'/%3E%3Cpath fill='%23000' d='M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0C22.32,8.481,24.301,9.057,26.013,10.047z'%3E%3CanimateTransform attributeType='xml' attributeName='transform' type='rotate' from='0 20 20' to='360 20 20' dur='0.5s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    .valid-feedback {
+        color: #198754;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+    }
+
+    .text-info {
+        color: #0dcaf0;
+    }
     </style>
-    <script>
-    $(document).ready(function() {
-        let questionCount = 0;
-        const MIN_QUESTIONS = 3;
-        const MAX_QUESTIONS = 10;
-
-        // Load courses for quiz dropdown
-        function loadCoursesForQuiz() {
-            $.ajax({
-                url: "{{ url_for('instructor.get_courses') }}",
-                type: 'GET',
-                success: function(response) {
-                    if (response.success) {
-                        $('#quizCourse').empty();
-                        $('#quizCourse').append('<option value="">Select Course</option>');
-                        response.data.forEach(course => {
-                            $('#quizCourse').append(
-                                `<option value="${course._id}">${course.name}</option>`
-                            );
-                        });
-                    }
-                }
-            });
-        }
-
-        // Update Add Question button
-        $('#addQuestion').click(function() {
-            if (questionCount >= MAX_QUESTIONS) {
-                alert(`Maximum ${MAX_QUESTIONS} questions allowed`);
-                return;
-            }
-            questionCount++;
-            const questionHtml = `
-                <div class="question-container mb-4" id="question${questionCount}">
-                    <hr>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6>Question ${questionCount}</h6>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestion(${questionCount})">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Question Text</label>
-                        <input type="text" class="form-control question-text" required>
-                    </div>
-                    <div class="options-container">
-                        <div class="mb-2">
-                            <div class="input-group">
-                                <div class="input-group-text">
-                                    <input type="radio" name="correct${questionCount}" required>
-                                </div>
-                                <input type="text" class="form-control option-text" placeholder="Option 1" required>
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <div class="input-group">
-                                <div class="input-group-text">
-                                    <input type="radio" name="correct${questionCount}" required>
-                                </div>
-                                <input type="text" class="form-control option-text" placeholder="Option 2" required>
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <div class="input-group">
-                                <div class="input-group-text">
-                                    <input type="radio" name="correct${questionCount}" required>
-                                </div>
-                                <input type="text" class="form-control option-text" placeholder="Option 3" required>
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <div class="input-group">
-                                <div class="input-group-text">
-                                    <input type="radio" name="correct${questionCount}" required>
-                                </div>
-                                <input type="text" class="form-control option-text" placeholder="Option 4" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            $('#questionsList').append(questionHtml);
-            // Disable add button if max reached
-            if (questionCount >= MAX_QUESTIONS) {
-                $('#addQuestion').prop('disabled', true);
-            }
-        });
-
-        // Update Save Quiz validation
-        $('#saveQuiz').click(function() {
-            const courseId = $('#quizCourse').val();
-            const title = $('#quizTitle').val().trim();
-            const description = $('#quizDescription').val().trim();
-
-            // Basic validation
-            if (!courseId || !title || !description) {
-                alert('Please fill in all quiz details');
-                return;
-            }
-
-            // Collect and validate questions
-            const questions = [];
-            let isValid = true;
-
-            $('.question-container').each(function() {
-                const questionText = $(this).find('.question-text').val().trim();
-                const options = [];
-                let correctAnswer = null;
-
-                // Validate question text
-                if (!questionText) {
-                    alert('Please fill in all question texts');
-                    isValid = false;
-                    return false; // break the loop
-                }
-
-                // Validate options
-                $(this).find('.input-group').each(function(index) {
-                    const optionText = $(this).find('.option-text').val().trim();
-                    if (!optionText) {
-                        alert('Please fill in all options');
-                        isValid = false;
-                        return false; // break the loop
-                    }
-                    options.push(optionText);
-                    if ($(this).find('input[type="radio"]').is(':checked')) {
-                        correctAnswer = index;
-                    }
-                });
-
-                // Validate correct answer selection
-                if (correctAnswer === null) {
-                    alert('Please select a correct answer for each question');
-                    isValid = false;
-                    return false; // break the loop
-                }
-
-                questions.push({
-                    question: questionText,
-                    options: options,
-                    correct_answer: correctAnswer
-                });
-            });
-
-            // Check minimum questions requirement
-            if (questions.length < MIN_QUESTIONS) {
-                alert(`Please add at least ${MIN_QUESTIONS} questions`);
-                return;
-            }
-
-            // If all validations pass, save the quiz
-            if (isValid) {
-                const quizData = {
-                    course_id: courseId,
-                    title: title,
-                    description: description,
-                    questions: questions
-                };
-
-                $.ajax({
-                    url: "{{ url_for('instructor.add_quiz') }}",
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(quizData),
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Quiz created successfully');
-                            $('#addQuizModal').modal('hide');
-                            $('#quizForm')[0].reset();
-                            $('#questionsList').empty();
-                            questionCount = 0;
-                            loadQuizzes();
-                            $('#viewQuizzesModal').modal('show');
-                        } else {
-                            alert('Failed to create quiz: ' + response.message);
-                        }
-                    },
-                    error: function() {
-                        alert('An error occurred while creating the quiz');
-                    }
-                });
-            }
-        });
-
-        // Update remove question function
-        window.removeQuestion = function(questionId) {
-            $(`#question${questionId}`).remove();
-            questionCount--;
-            // Re-enable add button if below max
-            if (questionCount < MAX_QUESTIONS) {
-                $('#addQuestion').prop('disabled', false);
-            }
-        };
-
-        // Reset quiz modal when closed
-        $('#addQuizModal').on('hidden.bs.modal', function() {
-            const form = $('#quizForm')[0];
-            form.reset();
-            $('#questionsList').empty();
-            questionCount = 0;
-            $('#addQuestion').prop('disabled', false);
-        });
-
-        // Initialize the modal
-        const viewQuizzesModal = new bootstrap.Modal(document.getElementById('viewQuizzesModal'));
-
-        // Handle View Quizzes click
-        $('#viewQuizzesLink').on('click', function(e) {
-            e.preventDefault();
-            console.log('View Quizzes clicked'); // Debug log
-            loadQuizzes();
-        });
-
-        // Function to load quizzes
-        function loadQuizzes() {
-            console.log('Loading quizzes...'); // Debug log
-            
-            // Show loading indicator
-            $('#quizzesList').html(`
-                <tr>
-                    <td colspan="6" class="text-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </td>
-                </tr>
-            `);
-            
-            $.ajax({
-                url: "{{ url_for('instructor.get_quizzes') }}",
-                type: 'GET',
-                success: function(response) {
-                    console.log('Response received:', response); // Debug log
-                    $('#quizzesList').empty();
-                    
-                    if (response.success && response.data && response.data.length > 0) {
-                        response.data.forEach(quiz => {
-                            const createdDate = new Date(quiz.created_at).toLocaleDateString();
-                            const questionCount = quiz.questions ? quiz.questions.length : 0;
-                            
-                            $('#quizzesList').append(`
-                                <tr>
-                                    <td><strong>${quiz.title || 'N/A'}</strong></td>
-                                    <td><span class="text-wrap">${quiz.description || 'N/A'}</span></td>
-                                    <td>${quiz.course_name || 'N/A'}</td>
-                                    <td><span class="badge bg-primary">${questionCount} Questions</span></td>
-                                    <td>${createdDate}</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button class="btn btn-info btn-sm" onclick="viewQuizResults('${quiz._id}')">
-                                                <i class="fa fa-chart-bar"></i> Results
-                                            </button>
-                                            <button class="btn btn-danger btn-sm" onclick="deleteQuiz('${quiz._id}')">
-                                                <i class="fa fa-trash"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `);
-                        });
-                    } else {
-                        $('#quizzesList').html(`
-                            <tr>
-                                <td colspan="6" class="text-center">
-                                    <div class="alert alert-info mb-0">
-                                        <i class="fa fa-info-circle"></i> No quizzes found
-                                    </div>
-                                </td>
-                            </tr>
-                        `);
-                    }
-                    
-                    // Show the modal
-                    $('#viewQuizzesModal').modal('show');
-                },
-                error: function(xhr, status, error) {
-                    console.error('Ajax error:', error);
-                    if (xhr.status === 401) {
-                        // Unauthorized - redirect to login
-                        window.location.href = "{{ url_for('auth.login') }}";
-                    } else {
-                        $('#quizzesList').html(`
-                            <tr>
-                                <td colspan="6" class="text-center">
-                                    <div class="alert alert-danger mb-0">
-                                        <i class="fa fa-exclamation-circle"></i> Error loading quizzes: ${error}
-                                    </div>
-                                </td>
-                            </tr>
-                        `);
-                    }
-                }
-            });
-        }
-
-        // Delete quiz function
-        window.deleteQuiz = function(quizId) {
-            if (confirm('Are you sure you want to delete this quiz?')) {
-                $.ajax({
-                    url: `/instructor/quiz/${quizId}`,
-                    type: 'DELETE',
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Quiz deleted successfully');
-                            loadQuizzes(); // Reload the quizzes list
-                        } else {
-                            alert('Failed to delete quiz: ' + response.message);
-                        }
-                    },
-                    error: function() {
-                        alert('An error occurred while deleting the quiz');
-                    }
-                });
-            }
-        };
-
-        // View quiz results function
-        window.viewQuizResults = function(quizId) {
-            $('#quizSelector').val(quizId).trigger('change');
-            $('#viewQuizzesModal').modal('hide');
-            $('#quizResultsModal').modal('show');
-        };
-    });
-    </script>
   </body>
 </html>

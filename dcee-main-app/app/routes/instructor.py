@@ -32,11 +32,45 @@ def get_profile():
             'message': str(e)
         })
 
+@instructor_bp.route('/check_course_name', methods=['POST'])
+@login_required
+def check_course_name():
+    try:
+        data = request.json
+        course_name = data.get('name')
+        
+        # Check if course already exists (case-insensitive)
+        existing_course = mongo.db.courses.find_one({
+            'name': {'$regex': f'^{course_name}$', '$options': 'i'}
+        })
+        
+        return jsonify({
+            'success': True,
+            'exists': existing_course is not None
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
+
 @instructor_bp.route('/add_course', methods=['POST'])
 @login_required
 def add_course():
     try:
         data = request.json
+        
+        # Check if course already exists
+        existing_course = mongo.db.courses.find_one({
+            'name': {'$regex': f'^{data["name"]}$', '$options': 'i'}
+        })
+        
+        if existing_course:
+            return jsonify({
+                'success': False,
+                'message': 'A course with this name already exists'
+            })
+        
         course = {
             'name': data['name'],
             'description': data['description'],
