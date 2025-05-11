@@ -11,7 +11,7 @@ import string
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from flask_mail import Mail, Message
 from functools import wraps
-
+import logging
 
 auth_bp = Blueprint('auth', __name__)
 customers_bp = Blueprint('customers', __name__)
@@ -145,6 +145,8 @@ def register():
             return redirect(url_for('auth.login'))
         
         elif role == 'instructor':
+            print("Instructor account creation started")
+            print(first_name, last_name, email)
             add_instructor = {
                 'first_name': first_name,
                 'last_name': last_name,
@@ -152,7 +154,10 @@ def register():
                 'created_at': created_at,
                 'updated_at': updated_at
             }
-            mongo.db.instructor.insert_one(add_instructor)
+            transcation = mongo.db.instructor.insert_one(add_instructor)
+            if transcation:
+                print(f"instructor added: {transcation}")
+                
             flash('Instructor registration successful! You can now log in.', 'success')
             return redirect(url_for('auth.login'))
 

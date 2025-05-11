@@ -195,9 +195,11 @@
     });
 
     function setRedirectUrl() {
+        // Always submit to auth.register regardless of role
+        // The registration logic will handle redirecting to the appropriate dashboard after successful registration
         const roleSelect = document.getElementById('role');
         const form = document.querySelector('.theme-form');
-        form.action = roleSelect.value === 'instructor' ? "{{ url_for('instructor.dashboard') }}" : "{{ url_for('auth.register') }}";
+        form.action = "{{ url_for('auth.register') }}";
     }
 </script>
 </body>
