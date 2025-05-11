@@ -820,11 +820,12 @@
                     return;
                 }
 
+                // Show loading state
+                const processBtn = $(this);
+                processBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing...');
+
                 const formData = new FormData();
                 formData.append('file', fileInput.files[0]);
-
-                // First ensure courses are loaded
-                loadCoursesForQuiz();
 
                 $.ajax({
                     url: "{{ url_for('instructor.process_quiz_excel') }}",
@@ -849,15 +850,39 @@
                                 );
                                 $('#questionsList').append(questionHtml);
                             });
+
+                            // Show success message with question count
+                            alert(`Successfully loaded ${response.data.length} questions from Excel file`);
+                            
+                            // Update the radio button names to match the new question count
+                            updateQuestionNumbers();
+                            verifyExcelQuestions();
                         } else {
                             alert('Error processing Excel: ' + response.message);
                         }
                     },
                     error: function() {
                         alert('Error uploading file');
+                    },
+                    complete: function() {
+                        // Reset button state
+                        processBtn.prop('disabled', false).html('Process File');
                     }
                 });
             });
+
+            // Add this function to update question numbers
+            function updateQuestionNumbers() {
+                $('.question-container').each(function(index) {
+                    const number = index + 1;
+                    $(this).find('h6').text(`Question ${number}`);
+                    
+                    // Update radio button names
+                    $(this).find('input[type="radio"]').each(function() {
+                        $(this).attr('name', `correct${number}`);
+                    });
+                });
+            }
 
             // Function to load courses for quiz
             function loadCoursesForQuiz() {
@@ -890,7 +915,7 @@
                         <div class="mb-2">
                             <div class="input-group">
                                 <div class="input-group-text">
-                                    <input type="radio" name="correct${number}" ${index === correctAnswer ? 'checked' : ''} required>
+                                    <input type="radio" name="correct${number}" value="${index}" ${index === correctAnswer ? 'checked' : ''} required>
                                 </div>
                                 <input type="text" class="form-control option-text" value="${option}" required>
                             </div>
@@ -1238,6 +1263,233 @@
                     }
                 });
             };
+
+            let questionCount = 0;
+
+            // Add Question button click handler
+            $('#addQuestion').click(function() {
+                questionCount++;
+                const questionHtml = `
+                    <div class="question-container mb-4" id="question${questionCount}">
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6>Question ${questionCount}</h6>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestion(${questionCount})">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                </div>
+                        <div class="mb-3">
+                            <label class="form-label">Question Text</label>
+                            <input type="text" class="form-control question-text" required>
+                        </div>
+                        <div class="options-container">
+                            <div class="mb-2">
+                        <div class="input-group">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="correct${questionCount}" value="0" required>
+                        </div>
+                                    <input type="text" class="form-control option-text" placeholder="Option 1" required>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="correct${questionCount}" value="1" required>
+                                    </div>
+                                    <input type="text" class="form-control option-text" placeholder="Option 2" required>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="correct${questionCount}" value="2" required>
+                                    </div>
+                                    <input type="text" class="form-control option-text" placeholder="Option 3" required>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="correct${questionCount}" value="3" required>
+                                    </div>
+                                    <input type="text" class="form-control option-text" placeholder="Option 4" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('#questionsList').append(questionHtml);
+            });
+
+            // Remove Question function
+            window.removeQuestion = function(number) {
+                $(`#question${number}`).remove();
+                // Update question numbers
+                $('.question-container').each(function(index) {
+                    $(this).find('h6').text(`Question ${index + 1}`);
+                });
+            };
+
+            // Save Quiz button click handler
+            $('#saveQuiz').click(function() {
+                // Show loading state
+                const saveBtn = $(this);
+                saveBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+
+                // Validate basic info
+                const courseId = $('#quizCourse').val();
+                const title = $('#quizTitle').val().trim();
+                const description = $('#quizDescription').val().trim();
+
+                if (!courseId || !title || !description) {
+                    alert('Please fill in all required fields (Course, Title, and Description)');
+                    saveBtn.prop('disabled', false).text('Save Quiz');
+                    return;
+                }
+
+                // Get all question containers
+                const questionContainers = $('.question-container');
+                const totalQuestions = questionContainers.length;
+
+                console.log('Total questions found:', totalQuestions); // Debug log
+
+                // Check minimum questions requirement
+                if (totalQuestions < 3) {
+                    alert(`Please add at least 3 questions to the quiz (currently have ${totalQuestions} questions)`);
+                    saveBtn.prop('disabled', false).text('Save Quiz');
+                    return;
+                }
+
+                // Collect questions data
+                const questions = [];
+                let isValid = true;
+
+                questionContainers.each(function(index) {
+                    const container = $(this);
+                    const questionText = container.find('.question-text').val().trim();
+                    const options = [];
+                    let correctAnswer = null; // Changed from -1 to null
+
+                    // Collect options
+                    container.find('.option-text').each(function(optionIndex) {
+                        const optionText = $(this).val().trim();
+                        options.push(optionText);
+                        
+                        // Check if this option is marked as correct
+                        const radioName = `correct${index + 1}`;
+                        const radio = container.find(`input[type="radio"][name="${radioName}"][value="${optionIndex}"]`);
+                        if (radio.is(':checked')) {
+                            correctAnswer = optionIndex;
+                        }
+                    });
+
+                    // Debug log
+                    console.log(`Question ${index + 1}:`, {
+                        text: questionText,
+                        options: options,
+                        correctAnswer: correctAnswer
+                    });
+
+                    // Validate question
+                    if (!questionText || options.some(opt => !opt)) {
+                        alert(`Please complete all fields for Question ${index + 1}`);
+                        isValid = false;
+                        return false;
+                    }
+
+                    if (correctAnswer === null) {
+                        alert(`Please select a correct answer for Question ${index + 1}`);
+                        isValid = false;
+                        return false;
+                    }
+
+                    questions.push({
+                        question: questionText,
+                        options: options,
+                        correct_answer: correctAnswer
+                    });
+                });
+
+                if (!isValid) {
+                    saveBtn.prop('disabled', false).text('Save Quiz');
+                    return;
+                }
+
+                // Prepare quiz data
+                const quizData = {
+                    course_id: courseId,
+                    title: title,
+                    description: description,
+                    questions: questions
+                };
+
+                // Debug log
+                console.log('Sending quiz data:', quizData);
+
+                // Send to server
+                $.ajax({
+                    url: "{{ url_for('instructor.add_quiz') }}",
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(quizData),
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Quiz saved successfully!');
+                            // Reset form
+                            $('#quizForm')[0].reset();
+                            $('#questionsList').empty();
+                            $('#excelFile').val(''); // Clear file input
+                            questionCount = 0;
+                            // Close modal
+                            $('#addQuizModal').modal('hide');
+                        } else {
+                            alert('Failed to save quiz: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Save quiz error:', error);
+                        alert('Error saving quiz. Please try again.');
+                    },
+                    complete: function() {
+                        // Reset button state
+                        saveBtn.prop('disabled', false).text('Save Quiz');
+                    }
+                });
+            });
+
+            // Reset quiz form when modal is closed
+            $('#addQuizModal').on('hidden.bs.modal', function() {
+                $('#quizForm')[0].reset();
+                $('#questionsList').empty();
+                questionCount = 0;
+            });
+
+            // Load courses when quiz modal is opened
+            $('#addQuizModal').on('show.bs.modal', function() {
+                loadCoursesForQuiz();
+            });
+
+            // Add this after Excel processing success
+            function verifyExcelQuestions() {
+                const containers = $('.question-container');
+                console.log(`Verifying ${containers.length} questions`);
+                
+                containers.each(function(index) {
+                    const container = $(this);
+                    const questionNumber = index + 1;
+                    const questionText = container.find('.question-text').val();
+                    const options = container.find('.option-text').map(function() {
+                        return $(this).val();
+                    }).get();
+                    const selectedRadio = container.find('input[type="radio"]:checked').val();
+                    
+                    console.log(`Question ${questionNumber}:`, {
+                        text: questionText,
+                        options: options,
+                        selectedAnswer: selectedRadio
+                    });
+                });
+            }
         });
     </script>
     <!-- Profile Modal -->
